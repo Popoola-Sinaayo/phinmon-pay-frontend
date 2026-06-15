@@ -1,29 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { api } from "@/lib/api";
-import { useAuth } from "@/hooks/useAuth";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { WalletCard } from "@/components/Cards";
 import { DataTable } from "@/components/DataTable";
-import { DashboardShell, DashboardSkeleton } from "@/components/layout/DashboardShell";
+import { DashboardShell } from "@/components/layout/DashboardShell";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Transaction } from "@/types";
 
-const nav = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/surveys", label: "Surveys" },
-  { href: "/wallet", label: "Wallet" },
-  { href: "/verification", label: "Verification" },
-  { href: "/settings", label: "Settings" },
-];
-
 export default function WalletPage() {
-  const router = useRouter();
-  const { data: user, isLoading } = useAuth();
+  const { user, isLoading } = useRequireAuth("respondent");
 
   const { data: wallet, isLoading: loadingWallet } = useQuery({
     queryKey: ["wallet"],
@@ -43,34 +32,19 @@ export default function WalletPage() {
     enabled: !!user,
   });
 
-  useEffect(() => {
-    if (!isLoading && !user) router.push("/login");
-  }, [user, isLoading, router]);
-
-  if (isLoading) {
-    return (
-      <DashboardShell nav={nav} logoHref="/dashboard" title="Wallet">
-        <DashboardSkeleton />
-      </DashboardShell>
-    );
-  }
-
   return (
     <DashboardShell
-      nav={nav}
-      logoHref="/dashboard"
+      user={user}
       title="Wallet"
       subtitle="Track earnings and withdraw to your bank"
-      userEmail={user?.email}
+      loading={isLoading || loadingWallet}
       actions={
         <Link href="/wallet/withdraw" className="btn-primary">
           Withdraw
         </Link>
       }
     >
-      {loadingWallet ? (
-        <DashboardSkeleton />
-      ) : (
+      {!loadingWallet && (
         <>
           <div className="max-w-xl">
             <WalletCard
@@ -86,7 +60,7 @@ export default function WalletPage() {
             className="mt-8"
           >
             <h2 className="text-lg font-semibold text-gray-900">Transaction History</h2>
-            <div className="mt-4 overflow-hidden rounded-card border border-gray-100">
+            <div className="mt-4">
               <DataTable
                 headers={["Date", "Description", "Amount", "Status"]}
                 rows={(transactions || []).map((t) => [
@@ -95,6 +69,7 @@ export default function WalletPage() {
                   formatCurrency(Math.abs(t.amount)),
                   t.status,
                 ])}
+                statusColumn={3}
               />
             </div>
           </motion.section>

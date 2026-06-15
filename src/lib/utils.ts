@@ -25,3 +25,8 @@ export function calculateSurveyCost(responsesNeeded: number, payoutPerResponse: 
   const platformFee = budget * (feePercent / 100);
   return { budget, platformFee, totalCost: budget + platformFee };
 }
+
+export function calculatePerResponseCost(payoutPerResponse: number, feePercent = 15) {
+  const platformFee = payoutPerResponse * (feePercent / 100);
+  return payoutPerResponse + platformFee;
+}

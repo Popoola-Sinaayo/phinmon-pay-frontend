@@ -1,8 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
@@ -10,25 +8,18 @@ import {
   ClipboardList,
   Crown,
   Shield,
+  Sparkles,
   TrendingUp,
   Wallet,
 } from "lucide-react";
 import { api } from "@/lib/api";
-import { useAuth } from "@/hooks/useAuth";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { MetricCard, SurveyCard, WalletCard } from "@/components/Cards";
 import { EmptyState } from "@/components/EmptyState";
-import { DashboardShell, DashboardSkeleton, QuickAction } from "@/components/layout/DashboardShell";
+import { DashboardShell, QuickAction } from "@/components/layout/DashboardShell";
 import { StaggerList, StaggerItem } from "@/components/motion";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Survey } from "@/types";
-
-const nav = [
-  { href: "/dashboard", label: "Dashboard" },
-  { href: "/surveys", label: "Surveys" },
-  { href: "/wallet", label: "Wallet" },
-  { href: "/verification", label: "Verification" },
-  { href: "/settings", label: "Settings" },
-];
 
 function getGreeting() {
   const hour = new Date().getHours();
@@ -38,8 +29,7 @@ function getGreeting() {
 }
 
 export default function RespondentDashboard() {
-  const router = useRouter();
-  const { data: user, isLoading } = useAuth();
+  const { user, isLoading } = useRequireAuth("respondent", { requireNin: true });
 
   const { data: dashboard, isLoading: loadingDash } = useQuery({
     queryKey: ["respondent-dashboard"],
@@ -59,40 +49,57 @@ export default function RespondentDashboard() {
     enabled: !!user?.ninVerified,
   });
 
-  useEffect(() => {
-    if (!isLoading && !user) router.push("/login");
-    else if (user && !user.ninVerified) router.push("/onboarding/verify-nin");
-    else if (user?.role === "researcher") router.push("/researcher/dashboard");
-  }, [user, isLoading, router]);
-
-  if (isLoading || !user) {
-    return (
-      <DashboardShell nav={nav} logoHref="/dashboard" title="Dashboard">
-        <DashboardSkeleton />
-      </DashboardShell>
-    );
-  }
-
-  const firstName = user.name?.split(" ")[0] || "there";
+  const firstName = user?.name?.split(" ")[0] || "there";
   const recentEarnings = dashboard?.recentEarnings || [];
 
   return (
     <DashboardShell
-      nav={nav}
-      logoHref="/dashboard"
-      title={`${getGreeting()}, ${firstName} 👋`}
+      user={user}
+      title={user ? `${getGreeting()}, ${firstName}` : "Dashboard"}
       subtitle={
         dashboard?.isPremium
           ? "Premium member — higher-paying surveys unlocked"
-          : "Complete liveness verification to unlock premium surveys"
+          : "Complete verification to unlock premium surveys and faster payouts"
       }
-      userEmail={user.email}
+      loading={isLoading || loadingDash}
     >
-      {loadingDash ? (
-        <DashboardSkeleton />
-      ) : (
+      {!loadingDash && user && (
         <>
-          {/* Quick actions — mobile first */}
+          {!dashboard?.isPremium && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="relative mb-6 overflow-hidden rounded-2xl border border-primary-100 bg-gradient-to-r from-primary-50 via-white to-amber-50/40 p-5"
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="flex items-center gap-2 text-sm font-semibold text-primary-700">
+                    <Sparkles className="h-4 w-4" /> Boost your earnings
+                  </p>
+                  <p className="mt-1 font-semibold text-gray-900">
+                    {user.livenessVerified
+                      ? "You're all set — premium surveys unlocked"
+                      : user.ninVerified
+                        ? "Complete premium verification for 3× higher payouts"
+                        : "Verify your NIN to start earning from surveys"}
+                  </p>
+                </div>
+                <Link href="/verification" className="btn-primary shrink-0 self-start">
+                  {user.livenessVerified ? "View status" : "Continue verification"}
+                </Link>
+              </div>
+              <div className="mt-4 flex gap-1">
+                {[user.ninVerified, user.livenessVerified].map((done, i) => (
+                  <div
+                    key={i}
+                    className={`h-1.5 flex-1 rounded-full ${done ? "bg-primary-500" : "bg-gray-200"}`}
+                  />
+                ))}
+                <div className="h-1.5 flex-1 rounded-full bg-gray-200" />
+              </div>
+            </motion.div>
+          )}
+
           <StaggerList className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StaggerItem>
               <QuickAction href="/surveys" icon={ClipboardList} label="Browse Surveys" />
@@ -104,12 +111,7 @@ export default function RespondentDashboard() {
               <QuickAction href="/verification" icon={Shield} label="Verification" />
             </StaggerItem>
             <StaggerItem>
-              <QuickAction
-                href="/verification"
-                icon={Crown}
-                label="Go Premium"
-                color="amber"
-              />
+              <QuickAction href="/verification" icon={Crown} label="Go Premium" color="amber" />
             </StaggerItem>
           </StaggerList>
 
@@ -124,6 +126,7 @@ export default function RespondentDashboard() {
               value={dashboard?.availableSurveys || 0}
               subtitle="Ready to complete"
               icon={ClipboardList}
+              iconColor="primary"
               trend="+12 this week"
               index={1}
             />
@@ -132,21 +135,20 @@ export default function RespondentDashboard() {
               value={dashboard?.completedSurveys || 0}
               subtitle="Total submissions"
               icon={TrendingUp}
+              iconColor="secondary"
               index={2}
             />
             <MetricCard
               title="Premium Status"
               value={dashboard?.isPremium ? "Active" : "Standard"}
-              subtitle={
-                dashboard?.isPremium ? "All tiers unlocked" : "Verify to upgrade"
-              }
+              subtitle={dashboard?.isPremium ? "All tiers unlocked" : "Verify to upgrade"}
               icon={Crown}
-              className={dashboard?.isPremium ? "border-amber-200 bg-amber-50/30" : ""}
+              iconColor="amber"
+              className={dashboard?.isPremium ? "border-amber-200/80 bg-amber-50/20" : ""}
               index={3}
             />
           </div>
 
-          {/* Recent earnings */}
           {recentEarnings.length > 0 && (
             <motion.section
               initial={{ opacity: 0, y: 16 }}
@@ -156,16 +158,19 @@ export default function RespondentDashboard() {
             >
               <div className="flex items-center justify-between">
                 <h2 className="font-semibold text-gray-900">Recent Earnings</h2>
-                <Link href="/wallet" className="flex items-center gap-1 text-sm text-primary-600 hover:underline">
+                <Link
+                  href="/wallet"
+                  className="flex items-center gap-1 text-sm font-medium text-primary-600 hover:underline"
+                >
                   View all <ArrowUpRight className="h-3.5 w-3.5" />
                 </Link>
               </div>
-              <div className="mt-4 space-y-3">
+              <div className="mt-4 space-y-2">
                 {recentEarnings.map(
                   (t: { _id: string; description: string; amount: number; createdAt: string }) => (
                     <motion.div
                       key={t._id}
-                      className="flex items-center justify-between rounded-xl bg-gray-50 px-4 py-3"
+                      className="flex items-center justify-between rounded-xl border border-gray-50 bg-gray-50/80 px-4 py-3"
                       whileHover={{ x: 2 }}
                     >
                       <div>

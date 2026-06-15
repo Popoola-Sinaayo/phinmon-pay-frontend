@@ -54,6 +54,25 @@ export default function PricingPage() {
         </div>
       </div>
 
+      <h2 className="mt-12 text-xl font-semibold text-gray-900">Choose how you pay</h2>
+      <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <div className="card">
+          <p className="text-lg font-bold text-gray-900">Prepay in full</p>
+          <p className="mt-2 text-sm text-gray-600">
+            Pay the entire campaign cost upfront at launch via Paystack checkout. Best for fixed-budget
+            studies.
+          </p>
+        </div>
+        <div className="card border-primary-100 bg-primary-50/30">
+          <p className="text-lg font-bold text-gray-900">Pay as you go</p>
+          <p className="mt-2 text-sm text-gray-600">
+            Save your card and pay per response as they come in. Set a spending cap — campaigns pause
+            automatically when reached. If a charge fails, the survey locks until you update your card
+            and settle any outstanding balance.
+          </p>
+        </div>
+      </div>
+
       <h2 className="mt-12 text-xl font-semibold text-gray-900">Campaign pricing examples</h2>
       <p className="mt-1 text-sm text-gray-500">15% platform fee included in totals below.</p>
       <div className="mt-6 grid gap-6 sm:grid-cols-3">

@@ -1,7 +1,27 @@
+import { cn } from "@/lib/utils";
+
 export function PremiumBadge() {
   return (
     <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
       Premium
+    </span>
+  );
+}
+
+const campaignStatusStyles: Record<string, string> = {
+  DRAFT: "bg-gray-100 text-gray-700",
+  PENDING_PAYMENT: "bg-amber-100 text-amber-800",
+  ACTIVE: "bg-primary-100 text-primary-700",
+  PAUSED: "bg-orange-100 text-orange-800",
+  COMPLETED: "bg-secondary-100 text-secondary-700",
+  CANCELLED: "bg-error-500/10 text-error-600",
+};
+
+export function CampaignStatusBadge({ status }: { status: string }) {
+  const style = campaignStatusStyles[status] || "bg-gray-100 text-gray-600";
+  return (
+    <span className={cn("inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize", style)}>
+      {status.replace(/_/g, " ").toLowerCase()}
     </span>
   );
 }

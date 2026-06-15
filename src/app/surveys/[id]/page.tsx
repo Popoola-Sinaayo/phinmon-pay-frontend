@@ -1,20 +1,20 @@
 "use client";
 
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { motion } from "framer-motion";
+import { Clock, HelpCircle } from "lucide-react";
 import { api } from "@/lib/api";
-import { useAuth } from "@/hooks/useAuth";
-import { Navbar } from "@/components/Navbar";
-import { formatCurrency } from "@/lib/utils";
+import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { PremiumBadge } from "@/components/Badges";
+import { DashboardShell } from "@/components/layout/DashboardShell";
+import { formatCurrency } from "@/lib/utils";
 import type { Survey } from "@/types";
 
 export default function SurveyDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const router = useRouter();
-  const { data: user, isLoading } = useAuth();
+  const { user, isLoading } = useRequireAuth("respondent");
 
   const { data: survey, isLoading: loadingSurvey } = useQuery({
     queryKey: ["survey", id],
@@ -25,57 +25,69 @@ export default function SurveyDetailPage() {
     enabled: !!id && !!user,
   });
 
-  useEffect(() => {
-    if (!isLoading && !user) router.push("/login");
-  }, [user, isLoading, router]);
-
   const locked = survey?.targetAudience === "PREMIUM_ONLY" && !user?.livenessVerified;
 
-  if (isLoading || loadingSurvey) return <div className="p-16 text-center">Loading...</div>;
-  if (!survey) return <div className="p-16 text-center">Survey not found</div>;
-
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar logoHref="/dashboard" />
-      <div className="mx-auto max-w-survey px-4 py-8">
-        <Link href="/surveys" className="text-sm text-primary-600 hover:underline">
-          ← Back to surveys
-        </Link>
-        <div className="card mt-4">
-          <div className="flex items-start justify-between">
-            <h1 className="text-2xl font-bold text-gray-900">{survey.title}</h1>
+    <DashboardShell
+      user={user}
+      title={survey?.title || "Survey"}
+      subtitle={survey?.description}
+      loading={isLoading || loadingSurvey}
+      backHref="/surveys"
+      breadcrumbs={[
+        { label: "Surveys", href: "/surveys" },
+        { label: survey?.title || "Detail" },
+      ]}
+      maxWidth="narrow"
+    >
+      {survey && (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="card"
+        >
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full bg-primary-50 px-3 py-1 text-sm font-bold text-primary-700">
+                {formatCurrency(survey.payoutPerResponse)}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
+                <Clock className="h-3 w-3" /> ~{survey.estimatedMinutes || 10} min
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
+                <HelpCircle className="h-3 w-3" /> {survey.questions.length} questions
+              </span>
+            </div>
             {survey.targetAudience === "PREMIUM_ONLY" && <PremiumBadge />}
           </div>
-          <p className="mt-4 text-gray-600">{survey.description}</p>
-          <div className="mt-6 grid gap-4 sm:grid-cols-2">
+
+          <div className="mt-6 grid gap-4 rounded-xl bg-gray-50/80 p-4 sm:grid-cols-2">
             <div>
-              <p className="text-sm text-gray-500">Reward</p>
-              <p className="text-xl font-bold text-primary-600">{formatCurrency(survey.payoutPerResponse)}</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Audience</p>
+              <p className="mt-1 font-medium capitalize text-gray-900">
+                {survey.targetAudience.replace(/_/g, " ").toLowerCase()}
+              </p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Estimated Time</p>
-              <p className="font-medium">~{survey.estimatedMinutes || 10} minutes</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Questions</p>
-              <p className="font-medium">{survey.questions.length}</p>
-            </div>
-            <div>
-              <p className="text-sm text-gray-500">Audience</p>
-              <p className="font-medium capitalize">{survey.targetAudience.replace("_", " ").toLowerCase()}</p>
+              <p className="text-xs font-medium uppercase tracking-wide text-gray-400">Category</p>
+              <p className="mt-1 font-medium text-gray-900">{survey.category || "General"}</p>
             </div>
           </div>
+
           {locked ? (
-            <Link href="/verification" className="btn-secondary mt-8 inline-flex">
+            <Link href="/verification" className="btn-secondary mt-8 inline-flex w-full justify-center sm:w-auto">
               Unlock Premium Access
             </Link>
           ) : (
-            <Link href={`/surveys/${id}/take`} className="btn-primary mt-8 inline-flex">
-              Start Survey
+            <Link
+              href={`/surveys/${id}/take`}
+              className="btn-primary mt-8 inline-flex w-full justify-center sm:w-auto"
+            >
+              Start Survey →
             </Link>
           )}
-        </div>
-      </div>
-    </div>
+        </motion.div>
+      )}
+    </DashboardShell>
   );
 }

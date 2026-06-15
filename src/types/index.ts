@@ -50,6 +50,11 @@ export interface Survey {
   responsesNeeded: number;
   responsesReceived: number;
   status: string;
+  billingModel?: "PREPAID" | "PAYG";
+  spendingCap?: number;
+  amountSpent?: number;
+  billingLocked?: boolean;
+  billingLockReason?: string;
   questions: Question[];
   estimatedMinutes?: number;
   createdAt: string;

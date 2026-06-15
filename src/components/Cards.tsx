@@ -61,6 +61,13 @@ export function SurveyCard({
   );
 }
 
+const metricIconColors: Record<string, string> = {
+  default: "bg-gray-100 text-gray-500",
+  primary: "bg-primary-100 text-primary-600",
+  secondary: "bg-secondary-100 text-secondary-600",
+  amber: "bg-amber-100 text-amber-600",
+};
+
 export function MetricCard({
   title,
   value,
@@ -69,6 +76,7 @@ export function MetricCard({
   icon: Icon,
   trend,
   index = 0,
+  iconColor = "default",
 }: {
   title: string;
   value: string | number;
@@ -77,6 +85,7 @@ export function MetricCard({
   icon?: React.ComponentType<{ className?: string }>;
   trend?: string;
   index?: number;
+  iconColor?: keyof typeof metricIconColors;
 }) {
   return (
     <motion.div
@@ -85,21 +94,105 @@ export function MetricCard({
       whileHover={{ y: -3 }}
       className={cn("card-hover", className)}
     >
-      <div className="flex items-start justify-between">
-        <p className="text-sm font-medium text-gray-500">{title}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-gray-500">{title}</p>
+          <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900">{value}</p>
+          {subtitle && <p className="mt-1 text-xs text-gray-400">{subtitle}</p>}
+          {trend && (
+            <p className="mt-2 flex items-center gap-1 text-xs font-semibold text-primary-600">
+              <TrendingUp className="h-3 w-3" /> {trend}
+            </p>
+          )}
+        </div>
         {Icon && (
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gray-50 text-gray-400">
+          <div
+            className={cn(
+              "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+              metricIconColors[iconColor]
+            )}
+          >
             <Icon className="h-4 w-4" />
           </div>
         )}
       </div>
-      <p className="mt-2 text-2xl font-bold tracking-tight text-gray-900">{value}</p>
-      {subtitle && <p className="mt-1 text-xs text-gray-400">{subtitle}</p>}
-      {trend && (
-        <p className="mt-2 flex items-center gap-1 text-xs font-medium text-primary-600">
-          <TrendingUp className="h-3 w-3" /> {trend}
-        </p>
-      )}
+    </motion.div>
+  );
+}
+
+export function CampaignRow({
+  survey,
+  index = 0,
+}: {
+  survey: Survey & {
+    responsesReceived?: number;
+    responsesNeeded?: number;
+    totalCost?: number;
+    billingModel?: "PREPAID" | "PAYG";
+    amountSpent?: number;
+    billingLocked?: boolean;
+  };
+  index?: number;
+}) {
+  const progress =
+    survey.responsesNeeded && survey.responsesReceived
+      ? Math.min(100, Math.round((survey.responsesReceived / survey.responsesNeeded) * 100))
+      : 0;
+
+  return (
+    <motion.div
+      {...cardMotion}
+      transition={{ delay: index * 0.05, duration: 0.35 }}
+      className="group flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-100 bg-white p-5 shadow-subtle transition hover:border-primary-100 hover:shadow-card"
+    >
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          <h3 className="font-semibold text-gray-900">{survey.title}</h3>
+          <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-600">
+            {survey.status.replace(/_/g, " ")}
+          </span>
+          {survey.billingModel === "PAYG" && (
+            <span className="rounded-full bg-secondary-50 px-2 py-0.5 text-[10px] font-semibold text-secondary-700">
+              PAYG
+            </span>
+          )}
+          {survey.billingLocked && (
+            <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
+              Locked
+            </span>
+          )}
+        </div>
+        <p className="mt-1 line-clamp-1 text-sm text-gray-500">{survey.description}</p>
+        <div className="mt-3 flex items-center gap-3">
+          <div className="h-1.5 flex-1 max-w-[140px] overflow-hidden rounded-full bg-gray-100">
+            <div
+              className="h-full rounded-full bg-primary-500 transition-all"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+          <span className="text-xs font-medium text-gray-500">
+            {survey.responsesReceived ?? 0}/{survey.responsesNeeded ?? 0} responses
+          </span>
+        </div>
+      </div>
+      <div className="flex items-center gap-4">
+        <div className="text-right">
+          <p className="text-xs text-gray-400">
+            {survey.billingModel === "PAYG" ? "Spent" : "Budget"}
+          </p>
+          <p className="font-bold text-primary-600">
+            {survey.billingModel === "PAYG"
+              ? formatCurrency(survey.amountSpent || 0)
+              : formatCurrency(survey.totalCost || 0)}
+          </p>
+        </div>
+        <Link
+          href={`/researcher/campaigns/${survey._id}`}
+          className="btn-secondary text-sm opacity-90 transition group-hover:opacity-100"
+        >
+          Manage
+        </Link>
+      </div>
     </motion.div>
   );
 }
