@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Crown, ShieldCheck } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { cn } from "@/lib/utils";
 import { isNavActive, RESEARCHER_CREATE, type NavItem } from "@/config/navigation";
 import type { User } from "@/types";
@@ -22,14 +23,7 @@ export function AppSidebar({
   return (
     <aside className="hidden w-[260px] shrink-0 flex-col border-r border-gray-200/80 bg-white lg:flex">
       <div className="flex h-16 items-center gap-2.5 border-b border-gray-100 px-5">
-        <Link href={items[0]?.href || "/dashboard"} className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-sm font-black text-white">
-            IP
-          </div>
-          <span className="text-lg font-extrabold tracking-tight text-gray-900">
-            Insight<span className="text-primary-600">Pay</span>
-          </span>
-        </Link>
+        <BrandLogo href={items[0]?.href || "/dashboard"} size="sm" />
       </div>
 
       <nav className="flex-1 space-y-1 p-3">

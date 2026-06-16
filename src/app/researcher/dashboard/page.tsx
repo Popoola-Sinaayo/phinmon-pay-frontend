@@ -177,7 +177,7 @@ export default function ResearcherDashboard() {
                     cy="50"
                     r="42"
                     fill="none"
-                    stroke="#16a34a"
+                    stroke="#7b61ff"
                     strokeWidth="8"
                     strokeLinecap="round"
                     strokeDasharray={`${(dashboard?.completionRate || 0) * 2.64} 264`}

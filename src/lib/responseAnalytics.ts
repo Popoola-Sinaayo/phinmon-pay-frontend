@@ -1,4 +1,4 @@
-import type { Question, Survey } from "@/types";
+import type { Survey } from "@/types";
 
 export type SurveyResponseRecord = {
   _id: string;

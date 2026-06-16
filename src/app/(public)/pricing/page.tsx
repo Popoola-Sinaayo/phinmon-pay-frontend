@@ -17,8 +17,8 @@ export default function PricingPage() {
       </p>
 
       {/* Start for free */}
-      <div className="card mt-12 border-2 border-gray-900 bg-gray-900 text-white">
-        <span className="inline-flex rounded-full bg-primary-500 px-3 py-1 text-xs font-bold">
+      <div className="card mt-12 border-2 border-primary-500 bg-gradient-to-br from-primary-600 to-primary-800 text-white">
+        <span className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-bold">
           Start for free
         </span>
         <div className="mt-4 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">

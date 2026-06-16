@@ -126,7 +126,7 @@ const BENTO_FEATURES = [
 const TESTIMONIALS = [
   {
     quote:
-      "We needed 200 Lagos & Abuja responses for a fintech UX study. InsightPay delivered in 36 hours — every response NIN-verified.",
+      "We needed 200 Lagos & Abuja responses for a fintech UX study. Phinmon delivered in 36 hours — every response NIN-verified.",
     name: "Chioma Okonkwo",
     role: "Product Lead · PayFlow",
     location: "Lagos",
@@ -144,7 +144,7 @@ const TESTIMONIALS = [
   },
   {
     quote:
-      "Premium tier respondents gave us 40% longer open-ended answers. We run all Nigeria panels through InsightPay now.",
+      "Premium tier respondents gave us 40% longer open-ended answers. We run all Nigeria panels through Phinmon now.",
     name: "Adaobi Nwachukwu",
     role: "Research Director · BrandScope",
     location: "Abuja",
@@ -217,7 +217,7 @@ export function LandingPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              InsightPay connects researchers with NIN-verified Nigerians. Real identities,
+              Phinmon connects researchers with NIN-verified Nigerians. Real identities,
               real payouts, real insights — built for mobile-first Africa.
             </motion.p>
 
@@ -647,7 +647,7 @@ export function LandingPage() {
           animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
           transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
           style={{
-            backgroundImage: "radial-gradient(circle at 20% 50%, #16a34a 0%, transparent 50%), radial-gradient(circle at 80% 50%, #2563eb 0%, transparent 50%)",
+            backgroundImage: "radial-gradient(circle at 20% 50%, #7b61ff 0%, transparent 50%), radial-gradient(circle at 80% 50%, #6b4ff5 0%, transparent 50%)",
             backgroundSize: "100% 100%",
           }}
         />
@@ -656,7 +656,7 @@ export function LandingPage() {
             Ready to earn or launch your first study?
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-gray-400">
-            Join 12,400+ verified Nigerians and hundreds of research teams already on InsightPay.
+            Join 12,400+ verified Nigerians and hundreds of research teams already on Phinmon.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>

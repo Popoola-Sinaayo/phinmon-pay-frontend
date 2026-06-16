@@ -44,9 +44,9 @@ body {
   }
   .mesh-bg {
     background-image:
-      radial-gradient(at 40% 20%, rgb(34 197 94 / 0.12) 0, transparent 50%),
-      radial-gradient(at 80% 0%, rgb(59 130 246 / 0.1) 0, transparent 50%),
-      radial-gradient(at 0% 50%, rgb(34 197 94 / 0.08) 0, transparent 50%);
+      radial-gradient(at 40% 20%, rgb(123 97 255 / 0.14) 0, transparent 50%),
+      radial-gradient(at 80% 0%, rgb(107 79 245 / 0.1) 0, transparent 50%),
+      radial-gradient(at 0% 50%, rgb(155 125 255 / 0.08) 0, transparent 50%);
   }
 }
 

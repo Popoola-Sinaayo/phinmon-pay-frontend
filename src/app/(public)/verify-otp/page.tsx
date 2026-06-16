@@ -7,6 +7,7 @@ import { api, setAuthToken } from "@/lib/api";
 import { OTPInput } from "@/components/OTPInput";
 import { FadeIn } from "@/components/motion";
 import type { User } from "@/types";
+import { requiresNinVerification } from "@/lib/verification";
 import { ShieldCheck } from "lucide-react";
 
 function VerifyOtpForm() {
@@ -21,7 +22,7 @@ function VerifyOtpForm() {
       router.push("/onboarding");
       return;
     }
-    if (!user.ninVerified) {
+    if (requiresNinVerification(user) && !user.ninVerified) {
       router.push("/onboarding/verify-nin");
       return;
     }

@@ -148,7 +148,7 @@ export function PhoneMockup() {
           </div>
           {/* App header */}
           <div className="flex items-center justify-between border-b border-gray-100 px-4 py-3">
-            <span className="text-sm font-bold text-primary-600">InsightPay</span>
+            <span className="text-sm font-bold text-primary-600">Phinmon</span>
             <ShieldCheck className="h-4 w-4 text-secondary-500" />
           </div>
           {/* Screen content */}

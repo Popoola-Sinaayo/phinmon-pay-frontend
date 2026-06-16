@@ -31,16 +31,20 @@ export default function SettingsPage() {
           {[
             { label: "Email", value: user.email, icon: Mail },
             { label: "Role", value: user.role, icon: UserIcon, capitalize: true },
-            {
-              label: "NIN Verified",
-              value: user.ninVerified ? "Verified" : "Not verified",
-              icon: Shield,
-            },
-            {
-              label: "Premium",
-              value: user.livenessVerified ? "Active" : "Not active",
-              icon: Crown,
-            },
+            ...(user.role === "respondent"
+              ? [
+                  {
+                    label: "NIN Verified",
+                    value: user.ninVerified ? "Verified" : "Not verified",
+                    icon: Shield,
+                  },
+                  {
+                    label: "Premium",
+                    value: user.livenessVerified ? "Active" : "Not active",
+                    icon: Crown,
+                  },
+                ]
+              : []),
           ].map((row, i) => (
             <motion.div
               key={row.label}

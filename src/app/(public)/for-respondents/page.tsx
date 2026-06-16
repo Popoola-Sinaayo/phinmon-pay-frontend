@@ -5,7 +5,7 @@ export default function ForRespondentsPage() {
     <div className="mx-auto max-w-landing px-4 py-16 sm:px-6">
       <h1 className="text-3xl font-bold text-gray-900">Earn Money Sharing Your Opinions</h1>
       <p className="mt-4 max-w-2xl text-gray-600">
-        Join InsightPay as a verified respondent. Complete NIN verification, answer surveys from
+        Join Phinmon as a verified respondent. Complete NIN verification, answer surveys from
         top brands and researchers, and get paid directly to your bank account.
       </p>
       <div className="mt-8 grid gap-6 sm:grid-cols-2">

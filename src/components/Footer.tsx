@@ -1,7 +1,6 @@
-"use client";
-
 import Link from "next/link";
 import { CreditCard, Fingerprint, Lock, ShieldCheck } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { FadeIn } from "./motion";
 
 const links = {
@@ -31,9 +30,7 @@ export function Footer() {
         <FadeIn>
           <div className="grid gap-12 md:grid-cols-4">
             <div className="md:col-span-2">
-              <Link href="/" className="text-2xl font-extrabold text-white">
-                Insight<span className="text-primary-500">Pay</span>
-              </Link>
+              <BrandLogo href="/" size="lg" onDark />
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-400">
                 Nigeria&apos;s verified research marketplace. NIN-checked respondents,
                 Paystack payouts, and export-ready survey data.
@@ -70,7 +67,7 @@ export function Footer() {
           </div>
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gray-800 pt-8 sm:flex-row">
             <p className="text-sm text-gray-500">
-              © {new Date().getFullYear()} InsightPay. All rights reserved.
+              © {new Date().getFullYear()} Phinmon. All rights reserved.
             </p>
             <p className="flex items-center gap-1 text-sm text-gray-500">
               Built in Nigeria · Lagos · Abuja · PH

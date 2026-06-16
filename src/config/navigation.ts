@@ -71,5 +71,5 @@ export function getPageTitle(pathname: string, role: string): string {
   if (pathname.includes("/campaigns/new")) return "New Campaign";
   if (pathname.match(/\/campaigns\/[^/]+$/)) return "Campaign";
   if (pathname.includes("/take")) return "Survey";
-  return "InsightPay";
+  return "Phinmon";
 }

@@ -48,7 +48,7 @@ export function ResearchTeamsMarquee() {
   return (
     <div className="border-t border-gray-100 bg-gray-50 py-10">
       <p className="mb-6 text-center text-sm font-medium text-gray-500">
-        Research teams collecting insights on InsightPay
+        Research teams collecting insights on Phinmon
       </p>
       <Marquee speed={45}>
         <div className="flex gap-8 px-6">

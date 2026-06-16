@@ -6,9 +6,13 @@ import { Providers } from "@/components/Providers";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "InsightPay — Get Paid For Your Opinions",
+  title: "Phinmon — Get Paid For Your Opinions",
   description:
-    "Nigerian research marketplace connecting verified respondents with researchers.",
+    "Nigeria's verified research marketplace connecting respondents with researchers.",
+  icons: {
+    icon: "/favicon.png",
+    apple: "/logo.png",
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

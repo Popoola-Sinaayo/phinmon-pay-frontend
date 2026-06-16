@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { useAuth } from "./useAuth";
+import { requiresNinVerification } from "@/lib/verification";
 import type { UserRole } from "@/types";
 
 type ExpectedRole = "respondent" | "researcher";
@@ -21,7 +22,7 @@ export function useRequireAuth(
       router.push("/login");
       return;
     }
-    if (requireNin && !user.ninVerified) {
+    if (requireNin && requiresNinVerification(user) && !user.ninVerified) {
       router.push("/onboarding/verify-nin");
       return;
     }

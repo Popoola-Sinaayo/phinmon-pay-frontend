@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { AppSidebar, MobileBottomNav } from "./AppSidebar";
 import { UserMenu } from "./UserMenu";
 import { PageTransition } from "@/components/motion";
@@ -57,7 +58,7 @@ export function DashboardShell({
   const isResearcher = role === "researcher";
 
   return (
-    <div className="min-h-screen bg-[#f4f6f5]">
+    <div className="min-h-screen bg-[#f6f4ff]">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(34,197,94,0.06),transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(59,130,246,0.05),transparent_50%)]" />
       <div className="relative flex min-h-screen">
         <AppSidebar
@@ -79,14 +80,7 @@ export function DashboardShell({
                 </Link>
               )}
 
-              <Link href={nav[0]?.href || "/dashboard"} className="flex items-center gap-2 lg:hidden">
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-600 text-xs font-black text-white">
-                  IP
-                </div>
-                <span className="text-base font-extrabold tracking-tight text-gray-900">
-                  Insight<span className="text-primary-600">Pay</span>
-                </span>
-              </Link>
+              <BrandLogo href={nav[0]?.href || "/dashboard"} size="sm" />
 
               {breadcrumbs && breadcrumbs.length > 0 && (
                 <nav className="hidden items-center gap-1.5 text-sm md:flex">

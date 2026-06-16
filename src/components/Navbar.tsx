@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
+import { BrandLogo } from "@/components/BrandLogo";
 import { cn } from "@/lib/utils";
 
 interface NavItem {
@@ -33,14 +34,7 @@ export function Navbar({
         className="sticky top-0 z-50 border-b border-gray-100/80 bg-white/80 backdrop-blur-xl"
       >
         <div className="mx-auto flex h-16 max-w-landing items-center justify-between px-4 sm:px-6">
-          <Link href={logoHref} className="group flex items-center gap-1">
-            <motion.span
-              className="text-xl font-extrabold text-gray-900"
-              whileHover={{ scale: 1.02 }}
-            >
-              Insight<span className="text-primary-600">Pay</span>
-            </motion.span>
-          </Link>
+          <BrandLogo href={logoHref} size="md" />
 
           {items && (
             <nav className="hidden items-center gap-1 md:flex">

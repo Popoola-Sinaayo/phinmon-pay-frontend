@@ -13,10 +13,25 @@ export interface User {
 }
 
 export interface Profile {
+  dateOfBirth?: string;
   age?: number;
   gender?: string;
   state?: string;
   occupation?: string;
+}
+
+export interface VerificationStatus {
+  ninVerified: boolean;
+  livenessVerified?: boolean;
+  livenessEnabled?: boolean;
+  ninLocked?: boolean;
+  ninLockedUntil?: string | null;
+  retryRemainingMs?: number;
+  retryRemainingHours?: number;
+  registeredName?: string;
+  dateOfBirth?: string | null;
+  profileComplete?: boolean;
+  cooldownHours?: number;
 }
 
 export type QuestionType =
