@@ -11,12 +11,24 @@ export function QuestionRenderer({
   value: unknown;
   onChange: (value: unknown) => void;
 }) {
+  const isLongText = question.type === "text_long" || question.type === "text";
+
   return (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold text-gray-900">{question.questionText}</h2>
       {question.required && <p className="text-sm text-gray-500">Required</p>}
 
-      {question.type === "text" && (
+      {(question.type === "text_short") && (
+        <input
+          type="text"
+          className="input"
+          value={(value as string) || ""}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Type your answer..."
+        />
+      )}
+
+      {isLongText && (
         <textarea
           className="input min-h-[120px]"
           value={(value as string) || ""}

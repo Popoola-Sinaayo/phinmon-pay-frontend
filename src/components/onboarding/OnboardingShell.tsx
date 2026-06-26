@@ -21,21 +21,21 @@ export function OnboardingShell({
   const progress = (step / totalSteps) * 100;
 
   return (
-      <div className="relative min-h-screen overflow-hidden bg-[#f6f4ff]">
-      <FloatingOrb className="pointer-events-none absolute -left-20 top-20 h-64 w-64 rounded-full bg-primary-400/20 blur-3xl" />
-      <FloatingOrb className="pointer-events-none absolute -right-16 bottom-32 h-56 w-56 rounded-full bg-secondary-400/15 blur-3xl" />
+      <div className="relative min-h-screen overflow-hidden bg-paper mesh-bg">
+      <FloatingOrb className="pointer-events-none absolute -left-20 top-20 h-64 w-64 rounded-full bg-primary-400/15 blur-3xl" />
+      <FloatingOrb className="pointer-events-none absolute -right-16 bottom-32 h-56 w-56 rounded-full bg-secondary-400/10 blur-3xl" />
 
       <div className="relative mx-auto flex min-h-screen max-w-lg flex-col px-4 pb-8 pt-6 sm:px-6 sm:pt-10">
         <BrandLogo href="/" size="md" className="mb-8 self-start" />
 
         <div className="mb-8">
-          <div className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-gray-400">
+          <div className="mb-3 flex items-center justify-between text-xs font-semibold uppercase tracking-wide text-ink-500">
             <span>
               Step {step} of {totalSteps}
             </span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="h-2 overflow-hidden rounded-full bg-gray-200/80">
+          <div className="h-2 overflow-hidden rounded-full bg-paper-300">
             <motion.div
               className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-700"
               initial={{ width: 0 }}
@@ -52,8 +52,8 @@ export function OnboardingShell({
           transition={{ duration: 0.45 }}
           className="mb-6"
         >
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl">{title}</h1>
-          {subtitle && <p className="mt-2 text-sm leading-relaxed text-gray-500">{subtitle}</p>}
+          <h1 className="font-display text-[1.75rem] font-medium tracking-tight text-ink-900 sm:text-[2rem]">{title}</h1>
+          {subtitle && <p className="mt-2 text-sm leading-relaxed text-ink-500">{subtitle}</p>}
         </motion.div>
 
         <motion.div
@@ -79,7 +79,7 @@ export function OnboardingCard({
   return (
     <div
       className={cn(
-        "rounded-2xl border border-gray-100/80 bg-white p-5 shadow-subtle sm:p-6",
+        "rounded-card border border-ink-900/[0.07] bg-white p-5 shadow-subtle sm:p-6",
         className
       )}
     >

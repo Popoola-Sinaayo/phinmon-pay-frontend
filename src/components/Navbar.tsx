@@ -31,7 +31,7 @@ export function Navbar({
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4 }}
-        className="sticky top-0 z-50 border-b border-gray-100/80 bg-white/80 backdrop-blur-xl"
+        className="sticky top-0 z-50 border-b border-ink-900/[0.07] bg-paper/80 backdrop-blur-xl"
       >
         <div className="mx-auto flex h-16 max-w-landing items-center justify-between px-4 sm:px-6">
           <BrandLogo href={logoHref} size="md" />
@@ -46,7 +46,7 @@ export function Navbar({
                     "relative rounded-lg px-3 py-2 text-sm font-medium transition-colors",
                     pathname === item.href
                       ? "text-primary-700"
-                      : "text-gray-600 hover:text-gray-900"
+                      : "text-ink-600 hover:text-ink-900"
                   )}
                 >
                   {item.label}
@@ -66,7 +66,7 @@ export function Navbar({
             {items && (
               <motion.button
                 type="button"
-                className="flex h-10 w-10 items-center justify-center rounded-lg border border-gray-200 md:hidden"
+                className="flex h-10 w-10 items-center justify-center rounded-pill border border-ink-900/10 text-ink-700 md:hidden"
                 onClick={() => setMobileOpen(true)}
                 whileTap={{ scale: 0.95 }}
                 aria-label="Open menu"

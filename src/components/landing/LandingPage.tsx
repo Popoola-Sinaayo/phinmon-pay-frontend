@@ -44,7 +44,12 @@ import { LiveActivityTicker } from "./LiveActivityTicker";
 import { PartnerMarquee, ResearchTeamsMarquee } from "./PartnerMarquee";
 import { PhoneMockup } from "./PhoneMockup";
 import { Marquee, SectionLabel, TextReveal } from "./LandingPrimitives";
-import { calculateSurveyCost } from "@/lib/utils";
+
+const LANDING_PRICING = [
+  { responses: 100, rewardPerResponse: 100, budget: 10000, platformFee: 2500, totalCost: 12500 },
+  { responses: 200, rewardPerResponse: 200, budget: 40000, platformFee: 10000, totalCost: 50000 },
+  { responses: 500, rewardPerResponse: 300, budget: 150000, platformFee: 37500, totalCost: 187500 },
+];
 
 const PLATFORM_STATS = [
   { value: 12400, suffix: "+", label: "NIN-verified panelists", icon: Fingerprint, detail: "Across 36 states + FCT" },
@@ -184,18 +189,20 @@ export function LandingPage() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 80]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.3]);
 
-  const pricing = [100, 200, 500].map((n) => ({ responses: n, ...calculateSurveyCost(n, 500) }));
+  const pricing = LANDING_PRICING;
 
   return (
     <div className="overflow-hidden bg-white">
       {/* ── Hero ── */}
-      <section ref={heroRef} className="relative overflow-hidden border-b border-gray-100 bg-[#fafbf9]">
-        {/* Subtle grid — not generic mesh gradient */}
+      <section ref={heroRef} className="relative overflow-hidden border-b border-ink-900/[0.06] bg-paper">
+        {/* Subtle warm grid — quiet, editorial */}
         <div
-          className="pointer-events-none absolute inset-0 opacity-[0.35]"
+          className="pointer-events-none absolute inset-0 opacity-[0.5]"
           style={{
-            backgroundImage: `linear-gradient(to right, #e5e7eb 1px, transparent 1px), linear-gradient(to bottom, #e5e7eb 1px, transparent 1px)`,
-            backgroundSize: "48px 48px",
+            backgroundImage: `linear-gradient(to right, rgba(26,24,21,0.045) 1px, transparent 1px), linear-gradient(to bottom, rgba(26,24,21,0.045) 1px, transparent 1px)`,
+            backgroundSize: "56px 56px",
+            maskImage: "radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%)",
+            WebkitMaskImage: "radial-gradient(ellipse 80% 70% at 50% 30%, #000 40%, transparent 100%)",
           }}
         />
 
@@ -203,16 +210,16 @@ export function LandingPage() {
           <motion.div style={{ y: heroY, opacity: heroOpacity }}>
             <SectionLabel icon={Users} text="Nigeria's verified research panel" />
 
-            <h1 className="mt-5 text-4xl font-extrabold leading-[1.08] tracking-tight text-gray-900 sm:text-5xl lg:text-[3.25rem]">
+            <h1 className="font-display mt-5 text-[2.75rem] font-medium leading-[1.04] tracking-[-0.02em] text-ink-900 sm:text-6xl lg:text-[4rem]">
               <TextReveal text="Earn from surveys." />
               <br />
-              <span className="text-primary-600">
+              <span className="italic text-primary-700">
                 <TextReveal text="Trust every response." />
               </span>
             </h1>
 
             <motion.p
-              className="mt-5 max-w-md text-base leading-relaxed text-gray-600 sm:text-lg"
+              className="mt-6 max-w-md text-base leading-relaxed text-ink-600 sm:text-lg"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
@@ -228,7 +235,7 @@ export function LandingPage() {
               transition={{ delay: 0.55 }}
             >
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <Link href="/register?role=respondent" className="btn-primary w-full px-7 py-3.5 sm:w-auto">
+                <Link href="/register?role=respondent" className="btn-accent w-full px-7 py-3.5 sm:w-auto">
                   <CircleDollarSign className="h-4 w-4" />
                   Start earning
                   <ArrowRight className="h-4 w-4" />
@@ -257,7 +264,7 @@ export function LandingPage() {
               ].map(({ icon: Icon, label }) => (
                 <span
                   key={label}
-                  className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-1.5 text-xs font-medium text-gray-600 shadow-subtle"
+                  className="inline-flex items-center gap-1.5 rounded-pill border border-ink-900/10 bg-white/80 px-3 py-1.5 text-xs font-medium text-ink-600 shadow-subtle"
                 >
                   <Icon className="h-3.5 w-3.5 text-primary-600" />
                   {label}
@@ -285,13 +292,13 @@ export function LandingPage() {
           {PLATFORM_STATS.map((stat) => (
             <StaggerItem key={stat.label}>
               <motion.div
-                className="group rounded-2xl border border-gray-100 p-5 transition-colors hover:border-primary-200 hover:bg-primary-50/30"
+                className="group rounded-2xl border border-ink-900/[0.07] p-5 transition-colors hover:border-primary-200 hover:bg-primary-50/40"
                 whileHover={{ y: -3 }}
               >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white transition-transform group-hover:scale-110">
+                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-ink-900 text-white transition-transform group-hover:scale-110">
                   <stat.icon className="h-5 w-5" />
                 </div>
-                <p className="mt-4 text-3xl font-extrabold tracking-tight text-gray-900">
+                <p className="mt-4 text-3xl font-extrabold tracking-tight text-ink-900">
                   <AnimatedCounter value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
                 </p>
                 <p className="mt-1 text-sm font-semibold text-gray-800">{stat.label}</p>
@@ -305,7 +312,7 @@ export function LandingPage() {
       <PartnerMarquee />
 
       {/* ── Survey types marquee ── */}
-      <section className="border-y border-gray-100 py-6">
+      <section className="border-y border-ink-900/[0.07] py-6">
         <Marquee speed={25}>
           <div className="flex gap-3 px-4">
             {SURVEY_TYPES.map((type) => (
@@ -326,14 +333,14 @@ export function LandingPage() {
         <div className="mx-auto max-w-landing px-4 sm:px-6">
           <FadeIn className="text-center">
             <SectionLabel icon={Zap} text="How it works" />
-            <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h2 className="mt-4 font-display text-3xl font-medium tracking-tight text-ink-900 sm:text-4xl">
               From signup to bank alert in 4 steps
             </h2>
           </FadeIn>
 
           <div className="relative mt-16">
             {/* Connecting line — desktop */}
-            <div className="absolute left-0 right-0 top-8 hidden h-0.5 bg-gray-100 lg:block" />
+            <div className="absolute left-0 right-0 top-8 hidden h-0.5 bg-paper-200 lg:block" />
             <motion.div
               className="absolute left-0 top-8 hidden h-0.5 origin-left bg-primary-500 lg:block"
               initial={{ scaleX: 0 }}
@@ -351,7 +358,7 @@ export function LandingPage() {
                     whileHover={{ y: -4 }}
                   >
                     <motion.div
-                      className="relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-white bg-gray-900 text-white shadow-lg lg:mx-0"
+                      className="relative z-10 mx-auto flex h-16 w-16 items-center justify-center rounded-2xl border-2 border-white bg-ink-900 text-white shadow-lg lg:mx-0"
                       whileInView={{ scale: [0.8, 1.1, 1] }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.1, duration: 0.4 }}
@@ -361,7 +368,7 @@ export function LandingPage() {
                     <span className="mt-4 inline-block rounded-full bg-primary-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-primary-700">
                       {step.time}
                     </span>
-                    <h3 className="mt-2 font-bold text-gray-900">{step.title}</h3>
+                    <h3 className="mt-2 font-bold text-ink-900">{step.title}</h3>
                     <p className="mt-1.5 text-sm leading-relaxed text-gray-500">{step.desc}</p>
                   </motion.div>
                 </StaggerItem>
@@ -372,11 +379,11 @@ export function LandingPage() {
       </section>
 
       {/* ── Bento feature grid ── */}
-      <section className="bg-gray-50 py-20 sm:py-28">
+      <section className="bg-paper-100 py-20 sm:py-28">
         <div className="mx-auto max-w-landing px-4 sm:px-6">
           <FadeIn>
             <SectionLabel icon={Shield} text="Built for trust" color="secondary" />
-            <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h2 className="mt-4 font-display text-3xl font-medium tracking-tight text-ink-900 sm:text-4xl">
               Everything researchers and respondents need
             </h2>
           </FadeIn>
@@ -402,13 +409,13 @@ export function LandingPage() {
                   </div>
                 )}
                 <motion.div
-                  className="flex h-11 w-11 items-center justify-center rounded-xl bg-gray-900 text-white"
+                  className="flex h-11 w-11 items-center justify-center rounded-xl bg-ink-900 text-white"
                   whileHover={{ rotate: [0, -8, 8, 0] }}
                   transition={{ duration: 0.4 }}
                 >
                   <feat.icon className="h-5 w-5" />
                 </motion.div>
-                <h3 className="mt-4 font-bold text-gray-900">{feat.title}</h3>
+                <h3 className="mt-4 font-bold text-ink-900">{feat.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-gray-500">{feat.desc}</p>
               </MotionCard>
             ))}
@@ -417,11 +424,11 @@ export function LandingPage() {
       </section>
 
       {/* ── Researcher section ── */}
-      <section className="bg-gray-950 py-20 text-white sm:py-28">
+      <section className="bg-ink-950 py-20 text-white sm:py-28">
         <div className="mx-auto grid max-w-landing items-center gap-12 px-4 sm:px-6 lg:grid-cols-2">
           <FadeIn direction="right">
             <SectionLabel icon={BarChart3} text="For researchers" color="amber" />
-            <h2 className="mt-4 text-3xl font-bold sm:text-4xl">
+            <h2 className="mt-4 font-display text-3xl font-medium tracking-tight sm:text-4xl">
               Launch a Nigeria panel study tonight. Fill it by Friday.
             </h2>
             <ul className="mt-8 space-y-4">
@@ -454,11 +461,11 @@ export function LandingPage() {
 
           <FadeIn direction="left">
             <motion.div
-              className="rounded-2xl border border-gray-800 bg-gray-900 p-6 shadow-2xl"
+              className="rounded-card border border-white/10 bg-ink-900 p-6 shadow-2xl"
               whileInView={{ rotate: [1, 0] }}
               viewport={{ once: true }}
             >
-              <div className="flex items-center justify-between border-b border-gray-800 pb-4">
+              <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div>
                   <p className="text-xs text-gray-500">Active campaign</p>
                   <p className="text-lg font-bold">Brand Pulse Q2 · Lagos</p>
@@ -474,14 +481,14 @@ export function LandingPage() {
                   { label: "Spend", value: "₦98K", icon: Wallet },
                   { label: "Fill rate", value: "93.5%", icon: BarChart3 },
                 ].map(({ label, value, icon: Icon }) => (
-                  <div key={label} className="rounded-xl bg-gray-800/80 p-3 text-center">
+                  <div key={label} className="rounded-xl bg-white/[0.06] p-3 text-center">
                     <Icon className="mx-auto h-4 w-4 text-gray-500" />
                     <p className="mt-1 text-lg font-bold">{value}</p>
                     <p className="text-[10px] text-gray-500">{label}</p>
                   </div>
                 ))}
               </div>
-              <div className="mt-4 h-2 overflow-hidden rounded-full bg-gray-800">
+              <div className="mt-4 h-2 overflow-hidden rounded-full bg-white/10">
                 <motion.div
                   className="h-full rounded-full bg-gradient-to-r from-primary-500 to-primary-400"
                   initial={{ width: 0 }}
@@ -503,7 +510,7 @@ export function LandingPage() {
         <div className="mx-auto max-w-landing px-4 sm:px-6">
           <FadeIn className="text-center">
             <SectionLabel icon={Target} text="Audience tiers" />
-            <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h2 className="mt-4 font-display text-3xl font-medium tracking-tight text-ink-900 sm:text-4xl">
               Pick the panel quality your study needs
             </h2>
           </FadeIn>
@@ -522,14 +529,14 @@ export function LandingPage() {
                       <Crown className="h-3 w-3" /> Recommended for high-stakes research
                     </div>
                   )}
-                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-900 text-white">
+                  <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-ink-900 text-white">
                     <data.icon className="h-7 w-7" />
                   </div>
-                  <h3 className="mt-4 text-2xl font-bold text-gray-900">{data.title}</h3>
+                  <h3 className="mt-4 text-2xl font-bold text-ink-900">{data.title}</h3>
                   <p className="mt-1 text-sm font-semibold text-primary-600">{data.price} per survey</p>
                   <ul className="mt-6 space-y-3">
                     {data.items.map(({ icon: Icon, text }) => (
-                      <li key={text} className="flex items-center gap-3 text-sm text-gray-600">
+                      <li key={text} className="flex items-center gap-3 text-sm text-ink-600">
                         <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${isPremium ? "bg-amber-50 text-amber-600" : "bg-primary-50 text-primary-600"}`}>
                           <Icon className="h-4 w-4" />
                         </div>
@@ -545,11 +552,11 @@ export function LandingPage() {
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="bg-gray-50 py-20 sm:py-28">
+      <section className="bg-paper-100 py-20 sm:py-28">
         <div className="mx-auto max-w-landing px-4 sm:px-6">
           <FadeIn className="text-center">
             <SectionLabel icon={Star} text="Testimonials" color="amber" />
-            <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
+            <h2 className="mt-4 font-display text-3xl font-medium tracking-tight text-ink-900 sm:text-4xl">
               Used by teams across Nigeria
             </h2>
           </FadeIn>
@@ -563,13 +570,13 @@ export function LandingPage() {
                       <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <p className="mt-4 flex-1 text-sm leading-relaxed text-gray-600">
+                  <p className="mt-4 flex-1 text-sm leading-relaxed text-ink-600">
                     &ldquo;{t.quote}&rdquo;
                   </p>
-                  <div className="mt-4 rounded-lg bg-gray-100 px-3 py-2 text-xs font-semibold text-gray-600">
+                  <div className="mt-4 rounded-lg bg-paper-200 px-3 py-2 text-xs font-semibold text-ink-600">
                     {t.stat}
                   </div>
-                  <div className="mt-4 flex items-center gap-3 border-t border-gray-100 pt-4">
+                  <div className="mt-4 flex items-center gap-3 border-t border-ink-900/[0.07] pt-4">
                     <Image
                       src={t.avatar}
                       alt={t.name}
@@ -578,7 +585,7 @@ export function LandingPage() {
                       className="h-12 w-12 rounded-full object-cover ring-2 ring-white"
                     />
                     <div>
-                      <p className="font-semibold text-gray-900">{t.name}</p>
+                      <p className="font-semibold text-ink-900">{t.name}</p>
                       <p className="text-xs text-gray-500">{t.role}</p>
                       <p className="flex items-center gap-1 text-xs text-gray-400">
                         <MapPin className="h-3 w-3" /> {t.location}
@@ -597,10 +604,10 @@ export function LandingPage() {
         <div className="mx-auto max-w-landing px-4 sm:px-6">
           <FadeIn className="text-center">
             <SectionLabel icon={CreditCard} text="Pricing" />
-            <h2 className="mt-4 text-3xl font-bold text-gray-900 sm:text-4xl">
-              Pay per response. No subscriptions.
+            <h2 className="mt-4 font-display text-3xl font-medium tracking-tight text-ink-900 sm:text-4xl">
+              Time-based pricing. No subscriptions.
             </h2>
-            <p className="mt-3 text-gray-500">15% platform fee included in totals below.</p>
+            <p className="mt-3 text-gray-500">25% platform fee included in totals below.</p>
           </FadeIn>
 
           <StaggerList className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -619,9 +626,9 @@ export function LandingPage() {
                       Most popular
                     </motion.span>
                   )}
-                  <p className="text-4xl font-extrabold text-gray-900">{p.responses}</p>
-                  <p className="text-sm text-gray-500">responses × ₦500 reward</p>
-                  <div className="my-5 space-y-1 border-y border-gray-100 py-5 text-sm text-gray-500">
+                  <p className="text-4xl font-extrabold text-ink-900">{p.responses}</p>
+                  <p className="text-sm text-gray-500">responses · time-based reward</p>
+                  <div className="my-5 space-y-1 border-y border-ink-900/[0.07] py-5 text-sm text-gray-500">
                     <p>Response cost: ₦{p.budget.toLocaleString()}</p>
                     <p>Platform fee: ₦{p.platformFee.toLocaleString()}</p>
                   </div>
@@ -641,18 +648,18 @@ export function LandingPage() {
       </section>
 
       {/* ── CTA ── */}
-      <section className="relative overflow-hidden bg-gray-900 py-20 sm:py-28">
+      <section className="relative overflow-hidden bg-ink-950 py-20 sm:py-28">
         <motion.div
           className="absolute inset-0 opacity-20"
           animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
           transition={{ duration: 20, repeat: Infinity, repeatType: "reverse" }}
           style={{
-            backgroundImage: "radial-gradient(circle at 20% 50%, #7b61ff 0%, transparent 50%), radial-gradient(circle at 80% 50%, #6b4ff5 0%, transparent 50%)",
+            backgroundImage: "radial-gradient(circle at 20% 50%, #1f9d63 0%, transparent 50%), radial-gradient(circle at 80% 50%, #107a4c 0%, transparent 50%)",
             backgroundSize: "100% 100%",
           }}
         />
         <FadeIn className="relative mx-auto max-w-landing px-4 text-center sm:px-6">
-          <h2 className="text-3xl font-bold text-white sm:text-4xl">
+          <h2 className="font-display text-3xl font-medium tracking-tight text-white sm:text-4xl">
             Ready to earn or launch your first study?
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-gray-400">

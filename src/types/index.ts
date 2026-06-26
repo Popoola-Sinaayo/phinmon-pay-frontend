@@ -36,6 +36,8 @@ export interface VerificationStatus {
 
 export type QuestionType =
   | "text"
+  | "text_short"
+  | "text_long"
   | "single_choice"
   | "multiple_choice"
   | "number"
@@ -60,8 +62,12 @@ export interface Survey {
   targetAudience: "ALL_VERIFIED" | "PREMIUM_ONLY" | "ALL_USERS";
   budget: number;
   platformFee: number;
+  platformFeeAmount?: number;
+  platformFeeRate?: number;
   totalCost: number;
   payoutPerResponse: number;
+  rewardPerResponseStandard?: number;
+  rewardPerResponsePremium?: number;
   responsesNeeded: number;
   responsesReceived: number;
   status: string;
@@ -72,6 +78,9 @@ export interface Survey {
   billingLockReason?: string;
   questions: Question[];
   estimatedMinutes?: number;
+  estimatedCompletionTimeSeconds?: number;
+  estimatedCompletionTimeMinutes?: number;
+  highComplexity?: boolean;
   createdAt: string;
 }
 

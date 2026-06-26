@@ -3,12 +3,12 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Calendar, MapPin, User, Briefcase } from "lucide-react";
+import { AlertTriangle, Calendar, MapPin, User, Briefcase } from "lucide-react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { OnboardingCard, OnboardingShell } from "@/components/onboarding/OnboardingShell";
 import { MotionButton } from "@/components/motion";
-import { getPostOnboardingPath, requiresNinVerification } from "@/lib/verification";
+import { getPostOnboardingPath } from "@/lib/verification";
 
 const NIGERIAN_STATES = [
   "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno",
@@ -31,7 +31,7 @@ export default function OnboardingPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const needsNin = user ? requiresNinVerification(user) : true;
+  const isRespondent = user?.role === "respondent";
 
   useEffect(() => {
     if (!isLoading && !user) router.push("/login");
@@ -68,14 +68,30 @@ export default function OnboardingPage() {
   return (
     <OnboardingShell
       step={1}
-      totalSteps={needsNin ? 2 : 1}
+      totalSteps={1}
       title="Tell us about yourself"
       subtitle={
-        needsNin
-          ? "Use your legal name and date of birth exactly as they appear on your NIN — we'll verify them in the next step."
+        isRespondent
+          ? "Enter your details exactly as they appear on your official ID. We will verify this information later."
           : "A few details so we can personalize your researcher account."
       }
     >
+      {isRespondent && (
+        <OnboardingCard className="mb-5 border-amber-200 bg-amber-50/80">
+          <div className="flex gap-3">
+            <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+            <div className="text-sm text-amber-900">
+              <p className="font-semibold">Important — your details will be verified</p>
+              <p className="mt-1 leading-relaxed text-amber-800/90">
+                Use your legal name and date of birth exactly as on your NIN. Mismatched information
+                may delay verification and survey access. You can explore the app now; identity
+                verification is required before taking surveys.
+              </p>
+            </div>
+          </div>
+        </OnboardingCard>
+      )}
+
       <OnboardingCard>
         <form onSubmit={handleSubmit} className="space-y-5">
           <div>
@@ -84,7 +100,7 @@ export default function OnboardingPage() {
             </label>
             <input
               className="input"
-              placeholder={needsNin ? "As on your NIN" : "Full name"}
+              placeholder={isRespondent ? "As on your NIN" : "Full name"}
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               required
@@ -176,7 +192,7 @@ export default function OnboardingPage() {
           )}
 
           <MotionButton type="submit" className="btn-primary w-full" disabled={loading}>
-            {loading ? "Saving..." : needsNin ? "Continue to NIN verification" : "Continue to dashboard"}
+            {loading ? "Saving..." : "Continue to dashboard"}
           </MotionButton>
         </form>
       </OnboardingCard>

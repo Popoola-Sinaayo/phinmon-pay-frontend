@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { cn, calculateSurveyCost, calculatePerResponseCost, formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { DashboardShell } from "@/components/layout/DashboardShell";
@@ -11,33 +11,73 @@ import type { Question } from "@/types";
 
 const STEPS = ["Details", "Questions", "Audience", "Budget", "Review", "Payment", "Launch"];
 
+interface PricingPreview {
+  estimatedTimeSeconds: number;
+  estimatedTimeMinutes: number;
+  rewardPerResponseStandard: number;
+  rewardPerResponsePremium: number;
+  platformFeeRate: number;
+  platformFeeAmount: number;
+  totalCost: number;
+  highComplexity: boolean;
+}
+
 export default function NewCampaignPage() {
   const router = useRouter();
   const { user, isLoading } = useRequireAuth("researcher");
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
   const [surveyId, setSurveyId] = useState<string | null>(null);
+  const [pricing, setPricing] = useState<PricingPreview | null>(null);
+  const [pricingLoading, setPricingLoading] = useState(false);
   const [form, setForm] = useState({
     title: "",
     description: "",
     category: "Market Research",
     targetAudience: "ALL_VERIFIED" as "ALL_VERIFIED" | "PREMIUM_ONLY",
-    payoutPerResponse: 500,
     responsesNeeded: 100,
-    estimatedMinutes: 10,
-    billingModel: "PREPAID" as "PREPAID" | "PAYG",
-    spendingCap: 0,
     questions: [] as Question[],
   });
 
-  const costs = calculateSurveyCost(form.responsesNeeded, form.payoutPerResponse);
-  const perResponseCost = calculatePerResponseCost(form.payoutPerResponse);
-  const effectiveCap = form.spendingCap || costs.totalCost;
+  const fetchPricing = useCallback(async () => {
+    if (!form.questions.length) {
+      setPricing(null);
+      return;
+    }
+    setPricingLoading(true);
+    try {
+      const { data } = await api.post<PricingPreview & { success: boolean }>("/surveys/preview-cost", {
+        questions: form.questions,
+        responsesNeeded: form.responsesNeeded,
+        targetAudience: form.targetAudience,
+      });
+      setPricing(data);
+    } catch {
+      setPricing(null);
+    } finally {
+      setPricingLoading(false);
+    }
+  }, [form.questions, form.responsesNeeded, form.targetAudience]);
+
+  useEffect(() => {
+    if (step < 3) return;
+    const timer = setTimeout(fetchPricing, 300);
+    return () => clearTimeout(timer);
+  }, [step, fetchPricing]);
+
+  const applicableReward =
+    form.targetAudience === "PREMIUM_ONLY"
+      ? pricing?.rewardPerResponsePremium
+      : pricing?.rewardPerResponseStandard;
 
   const saveDraft = async () => {
     const payload = {
-      ...form,
-      spendingCap: form.billingModel === "PAYG" ? form.spendingCap || costs.totalCost : undefined,
+      title: form.title,
+      description: form.description,
+      category: form.category,
+      targetAudience: form.targetAudience,
+      responsesNeeded: form.responsesNeeded,
+      questions: form.questions,
     };
     if (surveyId) {
       const { data } = await api.patch(`/surveys/${surveyId}`, payload);
@@ -71,14 +111,9 @@ export default function NewCampaignPage() {
       setLoading(true);
       try {
         const id = surveyId || (await saveDraft());
-        const { data } = await api.post(`/surveys/${id}/launch`, {
-          billingModel: form.billingModel,
-          spendingCap: form.billingModel === "PAYG" ? effectiveCap : undefined,
-        });
+        const { data } = await api.post(`/surveys/${id}/launch`, {});
         if (data.authorizationUrl) {
           window.location.href = data.authorizationUrl;
-        } else if (data.billingModel === "PAYG" && !data.requiresCardSetup) {
-          setStep(6);
         } else {
           setStep(6);
         }
@@ -177,7 +212,9 @@ export default function NewCampaignPage() {
                   {a === "ALL_VERIFIED" ? "Verified Users" : "Premium Users"}
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
-                  {a === "ALL_VERIFIED" ? "NIN verified respondents" : "NIN + liveness verified"}
+                  {a === "ALL_VERIFIED"
+                    ? "NIN verified respondents — standard reward rate"
+                    : "NIN + liveness verified — premium reward rate (2×)"}
                 </p>
               </button>
             ))}
@@ -186,121 +223,62 @@ export default function NewCampaignPage() {
         {step === 3 && (
           <div className="space-y-5">
             <div>
-              <label className="label">Billing model</label>
-              <div className="grid gap-3 sm:grid-cols-2">
-                {(
-                  [
-                    {
-                      key: "PREPAID",
-                      title: "Prepay in full",
-                      desc: "Pay the full campaign cost upfront via Paystack checkout.",
-                    },
-                    {
-                      key: "PAYG",
-                      title: "Pay as you go",
-                      desc: "Save your card and pay per response as they come in.",
-                    },
-                  ] as const
-                ).map((plan) => (
-                  <button
-                    key={plan.key}
-                    type="button"
-                    onClick={() =>
-                      setForm({
-                        ...form,
-                        billingModel: plan.key,
-                        spendingCap: plan.key === "PAYG" ? costs.totalCost : 0,
-                      })
-                    }
-                    className={cn(
-                      "rounded-xl border p-4 text-left transition",
-                      form.billingModel === plan.key
-                        ? "border-primary-500 bg-primary-50 ring-1 ring-primary-200"
-                        : "border-gray-200 hover:border-gray-300"
-                    )}
-                  >
-                    <p className="font-semibold text-gray-900">{plan.title}</p>
-                    <p className="mt-1 text-sm text-gray-500">{plan.desc}</p>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div>
               <label className="label">Responses Needed</label>
               <input
                 type="number"
                 className="input"
                 value={form.responsesNeeded}
-                onChange={(e) => {
-                  const responsesNeeded = Number(e.target.value);
-                  const nextCosts = calculateSurveyCost(responsesNeeded, form.payoutPerResponse);
-                  setForm({
-                    ...form,
-                    responsesNeeded,
-                    spendingCap:
-                      form.billingModel === "PAYG" ? nextCosts.totalCost : form.spendingCap,
-                  });
-                }}
+                onChange={(e) =>
+                  setForm({ ...form, responsesNeeded: Number(e.target.value) })
+                }
                 min={1}
               />
             </div>
-            <div>
-              <label className="label">Reward Per Response (₦)</label>
-              <input
-                type="number"
-                className="input"
-                value={form.payoutPerResponse}
-                onChange={(e) => {
-                  const payoutPerResponse = Number(e.target.value);
-                  const nextCosts = calculateSurveyCost(form.responsesNeeded, payoutPerResponse);
-                  setForm({
-                    ...form,
-                    payoutPerResponse,
-                    spendingCap:
-                      form.billingModel === "PAYG" ? nextCosts.totalCost : form.spendingCap,
-                  });
-                }}
-                min={100}
-              />
-            </div>
-
-            {form.billingModel === "PAYG" && (
-              <div>
-                <label className="label">Spending cap (₦)</label>
-                <input
-                  type="number"
-                  className="input"
-                  value={form.spendingCap || costs.totalCost}
-                  onChange={(e) => setForm({ ...form, spendingCap: Number(e.target.value) })}
-                  min={perResponseCost}
-                />
-                <p className="mt-1.5 text-xs text-gray-500">
-                  Campaign pauses when spend reaches this cap. Per response:{" "}
-                  {formatCurrency(perResponseCost)} incl. fee.
-                </p>
-              </div>
-            )}
 
             <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm">
-              {form.billingModel === "PREPAID" ? (
+              {pricingLoading ? (
+                <p className="text-gray-500">Calculating pricing...</p>
+              ) : pricing ? (
                 <>
-                  <p>Response cost: ₦{costs.budget.toLocaleString()}</p>
-                  <p>Platform fee (15%): ₦{costs.platformFee.toLocaleString()}</p>
-                  <p className="mt-2 font-bold text-primary-600">
-                    Total due at launch: ₦{costs.totalCost.toLocaleString()}
+                  <p>
+                    <strong>Estimated time:</strong> ~{pricing.estimatedTimeMinutes} min (
+                    {pricing.estimatedTimeSeconds}s)
                   </p>
+                  <p className="mt-2">
+                    <strong>Reward per response:</strong>{" "}
+                    {formatCurrency(applicableReward || 0)}
+                    {form.targetAudience === "ALL_VERIFIED" && (
+                      <span className="text-gray-500">
+                        {" "}
+                        (premium tier: {formatCurrency(pricing.rewardPerResponsePremium)})
+                      </span>
+                    )}
+                  </p>
+                  <p className="mt-2">
+                    Response cost: {formatCurrency((applicableReward || 0) * form.responsesNeeded)}
+                  </p>
+                  <p>
+                    Platform fee ({pricing.platformFeeRate}%):{" "}
+                    {formatCurrency(pricing.platformFeeAmount)}
+                  </p>
+                  <p className="mt-2 font-bold text-primary-600">
+                    Total due at launch: {formatCurrency(pricing.totalCost)}
+                  </p>
+                  {pricing.highComplexity && (
+                    <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+                      This survey is flagged as high complexity due to multiple-choice questions with
+                      more than 10 options.
+                    </p>
+                  )}
                 </>
               ) : (
-                <>
-                  <p>Estimated max if fully filled: ₦{costs.totalCost.toLocaleString()}</p>
-                  <p>Charged per response: {formatCurrency(perResponseCost)}</p>
-                  <p className="mt-2 font-bold text-primary-600">
-                    Spending cap: ₦{(form.spendingCap || costs.totalCost).toLocaleString()}
-                  </p>
-                </>
+                <p className="text-gray-500">Add questions to see pricing estimate.</p>
               )}
             </div>
+            <p className="text-xs text-gray-500">
+              Reward is calculated automatically from estimated completion time. Researchers cannot
+              override per-response payouts.
+            </p>
           </div>
         )}
         {step === 4 && (
@@ -309,10 +287,7 @@ export default function NewCampaignPage() {
               <strong>Title:</strong> {form.title}
             </p>
             <p>
-              <strong>Billing:</strong> {form.billingModel === "PAYG" ? "Pay as you go" : "Prepay in full"}
-            </p>
-            <p>
-              <strong>Audience:</strong> {form.targetAudience}
+              <strong>Audience:</strong> {form.targetAudience.replace(/_/g, " ").toLowerCase()}
             </p>
             <p>
               <strong>Questions:</strong> {form.questions.length}
@@ -320,28 +295,23 @@ export default function NewCampaignPage() {
             <p>
               <strong>Responses:</strong> {form.responsesNeeded}
             </p>
-            {form.billingModel === "PREPAID" ? (
-              <p>
-                <strong>Total Cost:</strong> ₦{costs.totalCost.toLocaleString()}
-              </p>
-            ) : (
+            {pricing && (
               <>
                 <p>
-                  <strong>Per response:</strong> {formatCurrency(perResponseCost)}
+                  <strong>Estimated time:</strong> ~{pricing.estimatedTimeMinutes} min
                 </p>
                 <p>
-                  <strong>Spending cap:</strong> {formatCurrency(effectiveCap)}
+                  <strong>Reward per response:</strong> {formatCurrency(applicableReward || 0)}
+                </p>
+                <p>
+                  <strong>Total Cost:</strong> {formatCurrency(pricing.totalCost)}
                 </p>
               </>
             )}
           </div>
         )}
         {step === 5 && (
-          <p className="text-gray-600">
-            {form.billingModel === "PAYG"
-              ? "Redirecting to Paystack to save your card..."
-              : "Redirecting to Paystack for payment..."}
-          </p>
+          <p className="text-gray-600">Redirecting to Paystack for payment...</p>
         )}
         {step === 6 && (
           <div className="text-center">
@@ -371,9 +341,7 @@ export default function NewCampaignPage() {
             {loading
               ? "Saving..."
               : step === 5
-                ? form.billingModel === "PAYG"
-                  ? "Save card & launch"
-                  : "Pay with Paystack"
+                ? "Pay with Paystack"
                 : step === 4
                   ? "Proceed to Payment"
                   : "Next"}

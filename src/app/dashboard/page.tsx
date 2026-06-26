@@ -19,6 +19,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { DashboardShell, QuickAction } from "@/components/layout/DashboardShell";
 import { StaggerList, StaggerItem } from "@/components/motion";
 import { formatCurrency, formatDate } from "@/lib/utils";
+import { getSurveyLockReason } from "@/lib/verification";
 import type { Survey } from "@/types";
 
 function getGreeting() {
@@ -29,7 +30,7 @@ function getGreeting() {
 }
 
 export default function RespondentDashboard() {
-  const { user, isLoading } = useRequireAuth("respondent", { requireNin: true });
+  const { user, isLoading } = useRequireAuth("respondent");
 
   const { data: dashboard, isLoading: loadingDash } = useQuery({
     queryKey: ["respondent-dashboard"],
@@ -46,7 +47,7 @@ export default function RespondentDashboard() {
       const { data } = await api.get<{ surveys: Survey[] }>("/surveys/available");
       return data.surveys.slice(0, 3);
     },
-    enabled: !!user?.ninVerified,
+    enabled: !!user,
   });
 
   const firstName = user?.name?.split(" ")[0] || "there";
@@ -201,7 +202,7 @@ export default function RespondentDashboard() {
                     key={s._id}
                     survey={s}
                     href={`/surveys/${s._id}`}
-                    locked={s.targetAudience === "PREMIUM_ONLY" && !user.livenessVerified}
+                    lockReason={getSurveyLockReason(s, user)}
                     index={i}
                   />
                 ))}

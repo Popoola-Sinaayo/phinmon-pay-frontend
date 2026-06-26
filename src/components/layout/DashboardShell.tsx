@@ -58,8 +58,8 @@ export function DashboardShell({
   const isResearcher = role === "researcher";
 
   return (
-    <div className="min-h-screen bg-[#f6f4ff]">
-      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(34,197,94,0.06),transparent_50%),radial-gradient(ellipse_at_bottom_left,rgba(59,130,246,0.05),transparent_50%)]" />
+    <div className="min-h-screen bg-paper">
+      <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(31,157,99,0.07),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(221,214,200,0.4),transparent_55%)]" />
       <div className="relative flex min-h-screen">
         <AppSidebar
           items={nav}
@@ -68,7 +68,7 @@ export function DashboardShell({
         />
 
         <div className="flex min-h-screen flex-1 flex-col lg:min-w-0">
-          <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-gray-200/80 bg-white/85 px-4 backdrop-blur-xl sm:px-6">
+          <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-ink-900/[0.07] bg-paper/80 px-4 backdrop-blur-xl sm:px-6">
             <div className="flex min-w-0 items-center gap-3">
               {backHref && (
                 <Link
@@ -122,11 +122,11 @@ export function DashboardShell({
                   className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
                 >
                   <div>
-                    <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-[1.75rem]">
+                    <h1 className="font-display text-[1.65rem] font-medium tracking-tight text-ink-900 sm:text-[1.9rem]">
                       {title}
                     </h1>
                     {subtitle && (
-                      <p className="mt-1 max-w-2xl text-sm leading-relaxed text-gray-500">
+                      <p className="mt-1.5 max-w-2xl text-sm leading-relaxed text-ink-500">
                         {subtitle}
                       </p>
                     )}

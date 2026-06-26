@@ -11,6 +11,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { DashboardShell, DashboardSkeleton } from "@/components/layout/DashboardShell";
 import { StaggerList, StaggerItem } from "@/components/motion";
 import { cn } from "@/lib/utils";
+import { getSurveyLockReason } from "@/lib/verification";
 import type { Survey } from "@/types";
 
 const filters = [
@@ -23,7 +24,7 @@ const filters = [
 function SurveysContent() {
   const searchParams = useSearchParams();
   const filter = searchParams.get("filter") || "";
-  const { user, isLoading } = useRequireAuth("respondent", { requireNin: true });
+  const { user, isLoading } = useRequireAuth("respondent");
 
   const { data: surveys, isLoading: loadingSurveys } = useQuery({
     queryKey: ["surveys", filter],
@@ -33,7 +34,7 @@ function SurveysContent() {
       });
       return data.surveys;
     },
-    enabled: !!user?.ninVerified,
+    enabled: !!user,
   });
 
   return (
@@ -69,7 +70,7 @@ function SurveysContent() {
                   <SurveyCard
                     survey={s}
                     href={`/surveys/${s._id}`}
-                    locked={s.targetAudience === "PREMIUM_ONLY" && !user?.livenessVerified}
+                    lockReason={user ? getSurveyLockReason(s, user) : null}
                     index={i}
                   />
                 </StaggerItem>

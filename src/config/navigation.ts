@@ -1,6 +1,5 @@
 import {
   ClipboardList,
-  CreditCard,
   LayoutDashboard,
   PlusCircle,
   Settings,
@@ -29,7 +28,6 @@ export const RESPONDENT_NAV: NavItem[] = [
 export const RESEARCHER_NAV: NavItem[] = [
   { href: "/researcher/dashboard", label: "Dashboard", shortLabel: "Home", icon: LayoutDashboard, exact: true },
   { href: "/researcher/campaigns", label: "Campaigns", shortLabel: "Campaigns", icon: ClipboardList },
-  { href: "/researcher/billing", label: "Billing", shortLabel: "Billing", icon: CreditCard, exact: true },
   { href: "/settings", label: "Settings", shortLabel: "Settings", icon: Settings, exact: true },
 ];
 

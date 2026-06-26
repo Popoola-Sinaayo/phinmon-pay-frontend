@@ -25,7 +25,7 @@ const TRUST_BADGES = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-gray-800 bg-gray-950 text-gray-300">
+    <footer className="border-t border-white/10 bg-ink-950 text-white/70">
       <div className="mx-auto max-w-landing px-4 py-16 sm:px-6">
         <FadeIn>
           <div className="grid gap-12 md:grid-cols-4">
@@ -39,7 +39,7 @@ export function Footer() {
                 {TRUST_BADGES.map(({ icon: Icon, label }) => (
                   <span
                     key={label}
-                    className="inline-flex items-center gap-1.5 rounded-full border border-gray-800 bg-gray-900 px-3 py-1.5 text-xs text-gray-400"
+                    className="inline-flex items-center gap-1.5 rounded-pill border border-white/10 bg-white/5 px-3 py-1.5 text-xs text-white/60"
                   >
                     <Icon className="h-3 w-3 text-primary-500" />
                     {label}
@@ -65,7 +65,7 @@ export function Footer() {
               </div>
             ))}
           </div>
-          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-gray-800 pt-8 sm:flex-row">
+          <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
             <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} Phinmon. All rights reserved.
             </p>

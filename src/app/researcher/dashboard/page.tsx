@@ -171,13 +171,13 @@ export default function ResearcherDashboard() {
             >
               <div className="relative flex h-32 w-32 items-center justify-center">
                 <svg className="h-32 w-32 -rotate-90" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="42" fill="none" stroke="#f3f4f6" strokeWidth="8" />
+                  <circle cx="50" cy="50" r="42" fill="none" stroke="#ece7dd" strokeWidth="8" />
                   <motion.circle
                     cx="50"
                     cy="50"
                     r="42"
                     fill="none"
-                    stroke="#7b61ff"
+                    stroke="#1f9d63"
                     strokeWidth="8"
                     strokeLinecap="round"
                     strokeDasharray={`${(dashboard?.completionRate || 0) * 2.64} 264`}

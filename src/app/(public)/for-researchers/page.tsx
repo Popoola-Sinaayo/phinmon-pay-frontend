@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function ForResearchersPage() {
   return (
     <div className="mx-auto max-w-landing px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-bold text-gray-900">Collect Quality Insights Faster</h1>
+      <h1 className="font-display text-4xl font-medium tracking-tight text-ink-900">Collect Quality Insights Faster</h1>
       <p className="mt-4 max-w-2xl text-gray-600">
         Build surveys, target verified or premium respondents, fund your campaign, and export
         results — all in one platform.

@@ -21,8 +21,8 @@ export function AppSidebar({
   const pathname = usePathname();
 
   return (
-    <aside className="hidden w-[260px] shrink-0 flex-col border-r border-gray-200/80 bg-white lg:flex">
-      <div className="flex h-16 items-center gap-2.5 border-b border-gray-100 px-5">
+    <aside className="hidden w-[260px] shrink-0 flex-col border-r border-ink-900/[0.07] bg-white lg:flex">
+      <div className="flex h-16 items-center gap-2.5 border-b border-ink-900/[0.07] px-5">
         <BrandLogo href={items[0]?.href || "/dashboard"} size="sm" />
       </div>
 
@@ -31,7 +31,7 @@ export function AppSidebar({
           <Link
             href={RESEARCHER_CREATE.href}
             className={cn(
-              "mb-3 flex items-center justify-center gap-2 rounded-xl bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-gray-800",
+              "mb-3 flex items-center justify-center gap-2 rounded-pill bg-ink-900 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-ink-800",
               pathname.startsWith("/researcher/campaigns/new") && "ring-2 ring-primary-500 ring-offset-2"
             )}
           >
@@ -55,13 +55,13 @@ export function AppSidebar({
               <span
                 className={cn(
                   "relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors",
-                  active ? "text-primary-800" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                  active ? "text-primary-800" : "text-ink-600 hover:bg-paper-100 hover:text-ink-900"
                 )}
               >
                 <span
                   className={cn(
                     "flex h-8 w-8 items-center justify-center rounded-lg transition-colors",
-                    active ? "bg-primary-600 text-white shadow-sm" : "bg-gray-100 text-gray-500"
+                    active ? "bg-primary-600 text-white shadow-sm" : "bg-paper-200 text-ink-500"
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -74,7 +74,7 @@ export function AppSidebar({
       </nav>
 
       {user && user.role === "respondent" && (
-        <div className="border-t border-gray-100 p-4">
+        <div className="border-t border-ink-900/[0.07] p-4">
           <VerificationStrip user={user} />
         </div>
       )}
@@ -93,10 +93,10 @@ function VerificationStrip({ user }: { user: User }) {
   return (
     <Link
       href="/verification"
-      className="block rounded-xl border border-gray-100 bg-gray-50/80 p-3 transition hover:border-primary-200 hover:bg-primary-50/30"
+      className="block rounded-xl border border-ink-900/[0.07] bg-paper-100 p-3 transition hover:border-primary-200 hover:bg-primary-50/40"
     >
       <div className="flex items-center justify-between">
-        <p className="text-xs font-semibold text-gray-700">Verification</p>
+        <p className="text-xs font-semibold text-ink-700">Verification</p>
         <span className="text-xs font-bold text-primary-600">{completed}/3</span>
       </div>
       <div className="mt-2 flex gap-1">
@@ -105,7 +105,7 @@ function VerificationStrip({ user }: { user: User }) {
             key={step.label}
             className={cn(
               "h-1.5 flex-1 rounded-full",
-              step.done ? "bg-primary-500" : "bg-gray-200"
+              step.done ? "bg-primary-500" : "bg-paper-300"
             )}
           />
         ))}
@@ -131,7 +131,7 @@ export function MobileBottomNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-gray-200/80 bg-white/95 backdrop-blur-xl lg:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-ink-900/[0.07] bg-paper/95 backdrop-blur-xl lg:hidden">
       <div className="mx-auto flex max-w-lg items-stretch justify-around px-1 pb-safe pt-1">
         {items.map((item) => {
           const active = isNavActive(pathname, item);

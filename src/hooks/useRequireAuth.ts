@@ -23,7 +23,7 @@ export function useRequireAuth(
       return;
     }
     if (requireNin && requiresNinVerification(user) && !user.ninVerified) {
-      router.push("/onboarding/verify-nin");
+      router.push("/verification?step=nin");
       return;
     }
     if (!expectedRole) return;

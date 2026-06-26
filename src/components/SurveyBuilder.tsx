@@ -18,7 +18,8 @@ import type { Question, QuestionType } from "@/types";
 import { cn } from "@/lib/utils";
 
 const QUESTION_TYPES: { value: QuestionType; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { value: "text", label: "Short text", icon: AlignLeft },
+  { value: "text_short", label: "Short text", icon: AlignLeft },
+  { value: "text_long", label: "Long text", icon: AlignLeft },
   { value: "single_choice", label: "Single choice", icon: CircleDot },
   { value: "multiple_choice", label: "Multiple choice", icon: CheckSquare },
   { value: "number", label: "Number", icon: Hash },
@@ -104,7 +105,7 @@ export function SurveyBuilder({
       {
         questionId: crypto.randomUUID(),
         questionText: "",
-        type: "text",
+        type: "text_short",
         required: true,
         options: [],
       },
@@ -151,7 +152,9 @@ export function SurveyBuilder({
       )}
 
       {questions.map((q, i) => {
-        const typeMeta = QUESTION_TYPES.find((t) => t.value === q.type) ?? QUESTION_TYPES[0];
+        const typeMeta =
+          QUESTION_TYPES.find((t) => t.value === q.type) ??
+          (q.type === "text" ? QUESTION_TYPES[0] : QUESTION_TYPES[0]);
 
         return (
           <motion.div
@@ -252,6 +255,12 @@ export function SurveyBuilder({
                   options={q.options || []}
                   onChange={(options) => updateQuestion(i, { options })}
                 />
+              )}
+
+              {q.type === "multiple_choice" && (q.options?.length ?? 0) > 10 && (
+                <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+                  High complexity: more than 10 options may increase survey time and cost.
+                </p>
               )}
 
               <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-gray-100 bg-gray-50/50 px-3 py-2.5">

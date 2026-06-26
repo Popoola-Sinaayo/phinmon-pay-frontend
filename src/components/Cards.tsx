@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn, formatCurrency, getEstimatedMinutes } from "@/lib/utils";
 import type { Survey } from "@/types";
 import { PremiumBadge } from "./Badges";
 import { Clock, HelpCircle, TrendingUp } from "lucide-react";
@@ -15,14 +15,17 @@ const cardMotion = {
 export function SurveyCard({
   survey,
   href,
+  lockReason,
   locked,
   index = 0,
 }: {
   survey: Survey;
   href: string;
+  lockReason?: "nin" | "liveness" | null;
   locked?: boolean;
   index?: number;
 }) {
+  const isLocked = lockReason || locked;
   return (
     <motion.div
       {...cardMotion}
@@ -42,19 +45,19 @@ export function SurveyCard({
           {formatCurrency(survey.payoutPerResponse)}
         </span>
         <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-600">
-          <Clock className="h-3 w-3" /> ~{survey.estimatedMinutes || 10} min
+          <Clock className="h-3 w-3" /> ~{getEstimatedMinutes(survey)} min
         </span>
         <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-600">
           <HelpCircle className="h-3 w-3" /> {survey.questions?.length || 0} Qs
         </span>
       </div>
-      {locked ? (
-        <Link href="/verification" className="btn-secondary text-center">
-          Unlock Premium Access
+      {isLocked ? (
+        <Link href={href} className="btn-secondary text-center">
+          {lockReason === "liveness" ? "Premium — verify to access" : "Verify identity to start"}
         </Link>
       ) : (
         <Link href={href} className="btn-primary text-center">
-          Start Survey
+          View survey
         </Link>
       )}
     </motion.div>
@@ -128,9 +131,6 @@ export function CampaignRow({
     responsesReceived?: number;
     responsesNeeded?: number;
     totalCost?: number;
-    billingModel?: "PREPAID" | "PAYG";
-    amountSpent?: number;
-    billingLocked?: boolean;
   };
   index?: number;
 }) {
@@ -151,16 +151,6 @@ export function CampaignRow({
           <span className="rounded-full bg-gray-100 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gray-600">
             {survey.status.replace(/_/g, " ")}
           </span>
-          {survey.billingModel === "PAYG" && (
-            <span className="rounded-full bg-secondary-50 px-2 py-0.5 text-[10px] font-semibold text-secondary-700">
-              PAYG
-            </span>
-          )}
-          {survey.billingLocked && (
-            <span className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-semibold text-amber-700">
-              Locked
-            </span>
-          )}
         </div>
         <p className="mt-1 line-clamp-1 text-sm text-gray-500">{survey.description}</p>
         <div className="mt-3 flex items-center gap-3">
@@ -177,13 +167,9 @@ export function CampaignRow({
       </div>
       <div className="flex items-center gap-4">
         <div className="text-right">
-          <p className="text-xs text-gray-400">
-            {survey.billingModel === "PAYG" ? "Spent" : "Budget"}
-          </p>
+          <p className="text-xs text-gray-400">Budget</p>
           <p className="font-bold text-primary-600">
-            {survey.billingModel === "PAYG"
-              ? formatCurrency(survey.amountSpent || 0)
-              : formatCurrency(survey.totalCost || 0)}
+            {formatCurrency(survey.totalCost || 0)}
           </p>
         </div>
         <Link

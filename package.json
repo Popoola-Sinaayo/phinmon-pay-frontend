@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@qore-id/web-sdk": "^2.0.0",
     "@tanstack/react-query": "^5.101.0",
     "axios": "^1.18.0",
     "clsx": "^2.1.1",

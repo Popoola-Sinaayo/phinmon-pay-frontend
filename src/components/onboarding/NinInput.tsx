@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef } from "react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 export function NinInput({
@@ -14,55 +13,55 @@ export function NinInput({
   disabled?: boolean;
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
-  const digits = value.padEnd(11, " ").split("").slice(0, 11);
-
-  const focusInput = () => {
-    if (!disabled) inputRef.current?.focus();
-  };
 
   const handleChange = (raw: string) => {
     onChange(raw.replace(/\D/g, "").slice(0, 11));
   };
 
   return (
-    <div className="relative">
+    <div>
       <input
         ref={inputRef}
         type="text"
         inputMode="numeric"
         autoComplete="off"
-        className="absolute inset-0 h-full w-full cursor-text opacity-0"
+        enterKeyHint="done"
+        placeholder="Enter your 11-digit NIN"
+        className={cn(
+          "input w-full text-center text-lg font-semibold tabular-nums sm:text-xl",
+          value && "tracking-[0.2em] sm:tracking-[0.3em]",
+          disabled && "opacity-60"
+        )}
         value={value}
         onChange={(e) => handleChange(e.target.value)}
         disabled={disabled}
+        maxLength={11}
         aria-label="National Identification Number"
       />
-      <div
-        className={cn("grid grid-cols-11 gap-1.5 sm:gap-2", disabled && "opacity-60")}
-        onClick={focusInput}
-      >
-        {digits.map((digit, i) => (
-          <motion.div
-            key={i}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: i * 0.03 }}
-            className={cn(
-              "flex aspect-[3/4] items-center justify-center rounded-lg border-2 bg-white text-lg font-bold tabular-nums transition sm:rounded-xl sm:text-xl",
-              digit.trim()
-                ? "border-primary-400 text-gray-900 shadow-sm"
-                : value.length === i
-                  ? "border-primary-500 ring-2 ring-primary-100"
-                  : "border-gray-200 text-gray-300"
-            )}
+      <div className="mt-2 flex items-center justify-between px-1 text-xs">
+        {value && !disabled ? (
+          <button
+            type="button"
+            onClick={() => {
+              onChange("");
+              inputRef.current?.focus();
+            }}
+            className="font-medium text-gray-400 transition hover:text-gray-600"
           >
-            {digit.trim() || ""}
-          </motion.div>
-        ))}
+            Clear
+          </button>
+        ) : (
+          <span className="text-gray-400">You can edit any digit</span>
+        )}
+        <span
+          className={cn(
+            "tabular-nums text-gray-400",
+            value.length === 11 && "font-semibold text-primary-600"
+          )}
+        >
+          {value.length}/11
+        </span>
       </div>
-      <p className="mt-3 text-center text-xs text-gray-400">
-        Tap to enter your 11-digit NIN
-      </p>
     </div>
   );
 }

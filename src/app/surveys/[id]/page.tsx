@@ -1,19 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { Clock, HelpCircle } from "lucide-react";
+import { Clock, HelpCircle, ShieldAlert } from "lucide-react";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { PremiumBadge } from "@/components/Badges";
 import { DashboardShell } from "@/components/layout/DashboardShell";
-import { formatCurrency } from "@/lib/utils";
+import { MotionButton } from "@/components/motion";
+import { formatCurrency, getEstimatedMinutes } from "@/lib/utils";
+import { canTakeSurvey } from "@/lib/verification";
 import type { Survey } from "@/types";
 
 export default function SurveyDetailPage() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
   const { user, isLoading } = useRequireAuth("respondent");
 
   const { data: survey, isLoading: loadingSurvey } = useQuery({
@@ -25,7 +28,7 @@ export default function SurveyDetailPage() {
     enabled: !!id && !!user,
   });
 
-  const locked = survey?.targetAudience === "PREMIUM_ONLY" && !user?.livenessVerified;
+  const access = user && survey ? canTakeSurvey(survey, user) : { allowed: true };
 
   return (
     <DashboardShell
@@ -40,7 +43,7 @@ export default function SurveyDetailPage() {
       ]}
       maxWidth="narrow"
     >
-      {survey && (
+      {survey && user && (
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
@@ -52,7 +55,7 @@ export default function SurveyDetailPage() {
                 {formatCurrency(survey.payoutPerResponse)}
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
-                <Clock className="h-3 w-3" /> ~{survey.estimatedMinutes || 10} min
+                <Clock className="h-3 w-3" /> ~{getEstimatedMinutes(survey)} min
               </span>
               <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-gray-600">
                 <HelpCircle className="h-3 w-3" /> {survey.questions.length} questions
@@ -74,11 +77,47 @@ export default function SurveyDetailPage() {
             </div>
           </div>
 
-          {locked ? (
-            <Link href="/verification" className="btn-secondary mt-8 inline-flex w-full justify-center sm:w-auto">
-              Unlock Premium Access
-            </Link>
-          ) : (
+          {!access.allowed && access.reason === "nin" && (
+            <div className="mt-8 rounded-xl border border-secondary-100 bg-secondary-50/60 p-4">
+              <div className="flex gap-3">
+                <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-secondary-600" />
+                <div>
+                  <p className="font-semibold text-gray-900">NIN verification required</p>
+                  <p className="mt-1 text-sm text-gray-600">
+                    Verify your identity with your NIN before taking this survey.
+                  </p>
+                  <MotionButton
+                    className="btn-primary mt-4"
+                    onClick={() => router.push("/verification?step=nin")}
+                  >
+                    Verify NIN to continue
+                  </MotionButton>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {!access.allowed && access.reason === "liveness" && (
+            <div className="mt-8 rounded-xl border border-amber-100 bg-amber-50/60 p-4">
+              <div className="flex gap-3">
+                <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                <div>
+                  <p className="font-semibold text-gray-900">Premium liveness check required</p>
+                  <p className="mt-1 text-sm text-gray-600">
+                    This is a premium survey. Complete a quick liveness verification to access it.
+                  </p>
+                  <MotionButton
+                    className="btn-primary mt-4"
+                    onClick={() => router.push("/verification?step=liveness")}
+                  >
+                    Complete liveness check
+                  </MotionButton>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {access.allowed && (
             <Link
               href={`/surveys/${id}/take`}
               className="btn-primary mt-8 inline-flex w-full justify-center sm:w-auto"

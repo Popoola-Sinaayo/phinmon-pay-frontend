@@ -1,7 +1,7 @@
 export default function HowItWorksPage() {
   return (
     <div className="mx-auto max-w-landing px-4 py-16 sm:px-6">
-      <h1 className="text-3xl font-bold text-gray-900">How It Works</h1>
+      <h1 className="font-display text-4xl font-medium tracking-tight text-ink-900">How It Works</h1>
       <div className="mt-12 grid gap-12 lg:grid-cols-2">
         <div>
           <h2 className="text-xl font-semibold text-primary-600">For Respondents</h2>

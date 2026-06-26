@@ -1,17 +1,19 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { useQoreIdLiveness } from "@/hooks/useQoreIdLiveness";
 import { VerificationBadge } from "@/components/Badges";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { RetryCountdown } from "@/components/onboarding/RetryCountdown";
 import { NinInput } from "@/components/onboarding/NinInput";
+import { ProfileDetailsForm } from "@/components/onboarding/ProfileDetailsForm";
 import { MotionCard, MotionButton } from "@/components/motion";
-import { Crown, Shield, CheckCircle2, Lock } from "lucide-react";
+import { Crown, Shield, CheckCircle2, Lock, Pencil } from "lucide-react";
 
 type VerificationStatus = {
   ninVerified?: boolean;
@@ -24,14 +26,17 @@ type VerificationStatus = {
   profileComplete?: boolean;
 };
 
-export default function VerificationPage() {
+function VerificationContent() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const focusStep = searchParams.get("step");
   const { user, isLoading, refetch } = useRequireAuth("respondent");
+  const { runLivenessCheck, loading: livenessLoading, error: livenessError } = useQoreIdLiveness();
   const [nin, setNin] = useState("");
   const [ninError, setNinError] = useState("");
   const [ninLoading, setNinLoading] = useState(false);
-  const [showNinForm, setShowNinForm] = useState(false);
-  const [livenessLoading, setLivenessLoading] = useState(false);
+  const [showNinForm, setShowNinForm] = useState(focusStep === "nin");
+  const [editingDetails, setEditingDetails] = useState(false);
 
   const { data: status, refetch: refetchStatus } = useQuery<VerificationStatus>({
     queryKey: ["verification-status"],
@@ -40,6 +45,10 @@ export default function VerificationPage() {
     refetchInterval: (query) =>
       query.state.data?.ninLocked && (query.state.data.retryRemainingMs || 0) > 0 ? 1000 : false,
   });
+
+  useEffect(() => {
+    if (focusStep === "nin") setShowNinForm(true);
+  }, [focusStep]);
 
   const ninStatus = user?.ninVerified
     ? "verified"
@@ -50,9 +59,7 @@ export default function VerificationPage() {
     ? "locked"
     : user?.livenessVerified
       ? "verified"
-      : user?.ninVerified
-        ? "not_started"
-        : "locked";
+      : "not_started";
 
   const isLocked = status?.ninLocked && (status.retryRemainingMs || 0) > 0;
 
@@ -67,25 +74,45 @@ export default function VerificationPage() {
       await refetch();
       await refetchStatus();
     } catch (err: unknown) {
-      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setNinError(msg || "Verification failed");
+      const res = (err as { response?: { status?: number; data?: { message?: string; details?: { duplicateNin?: boolean } } } })
+        ?.response;
+      const msg = res?.data?.message;
+      if (res?.status === 409 || res?.data?.details?.duplicateNin) {
+        setNinError(
+          msg || "This NIN is already linked to another account. Each NIN can only be used once."
+        );
+      } else {
+        setNinError(msg || "Verification failed");
+      }
       await refetchStatus();
     } finally {
       setNinLoading(false);
     }
   };
 
+  const handleLiveness = async () => {
+    if (!user) return;
+    try {
+      await runLivenessCheck(user, { dateOfBirth: status?.dateOfBirth || undefined });
+      await refetch();
+      await refetchStatus();
+    } catch {
+      // error surfaced via livenessError
+    }
+  };
+
   const steps = [
     { label: "Account created", done: true },
+    { label: "Profile details", done: !!status?.profileComplete },
     { label: "NIN verified", done: !!user?.ninVerified },
-    { label: "Premium liveness", done: !!user?.livenessVerified },
+    { label: "NIN liveness", done: !!user?.livenessVerified },
   ];
 
   return (
     <DashboardShell
       user={user}
       title="Verification"
-      subtitle="Build trust and unlock higher-paying survey opportunities"
+      subtitle="Verify your identity to take surveys and unlock premium opportunities"
       loading={isLoading}
     >
       {user && (
@@ -110,7 +137,7 @@ export default function VerificationPage() {
           </div>
 
           <div className="grid gap-6 lg:grid-cols-2">
-            <MotionCard className="card-hover">
+            <MotionCard className={`card-hover ${focusStep === "nin" ? "ring-2 ring-secondary-200" : ""}`}>
               <div className="flex items-start justify-between">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-secondary-100">
                   <Shield className="h-6 w-6 text-secondary-600" />
@@ -119,18 +146,59 @@ export default function VerificationPage() {
               </div>
               <h2 className="mt-4 text-lg font-semibold text-gray-900">NIN Verification</h2>
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                Your NIN is matched against your legal name and date of birth. Data is encrypted and
-                never shared with researchers.
+                Required before taking any survey. Your NIN is securely verified and matched against
+                your profile details.
               </p>
 
-              {status?.registeredName && !user.ninVerified && (
-                <div className="mt-4 rounded-xl bg-gray-50 p-3 text-sm">
-                  <p className="font-medium text-gray-900">{status.registeredName}</p>
-                  {status.dateOfBirth && (
-                    <p className="text-gray-500">
-                      DOB: {new Date(status.dateOfBirth).toLocaleDateString("en-NG")}
-                    </p>
-                  )}
+              {!user.ninVerified && (
+                <div className="mt-4">
+                  <AnimatePresence mode="wait">
+                    {editingDetails ? (
+                      <motion.div
+                        key="edit-details"
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: "auto" }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="rounded-xl border border-gray-100 bg-gray-50/60 p-4"
+                      >
+                        <p className="mb-3 text-sm font-medium text-gray-900">Edit your details</p>
+                        <ProfileDetailsForm
+                          onSaved={async () => {
+                            setEditingDetails(false);
+                            setNinError("");
+                            await refetch();
+                            await refetchStatus();
+                          }}
+                          onCancel={() => setEditingDetails(false)}
+                        />
+                      </motion.div>
+                    ) : (
+                      <div className="rounded-xl bg-gray-50 p-3 text-sm">
+                        <div className="flex items-start justify-between gap-2">
+                          <div>
+                            <p className="font-medium text-gray-900">
+                              {status?.registeredName || "Your name"}
+                            </p>
+                            {status?.dateOfBirth && (
+                              <p className="text-gray-500">
+                                DOB: {new Date(status.dateOfBirth).toLocaleDateString("en-NG")}
+                              </p>
+                            )}
+                          </div>
+                          <button
+                            type="button"
+                            onClick={() => setEditingDetails(true)}
+                            className="inline-flex shrink-0 items-center gap-1 text-xs font-medium text-primary-600 hover:underline"
+                          >
+                            <Pencil className="h-3.5 w-3.5" /> Edit
+                          </button>
+                        </div>
+                        <p className="mt-2 text-xs text-gray-400">
+                          Make sure these match your NIN exactly before verifying.
+                        </p>
+                      </div>
+                    )}
+                  </AnimatePresence>
                 </div>
               )}
 
@@ -182,7 +250,7 @@ export default function VerificationPage() {
                             className="btn-primary flex-1"
                             disabled={ninLoading || nin.length !== 11}
                           >
-                            {ninLoading ? "..." : "Verify"}
+                            {ninLoading ? "Verifying..." : "Verify NIN"}
                           </MotionButton>
                         </div>
                       </motion.form>
@@ -201,44 +269,57 @@ export default function VerificationPage() {
               )}
             </MotionCard>
 
-            <MotionCard className="card-hover border-amber-100/80 bg-gradient-to-br from-amber-50/50 to-white">
+            <MotionCard
+              className={`card-hover border-amber-100/80 bg-gradient-to-br from-amber-50/50 to-white ${
+                focusStep === "liveness" ? "ring-2 ring-amber-200" : ""
+              }`}
+            >
               <div className="flex items-start justify-between">
                 <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
                   <Crown className="h-6 w-6 text-amber-600" />
                 </div>
                 <VerificationBadge status={livenessStatus} />
               </div>
-              <h2 className="mt-4 text-lg font-semibold text-gray-900">Premium Liveness</h2>
+              <h2 className="mt-4 text-lg font-semibold text-gray-900">NIN Liveness Check</h2>
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                Unlock premium surveys paying ₦1,000–₦5,000. Premium respondents earn 3× more on
-                average.
+                Required for premium surveys. Complete a quick liveness check to confirm you&apos;re a
+                real person.
               </p>
               {status?.livenessEnabled && user.ninVerified && !user.livenessVerified && (
-                <MotionButton
-                  className="btn-primary mt-6 w-full sm:w-auto"
-                  onClick={async () => {
-                    setLivenessLoading(true);
-                    try {
-                      const { data } = await api.post("/verification/liveness/start");
-                      await api.post("/verification/liveness/complete", {
-                        sessionId: data.sessionId,
-                      });
-                      await refetch();
-                    } catch {
-                      alert("Liveness verification failed");
-                    } finally {
-                      setLivenessLoading(false);
-                    }
-                  }}
-                  disabled={livenessLoading}
-                >
-                  {livenessLoading ? "Verifying..." : "Complete Liveness Verification"}
-                </MotionButton>
+                <div className="mt-6 space-y-3">
+                  {livenessError && (
+                    <p className="text-sm text-error-600">{livenessError}</p>
+                  )}
+                  <MotionButton
+                    className="btn-primary w-full sm:w-auto"
+                    onClick={handleLiveness}
+                    disabled={livenessLoading}
+                  >
+                    {livenessLoading ? "Starting..." : "Start liveness check"}
+                  </MotionButton>
+                </div>
+              )}
+              {status?.livenessEnabled && !user.ninVerified && !user.livenessVerified && (
+                <p className="mt-6 text-sm text-gray-500">Complete NIN verification first.</p>
               )}
             </MotionCard>
           </div>
         </>
       )}
     </DashboardShell>
+  );
+}
+
+export default function VerificationPage() {
+  return (
+    <Suspense
+      fallback={
+        <DashboardShell title="Verification" loading>
+          <div />
+        </DashboardShell>
+      }
+    >
+      <VerificationContent />
+    </Suspense>
   );
 }

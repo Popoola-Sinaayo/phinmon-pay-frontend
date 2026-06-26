@@ -1,5 +1,6 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
+import type { Survey } from "@/types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -20,13 +21,6 @@ export function formatDate(date: string | Date) {
   }).format(new Date(date));
 }
 
-export function calculateSurveyCost(responsesNeeded: number, payoutPerResponse: number, feePercent = 15) {
-  const budget = responsesNeeded * payoutPerResponse;
-  const platformFee = budget * (feePercent / 100);
-  return { budget, platformFee, totalCost: budget + platformFee };
-}
-
-export function calculatePerResponseCost(payoutPerResponse: number, feePercent = 15) {
-  const platformFee = payoutPerResponse * (feePercent / 100);
-  return payoutPerResponse + platformFee;
+export function getEstimatedMinutes(survey: Pick<Survey, "estimatedCompletionTimeMinutes" | "estimatedMinutes">) {
+  return survey.estimatedCompletionTimeMinutes ?? survey.estimatedMinutes ?? 1;
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import { Clock } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -7,7 +8,8 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/hooks/useAuth";
 import { QuestionRenderer } from "@/components/QuestionRenderer";
 import { ProgressBar } from "@/components/ProgressBar";
-import { formatCurrency } from "@/lib/utils";
+import { formatCurrency, getEstimatedMinutes } from "@/lib/utils";
+import { canTakeSurvey } from "@/lib/verification";
 import type { Survey, Answer } from "@/types";
 
 export default function TakeSurveyPage() {
@@ -30,10 +32,23 @@ export default function TakeSurveyPage() {
   });
 
   useEffect(() => {
-    if (!isLoading && !user) router.push("/login");
-  }, [user, isLoading, router]);
+    if (!isLoading && !user) {
+      router.push("/login");
+      return;
+    }
+    if (user && survey) {
+      const access = canTakeSurvey(survey, user);
+      if (!access.allowed) {
+        router.replace(
+          access.reason === "liveness" ? "/verification?step=liveness" : "/verification?step=nin"
+        );
+      }
+    }
+  }, [user, isLoading, survey, router]);
 
-  if (isLoading || !survey) return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+  if (isLoading || !survey || !user) {
+    return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
+  }
 
   const question = survey.questions[currentIndex];
   const isLast = currentIndex === survey.questions.length - 1;
@@ -62,6 +77,14 @@ export default function TakeSurveyPage() {
       setCompleted(true);
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      if (msg?.toLowerCase().includes("nin")) {
+        router.push("/verification?step=nin");
+        return;
+      }
+      if (msg?.toLowerCase().includes("premium") || msg?.toLowerCase().includes("eligible")) {
+        router.push("/verification?step=liveness");
+        return;
+      }
       alert(msg || "Failed to submit survey");
     } finally {
       setSubmitting(false);
@@ -84,7 +107,18 @@ export default function TakeSurveyPage() {
   return (
     <div className="flex min-h-screen flex-col bg-white">
       <div className="border-b border-gray-100 px-4 py-4">
-        <div className="mx-auto max-w-survey">
+        <div className="mx-auto max-w-survey space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="truncate text-sm font-semibold text-gray-900">{survey.title}</p>
+            <div className="flex flex-wrap gap-2">
+              <span className="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-1 text-xs font-bold text-primary-700">
+                {formatCurrency(survey.payoutPerResponse)}
+              </span>
+              <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs text-gray-600">
+                <Clock className="h-3 w-3" /> ~{getEstimatedMinutes(survey)} min
+              </span>
+            </div>
+          </div>
           <ProgressBar current={currentIndex + 1} total={survey.questions.length} />
         </div>
       </div>
