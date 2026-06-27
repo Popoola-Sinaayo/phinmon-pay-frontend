@@ -17,6 +17,24 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (typeof window !== "undefined") {
+      const code = error.response?.data?.details?.code;
+      if (error.response?.status === 403 && code === "ACCOUNT_SUSPENDED") {
+        localStorage.removeItem("token");
+        const params = new URLSearchParams({
+          suspended: "1",
+          message: error.response?.data?.message || "Your account has been suspended",
+        });
+        window.location.href = `/login?${params.toString()}`;
+      }
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const setAuthToken = (token: string | null) => {
   if (typeof window === "undefined") return;
   if (token) localStorage.setItem("token", token);

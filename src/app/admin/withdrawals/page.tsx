@@ -24,7 +24,7 @@ export default function AdminWithdrawalsPage() {
             headers={["Date", "User", "Amount", "Status", "Reference"]}
             rows={(withdrawals || []).map((w: { createdAt: string; userId: { email?: string }; amount: number; status: string; reference: string }) => [
               formatDate(w.createdAt),
-              w.userId?.email || "—",
+              w.userId?.email || "",
               formatCurrency(w.amount),
               w.status,
               w.reference,

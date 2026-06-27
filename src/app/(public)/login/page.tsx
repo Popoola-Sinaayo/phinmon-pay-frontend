@@ -40,7 +40,7 @@ export default function LoginPage() {
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Welcome back</h1>
           <p className="mt-2 text-sm text-gray-500">
-            Enter your email — we&apos;ll send a 6-digit code. No password needed.
+            Enter your email  we&apos;ll send a 6-digit code. No password needed.
           </p>
           <form onSubmit={handleSubmit} className="mt-8 space-y-4">
             <div>

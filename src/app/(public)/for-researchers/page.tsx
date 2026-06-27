@@ -6,7 +6,7 @@ export default function ForResearchersPage() {
       <h1 className="font-display text-4xl font-medium tracking-tight text-ink-900">Collect Quality Insights Faster</h1>
       <p className="mt-4 max-w-2xl text-gray-600">
         Build surveys, target verified or premium respondents, fund your campaign, and export
-        results — all in one platform.
+        results  all in one platform.
       </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {[

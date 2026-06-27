@@ -11,6 +11,22 @@ import type { Question } from "@/types";
 
 const STEPS = ["Details", "Questions", "Audience", "Budget", "Review", "Payment", "Launch"];
 
+const CATEGORIES = [
+  "Market Research",
+  "Customer Feedback",
+  "Product Research",
+  "Brand Awareness",
+  "Academic Research",
+  "Public Opinion",
+  "Health & Wellness",
+  "Finance & Banking",
+  "Technology",
+  "Education",
+  "Employee & HR",
+  "Political & Social",
+  "Other",
+];
+
 interface PricingPreview {
   estimatedTimeSeconds: number;
   estimatedTimeMinutes: number;
@@ -18,6 +34,9 @@ interface PricingPreview {
   rewardPerResponsePremium: number;
   platformFeeRate: number;
   platformFeeAmount: number;
+  aiSpamFilterCost?: number;
+  aiAnalyticsCost?: number;
+  aiAddOnsCost?: number;
   totalCost: number;
   highComplexity: boolean;
 }
@@ -36,6 +55,8 @@ export default function NewCampaignPage() {
     category: "Market Research",
     targetAudience: "ALL_VERIFIED" as "ALL_VERIFIED" | "PREMIUM_ONLY",
     responsesNeeded: 100,
+    aiSpamFilterEnabled: false,
+    aiAnalyticsEnabled: false,
     questions: [] as Question[],
   });
 
@@ -50,6 +71,8 @@ export default function NewCampaignPage() {
         questions: form.questions,
         responsesNeeded: form.responsesNeeded,
         targetAudience: form.targetAudience,
+        aiSpamFilterEnabled: form.aiSpamFilterEnabled,
+        aiAnalyticsEnabled: form.aiAnalyticsEnabled,
       });
       setPricing(data);
     } catch {
@@ -57,7 +80,7 @@ export default function NewCampaignPage() {
     } finally {
       setPricingLoading(false);
     }
-  }, [form.questions, form.responsesNeeded, form.targetAudience]);
+  }, [form.questions, form.responsesNeeded, form.targetAudience, form.aiSpamFilterEnabled, form.aiAnalyticsEnabled]);
 
   useEffect(() => {
     if (step < 3) return;
@@ -77,6 +100,8 @@ export default function NewCampaignPage() {
       category: form.category,
       targetAudience: form.targetAudience,
       responsesNeeded: form.responsesNeeded,
+      aiSpamFilterEnabled: form.aiSpamFilterEnabled,
+      aiAnalyticsEnabled: form.aiAnalyticsEnabled,
       questions: form.questions,
     };
     if (surveyId) {
@@ -130,7 +155,7 @@ export default function NewCampaignPage() {
     <DashboardShell
       user={user}
       title="Create Campaign"
-      subtitle={`Step ${step + 1} of ${STEPS.length} — ${STEPS[step]}`}
+      subtitle={`Step ${step + 1} of ${STEPS.length}  ${STEPS[step]}`}
       loading={isLoading}
       backHref="/researcher/campaigns"
       breadcrumbs={[
@@ -180,11 +205,17 @@ export default function NewCampaignPage() {
             </div>
             <div>
               <label className="label">Category</label>
-              <input
+              <select
                 className="input"
                 value={form.category}
                 onChange={(e) => setForm({ ...form, category: e.target.value })}
-              />
+              >
+                {CATEGORIES.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
             </div>
           </div>
         )}
@@ -213,8 +244,8 @@ export default function NewCampaignPage() {
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
                   {a === "ALL_VERIFIED"
-                    ? "NIN verified respondents — standard reward rate"
-                    : "NIN + liveness verified — premium reward rate (2×)"}
+                    ? "NIN verified respondents  standard reward rate"
+                    : "NIN + liveness verified  premium reward rate (2×)"}
                 </p>
               </button>
             ))}
@@ -233,6 +264,49 @@ export default function NewCampaignPage() {
                 }
                 min={1}
               />
+            </div>
+
+            <div className="rounded-xl border border-gray-200 p-4">
+              <p className="text-sm font-semibold text-gray-900">AI add-ons</p>
+              <p className="mt-1 text-xs text-gray-500">
+                Optional features billed at launch. Prices are included in your total.
+              </p>
+              <label className="mt-4 flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={form.aiSpamFilterEnabled}
+                  onChange={(e) =>
+                    setForm({ ...form, aiSpamFilterEnabled: e.target.checked })
+                  }
+                />
+                <span>
+                  <span className="block text-sm font-medium text-gray-900">
+                    AI spam filtering
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    ₦20 per response  flags nonsensical text answers for review
+                  </span>
+                </span>
+              </label>
+              <label className="mt-3 flex cursor-pointer items-start gap-3">
+                <input
+                  type="checkbox"
+                  className="mt-1"
+                  checked={form.aiAnalyticsEnabled}
+                  onChange={(e) =>
+                    setForm({ ...form, aiAnalyticsEnabled: e.target.checked })
+                  }
+                />
+                <span>
+                  <span className="block text-sm font-medium text-gray-900">
+                    AI analytics chat
+                  </span>
+                  <span className="text-xs text-gray-500">
+                    ₦5,000 flat  unlimited Q&amp;A about your survey results
+                  </span>
+                </span>
+              </label>
             </div>
 
             <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm">
@@ -261,6 +335,20 @@ export default function NewCampaignPage() {
                     Platform fee ({pricing.platformFeeRate}%):{" "}
                     {formatCurrency(pricing.platformFeeAmount)}
                   </p>
+                  {(pricing.aiAddOnsCost || 0) > 0 && (
+                    <>
+                      {form.aiSpamFilterEnabled && (
+                        <p className="mt-2">
+                          AI spam filtering: {formatCurrency(pricing.aiSpamFilterCost || 0)}
+                        </p>
+                      )}
+                      {form.aiAnalyticsEnabled && (
+                        <p>
+                          AI analytics chat: {formatCurrency(pricing.aiAnalyticsCost || 0)}
+                        </p>
+                      )}
+                    </>
+                  )}
                   <p className="mt-2 font-bold text-primary-600">
                     Total due at launch: {formatCurrency(pricing.totalCost)}
                   </p>
@@ -294,6 +382,12 @@ export default function NewCampaignPage() {
             </p>
             <p>
               <strong>Responses:</strong> {form.responsesNeeded}
+            </p>
+            <p>
+              <strong>AI spam filtering:</strong> {form.aiSpamFilterEnabled ? "Yes" : "No"}
+            </p>
+            <p>
+              <strong>AI analytics chat:</strong> {form.aiAnalyticsEnabled ? "Yes" : "No"}
             </p>
             {pricing && (
               <>

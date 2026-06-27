@@ -1,5 +1,37 @@
 import { cn } from "@/lib/utils";
 
+export function ResponseStatusBadge({
+  status,
+  spamSuspected,
+}: {
+  status: string;
+  spamSuspected?: boolean;
+}) {
+  const styles: Record<string, string> = {
+    APPROVED: "bg-primary-50 text-primary-700",
+    PENDING: "bg-amber-50 text-amber-700",
+    REJECTED: "bg-error-500/10 text-error-600",
+    FLAGGED: "bg-error-500/10 text-error-600",
+  };
+  return (
+    <span className="inline-flex flex-wrap items-center gap-1.5">
+      <span
+        className={cn(
+          "inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize",
+          styles[status] || "bg-gray-100 text-gray-600"
+        )}
+      >
+        {status.toLowerCase()}
+      </span>
+      {spamSuspected && (
+        <span className="inline-flex rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-semibold text-orange-800">
+          Possible spam
+        </span>
+      )}
+    </span>
+  );
+}
+
 export function PremiumBadge() {
   return (
     <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">

@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { ResponseDetailDrawer } from "@/components/researcher/ResponseDetailDrawer";
+import { AiAnalyticsPanel } from "@/components/researcher/AiAnalyticsPanel";
 import { ResponseList } from "@/components/researcher/ResponseList";
 import { ResponseSummary } from "@/components/researcher/ResponseSummary";
 import { DashboardShell } from "@/components/layout/DashboardShell";
@@ -46,6 +47,7 @@ export default function CampaignResponsesPage() {
       {survey && !loadingResponses && (
         <div className="space-y-8">
           <ResponseSummary survey={survey} responses={responses} />
+          <AiAnalyticsPanel survey={survey} />
           <section>
             <h2 className="mb-4 text-lg font-semibold text-gray-900">Individual responses</h2>
             <ResponseList responses={responses} onSelect={setSelected} />

@@ -2,12 +2,13 @@
 
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { AnimatePresence, motion } from "framer-motion";
-import { Crown, ShieldCheck, X } from "lucide-react";
+import { AlertTriangle, Crown, Flag, ShieldCheck, X } from "lucide-react";
+import { useState } from "react";
+import { ResponseStatusBadge } from "@/components/Badges";
 import { api } from "@/lib/api";
 import { formatAnswerValue, type SurveyResponseRecord } from "@/lib/responseAnalytics";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Question, Survey } from "@/types";
-import { cn } from "@/lib/utils";
 
 export function ResponseDetailDrawer({
   response,
@@ -21,6 +22,8 @@ export function ResponseDetailDrawer({
   onClose: () => void;
 }) {
   const queryClient = useQueryClient();
+  const [flagReason, setFlagReason] = useState("");
+  const [showFlagConfirm, setShowFlagConfirm] = useState(false);
 
   const statusMutation = useMutation({
     mutationFn: async (status: "APPROVED" | "REJECTED") => {
@@ -28,6 +31,19 @@ export function ResponseDetailDrawer({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["campaign-responses", surveyId] });
+      onClose();
+    },
+  });
+
+  const flagMutation = useMutation({
+    mutationFn: async () => {
+      await api.post(`/responses/${response!._id}/flag`, {
+        reason: flagReason || undefined,
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["campaign-responses", surveyId] });
+      setShowFlagConfirm(false);
       onClose();
     },
   });
@@ -71,7 +87,10 @@ export function ResponseDetailDrawer({
 
             <div className="flex-1 overflow-y-auto px-5 py-4">
               <div className="flex flex-wrap gap-2">
-                <StatusPill status={response.status} />
+                <ResponseStatusBadge
+                  status={response.status}
+                  spamSuspected={response.spamSuspected}
+                />
                 <span className="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary-700">
                   {formatCurrency(response.rewardAmount)}
                 </span>
@@ -87,6 +106,22 @@ export function ResponseDetailDrawer({
                 )}
               </div>
 
+              {response.spamSuspected && (
+                <div className="mt-4 flex gap-2 rounded-lg border border-orange-200 bg-orange-50 px-3 py-2 text-sm text-orange-900">
+                  <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <p>
+                    Possible spam  review this response before approving. Reward is held in pending
+                    until you approve or reject.
+                  </p>
+                </div>
+              )}
+
+              {response.flagReason && (
+                <p className="mt-4 text-sm text-gray-600">
+                  <strong>Flag reason:</strong> {response.flagReason}
+                </p>
+              )}
+
               <div className="mt-6 space-y-4">
                 {survey.questions.map((q, i) => {
                   const answer = response.answers.find((a) => a.questionId === q.questionId);
@@ -98,47 +133,115 @@ export function ResponseDetailDrawer({
             </div>
 
             {response.status === "PENDING" && (
-              <div className="flex gap-3 border-t border-gray-100 p-5">
-                <button
-                  type="button"
-                  className="btn-secondary flex-1"
-                  disabled={statusMutation.isPending}
-                  onClick={() => statusMutation.mutate("REJECTED")}
-                >
-                  Reject
-                </button>
-                <button
-                  type="button"
-                  className="btn-primary flex-1"
-                  disabled={statusMutation.isPending}
-                  onClick={() => statusMutation.mutate("APPROVED")}
-                >
-                  Approve
-                </button>
+              <div className="flex flex-col gap-3 border-t border-gray-100 p-5">
+                <div className="flex gap-3">
+                  <button
+                    type="button"
+                    className="btn-secondary flex-1"
+                    disabled={statusMutation.isPending || flagMutation.isPending}
+                    onClick={() => statusMutation.mutate("REJECTED")}
+                  >
+                    Reject
+                  </button>
+                  <button
+                    type="button"
+                    className="btn-primary flex-1"
+                    disabled={statusMutation.isPending || flagMutation.isPending}
+                    onClick={() => statusMutation.mutate("APPROVED")}
+                  >
+                    Approve
+                  </button>
+                </div>
+                {!showFlagConfirm ? (
+                  <button
+                    type="button"
+                    className="btn-secondary inline-flex items-center justify-center gap-2 text-error-600"
+                    onClick={() => setShowFlagConfirm(true)}
+                  >
+                    <Flag className="h-4 w-4" />
+                    Flag as invalid
+                  </button>
+                ) : (
+                  <div className="rounded-lg border border-error-200 bg-error-500/5 p-3">
+                    <p className="text-sm font-medium text-gray-900">
+                      Flag this response as invalid? The reward will be clawed back.
+                    </p>
+                    <textarea
+                      className="input mt-2 min-h-[60px] text-sm"
+                      placeholder="Optional reason..."
+                      value={flagReason}
+                      onChange={(e) => setFlagReason(e.target.value)}
+                    />
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        type="button"
+                        className="btn-secondary flex-1 text-sm"
+                        onClick={() => setShowFlagConfirm(false)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-primary flex-1 bg-error-600 text-sm hover:bg-error-700"
+                        disabled={flagMutation.isPending}
+                        onClick={() => flagMutation.mutate()}
+                      >
+                        Confirm flag
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {response.status === "APPROVED" && (
+              <div className="border-t border-gray-100 p-5">
+                {!showFlagConfirm ? (
+                  <button
+                    type="button"
+                    className="btn-secondary inline-flex w-full items-center justify-center gap-2 text-error-600"
+                    onClick={() => setShowFlagConfirm(true)}
+                  >
+                    <Flag className="h-4 w-4" />
+                    Flag as invalid
+                  </button>
+                ) : (
+                  <div className="rounded-lg border border-error-200 bg-error-500/5 p-3">
+                    <p className="text-sm font-medium text-gray-900">
+                      Flag this response as invalid? The reward will be clawed back from the
+                      respondent&apos;s wallet.
+                    </p>
+                    <textarea
+                      className="input mt-2 min-h-[60px] text-sm"
+                      placeholder="Optional reason..."
+                      value={flagReason}
+                      onChange={(e) => setFlagReason(e.target.value)}
+                    />
+                    <div className="mt-2 flex gap-2">
+                      <button
+                        type="button"
+                        className="btn-secondary flex-1 text-sm"
+                        onClick={() => setShowFlagConfirm(false)}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="button"
+                        className="btn-primary flex-1 bg-error-600 text-sm hover:bg-error-700"
+                        disabled={flagMutation.isPending}
+                        onClick={() => flagMutation.mutate()}
+                      >
+                        Confirm flag
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </motion.aside>
         </>
       )}
     </AnimatePresence>
-  );
-}
-
-function StatusPill({ status }: { status: string }) {
-  const styles: Record<string, string> = {
-    APPROVED: "bg-primary-50 text-primary-700",
-    PENDING: "bg-amber-50 text-amber-700",
-    REJECTED: "bg-error-500/10 text-error-600",
-  };
-  return (
-    <span
-      className={cn(
-        "inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize",
-        styles[status] || "bg-gray-100 text-gray-600"
-      )}
-    >
-      {status.toLowerCase()}
-    </span>
   );
 }
 

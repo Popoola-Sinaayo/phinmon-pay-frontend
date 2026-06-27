@@ -22,7 +22,7 @@ export default function AdminUsersPage() {
           <DataTable
             headers={["Name", "Email", "Role", "NIN", "Premium", "Status"]}
             rows={(users || []).map((u: { name?: string; email: string; role: string; ninVerified: boolean; livenessVerified: boolean; status: string }) => [
-              u.name || "—",
+              u.name || "",
               u.email,
               u.role,
               u.ninVerified ? "Yes" : "No",

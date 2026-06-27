@@ -1,14 +1,32 @@
+"use client";
+
 import Link from "next/link";
-import { CircleDollarSign, ClipboardList, Clock, CreditCard } from "lucide-react";
+import { CircleDollarSign, ClipboardList, CreditCard, HelpCircle, Sparkles, Users } from "lucide-react";
+import { computeFromPerResponse, usePricingConfig } from "@/lib/pricingConfig";
+import { formatCurrency } from "@/lib/utils";
 
 export default function PricingPage() {
+  const pricingConfig = usePricingConfig();
+  const fromPerResponse = computeFromPerResponse(pricingConfig);
+
   return (
     <div className="mx-auto max-w-landing px-4 py-16 sm:px-6">
       <h1 className="font-display text-4xl font-medium tracking-tight text-ink-900">Pricing</h1>
       <p className="mt-2 text-gray-600">
-        Researchers pay based on estimated survey completion time — not question count. Rewards are
-        calculated automatically and shown before payment.
+        Campaign pricing is calculated automatically from your survey setup. You see the full total
+        before you pay  no manual reward overrides.
       </p>
+
+      <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
+        <p className="text-gray-700">
+          <span className="font-semibold text-gray-900">From {formatCurrency(fromPerResponse)}</span>{" "}
+          per response
+        </p>
+        <p className="text-gray-700">
+          Platform fee:{" "}
+          <span className="font-semibold text-gray-900">{pricingConfig.platformFeeRate}%</span>
+        </p>
+      </div>
 
       <div className="card mt-12 border-2 border-primary-500 bg-gradient-to-br from-primary-600 to-primary-800 text-white">
         <span className="inline-flex rounded-full bg-white/20 px-3 py-1 text-xs font-bold">
@@ -21,7 +39,7 @@ export default function PricingPage() {
             <ul className="mt-4 space-y-2 text-sm text-gray-300">
               <li className="flex items-center gap-2">
                 <CircleDollarSign className="h-4 w-4 text-primary-400" />
-                Respondents earn ₦60/min (standard) or ₦120/min (premium surveys)
+                Respondents join and earn from verified surveys
               </li>
               <li className="flex items-center gap-2">
                 <ClipboardList className="h-4 w-4 text-primary-400" />
@@ -47,38 +65,70 @@ export default function PricingPage() {
         </div>
       </div>
 
-      <h2 className="mt-12 text-xl font-semibold text-gray-900">How time-based pricing works</h2>
-      <div className="mt-6 grid gap-6 md:grid-cols-2">
+      <h2 className="mt-12 text-xl font-semibold text-gray-900">What drives your campaign cost</h2>
+      <div className="mt-6 grid gap-6 md:grid-cols-3">
         <div className="card">
           <div className="flex items-center gap-2">
-            <Clock className="h-5 w-5 text-primary-600" />
-            <p className="text-lg font-bold text-gray-900">Estimated completion time</p>
+            <HelpCircle className="h-5 w-5 text-primary-600" />
+            <p className="text-lg font-bold text-gray-900">Number of questions</p>
           </div>
           <p className="mt-2 text-sm text-gray-600">
-            Each question type has a fixed time weight (e.g. yes/no 2s, short text 15s, long text 45s).
-            Total time drives the reward per respondent.
+            More questions mean more respondent effort. Each question type contributes to the
+            estimated completion time and reward.
+          </p>
+        </div>
+        <div className="card">
+          <div className="flex items-center gap-2">
+            <Users className="h-5 w-5 text-primary-600" />
+            <p className="text-lg font-bold text-gray-900">Number of respondents</p>
+          </div>
+          <p className="mt-2 text-sm text-gray-600">
+            Set how many verified responses you need. Total payout scales with the number of people
+            who complete your survey.
           </p>
         </div>
         <div className="card border-primary-100 bg-primary-50/30">
-          <p className="text-lg font-bold text-gray-900">Prepay in full at launch</p>
+          <div className="flex items-center gap-2">
+            <ClipboardList className="h-5 w-5 text-primary-600" />
+            <p className="text-lg font-bold text-gray-900">Type of questions</p>
+          </div>
           <p className="mt-2 text-sm text-gray-600">
-            Total cost = (reward × responses) + platform fee (25%). Preview pricing before payment —
-            no manual reward overrides.
+            Yes/no, multiple choice, ratings, and text fields each carry different time weights.
+            Longer or more complex questions increase the per-response reward.
           </p>
         </div>
       </div>
 
-      <h2 className="mt-12 text-xl font-semibold text-gray-900">Example</h2>
-      <div className="card mt-6 max-w-md">
-        <p className="text-sm text-gray-600">5-minute survey · 100 responses · verified audience</p>
-        <hr className="my-4 border-gray-100" />
-        <p className="text-sm text-gray-600">Reward per response: ₦300</p>
-        <p className="text-sm text-gray-600">Response cost: ₦30,000</p>
-        <p className="text-sm text-gray-600">Platform fee (25%): ₦7,500</p>
-        <p className="mt-2 font-semibold text-primary-600">Total: ₦37,500</p>
+      <h2 className="mt-12 text-xl font-semibold text-gray-900">Optional AI add-ons</h2>
+      <div className="mt-6 grid gap-6 md:grid-cols-2">
+        <div className="card">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary-600" />
+            <p className="text-lg font-bold text-gray-900">AI spam filtering</p>
+          </div>
+          <p className="mt-2 text-sm text-gray-600">
+            Automatically flag nonsensical or low-quality text answers for review before payout.
+            Priced per response when enabled at survey creation.
+          </p>
+        </div>
+        <div className="card">
+          <div className="flex items-center gap-2">
+            <Sparkles className="h-5 w-5 text-primary-600" />
+            <p className="text-lg font-bold text-gray-900">AI analytics chat</p>
+          </div>
+          <p className="mt-2 text-sm text-gray-600">
+            Ask questions about your survey results and get instant insights from your response data.
+            One flat fee per campaign when enabled.
+          </p>
+        </div>
       </div>
 
-      <div className="mt-12 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+      <p className="mt-8 text-center text-sm text-gray-500">
+        Your exact total  including any AI add-ons  is shown in the campaign builder before you
+        pay.
+      </p>
+
+      <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <Link href="/register?role=researcher" className="btn-primary">
           Launch Your First Survey
         </Link>

@@ -1,5 +1,5 @@
 export type UserRole = "respondent" | "researcher" | "admin";
-export type UserStatus = "PENDING_VERIFICATION" | "VERIFIED" | "PREMIUM";
+export type UserStatus = "PENDING_VERIFICATION" | "VERIFIED" | "PREMIUM" | "SUSPENDED";
 
 export interface User {
   id: string;
@@ -81,6 +81,11 @@ export interface Survey {
   estimatedCompletionTimeSeconds?: number;
   estimatedCompletionTimeMinutes?: number;
   highComplexity?: boolean;
+  aiSpamFilterEnabled?: boolean;
+  aiAnalyticsEnabled?: boolean;
+  aiAddOnsCost?: number;
+  aiSpamFilterCost?: number;
+  aiAnalyticsCost?: number;
   createdAt: string;
 }
 

@@ -16,7 +16,7 @@ const fraunces = Fraunces({
 });
 
 export const metadata: Metadata = {
-  title: "Phinmon — Get Paid For Your Opinions",
+  title: "Phinmon  Get Paid For Your Opinions",
   description:
     "Nigeria's verified research marketplace connecting respondents with researchers.",
 };

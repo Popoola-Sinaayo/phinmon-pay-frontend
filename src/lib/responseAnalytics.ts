@@ -2,8 +2,10 @@ import type { Survey } from "@/types";
 
 export type SurveyResponseRecord = {
   _id: string;
-  status: "PENDING" | "APPROVED" | "REJECTED";
+  status: "PENDING" | "APPROVED" | "REJECTED" | "FLAGGED";
   rewardAmount: number;
+  spamSuspected?: boolean;
+  flagReason?: string;
   createdAt: string;
   answers: Array<{ questionId: string; type: string; value: unknown }>;
   userId?: { name?: string; email?: string; ninVerified?: boolean; livenessVerified?: boolean };
@@ -28,7 +30,7 @@ export function computeResponseSummary(
   survey: Survey,
   responses: SurveyResponseRecord[]
 ) {
-  const statusCounts = { APPROVED: 0, PENDING: 0, REJECTED: 0 };
+  const statusCounts = { APPROVED: 0, PENDING: 0, REJECTED: 0, FLAGGED: 0 };
   let approvedRewards = 0;
   let pendingRewards = 0;
 
@@ -128,7 +130,7 @@ export function computeQuestionInsights(
 }
 
 export function formatAnswerValue(value: unknown): string {
-  if (value === null || value === undefined || value === "") return "—";
+  if (value === null || value === undefined || value === "") return "";
   if (typeof value === "boolean") return value ? "Yes" : "No";
   if (Array.isArray(value)) return value.join(", ");
   return String(value);

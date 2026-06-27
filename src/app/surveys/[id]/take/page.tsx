@@ -1,6 +1,6 @@
 "use client";
 
-import { Clock } from "lucide-react";
+import { Clock, ShieldAlert } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
@@ -118,6 +118,13 @@ export default function TakeSurveyPage() {
                 <Clock className="h-3 w-3" /> ~{getEstimatedMinutes(survey)} min
               </span>
             </div>
+          </div>
+          <div className="flex items-start gap-2 rounded-lg border border-amber-100 bg-amber-50/80 px-3 py-2 text-xs text-amber-900">
+            <ShieldAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+            <span>
+              Give thoughtful answers. Low-quality or spam responses may be flagged and put your
+              account at risk of suspension.
+            </span>
           </div>
           <ProgressBar current={currentIndex + 1} total={survey.questions.length} />
         </div>

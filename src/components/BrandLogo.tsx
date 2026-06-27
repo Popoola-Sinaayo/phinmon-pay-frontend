@@ -36,7 +36,7 @@ function LogoMark({ size }: { size: number }) {
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* Green "verified" accent dot — trust + money */}
+      {/* Green "verified" accent dot  trust + money */}
       <circle cx="28.4" cy="27.8" r="3.1" fill="#1f9d63" />
     </svg>
   );

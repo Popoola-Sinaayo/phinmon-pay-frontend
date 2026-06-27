@@ -81,7 +81,7 @@ export default function OnboardingPage() {
           <div className="flex gap-3">
             <AlertTriangle className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
             <div className="text-sm text-amber-900">
-              <p className="font-semibold">Important — your details will be verified</p>
+              <p className="font-semibold">Important  your details will be verified</p>
               <p className="mt-1 leading-relaxed text-amber-800/90">
                 Use your legal name and date of birth exactly as on your NIN. Mismatched information
                 may delay verification and survey access. You can explore the app now; identity

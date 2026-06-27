@@ -7,6 +7,7 @@ import {
   ArrowUpRight,
   ClipboardList,
   Crown,
+  Lock,
   Shield,
   Sparkles,
   TrendingUp,
@@ -59,7 +60,7 @@ export default function RespondentDashboard() {
       title={user ? `${getGreeting()}, ${firstName}` : "Dashboard"}
       subtitle={
         dashboard?.isPremium
-          ? "Premium member — higher-paying surveys unlocked"
+          ? "Premium member  higher-paying surveys unlocked"
           : "Complete verification to unlock premium surveys and faster payouts"
       }
       loading={isLoading || loadingDash}
@@ -79,7 +80,7 @@ export default function RespondentDashboard() {
                   </p>
                   <p className="mt-1 font-semibold text-gray-900">
                     {user.livenessVerified
-                      ? "You're all set — premium surveys unlocked"
+                      ? "You're all set  premium surveys unlocked"
                       : user.ninVerified
                         ? "Complete premium verification for 3× higher payouts"
                         : "Verify your NIN to start earning from surveys"}
@@ -97,6 +98,30 @@ export default function RespondentDashboard() {
                   />
                 ))}
                 <div className="h-1.5 flex-1 rounded-full bg-gray-200" />
+              </div>
+            </motion.div>
+          )}
+
+          {!user.livenessVerified && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.05 }}
+              className="mb-6 rounded-2xl border border-gray-100 bg-gray-50/70 p-5"
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary-100">
+                  <Lock className="h-5 w-5 text-secondary-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-gray-900">Why we verify your details</p>
+                  <p className="mt-1 text-sm leading-relaxed text-gray-600">
+                    We verify your NIN only to confirm you&apos;re a real person and to stop bots and
+                    duplicate accounts  this keeps survey results validated and fair. Your details are
+                    hashed and <span className="font-medium">never stored on our systems</span>; we
+                    only validate them, then discard them.
+                  </p>
+                </div>
               </div>
             </motion.div>
           )}

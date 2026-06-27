@@ -27,41 +27,47 @@ import {
   Shield,
   ShieldCheck,
   Smartphone,
-  Star,
+  // Star, // re-enable with testimonials section
   Target,
   Users,
   Wallet,
   Zap,
 } from "lucide-react";
 import {
-  AnimatedCounter,
   FadeIn,
   MotionCard,
   StaggerItem,
   StaggerList,
 } from "@/components/motion";
-import { LiveActivityTicker } from "./LiveActivityTicker";
-import { PartnerMarquee, ResearchTeamsMarquee } from "./PartnerMarquee";
+import { computeFromTiers, usePricingConfig } from "@/lib/pricingConfig";
+// Temporarily disabled  re-enable when we have real data
+// import { LiveActivityTicker } from "./LiveActivityTicker";
+// import { PartnerMarquee, ResearchTeamsMarquee } from "./PartnerMarquee";
 import { PhoneMockup } from "./PhoneMockup";
 import { Marquee, SectionLabel, TextReveal } from "./LandingPrimitives";
 
-const LANDING_PRICING = [
-  { responses: 100, rewardPerResponse: 100, budget: 10000, platformFee: 2500, totalCost: 12500 },
-  { responses: 200, rewardPerResponse: 200, budget: 40000, platformFee: 10000, totalCost: 50000 },
-  { responses: 500, rewardPerResponse: 300, budget: 150000, platformFee: 37500, totalCost: 187500 },
-];
-
-const PLATFORM_STATS = [
-  { value: 12400, suffix: "+", label: "NIN-verified panelists", icon: Fingerprint, detail: "Across 36 states + FCT" },
-  { value: 48, prefix: "₦", suffix: "M+", label: "Total payouts processed", icon: Wallet, detail: "Via Paystack transfers" },
-  { value: 2.4, suffix: " days", label: "Median campaign fill time", icon: Clock, detail: "For 100-response studies" },
-  { value: 96.8, suffix: "%", label: "Authenticity score", icon: ShieldCheck, detail: "Duplicate & fraud filtered" },
+const WHY_VERIFY = [
+  {
+    icon: Fingerprint,
+    title: "One real person, one account",
+    desc: "Every panelist verifies a real NIN, so a respondent can't sign up multiple times to game payouts or skew your data.",
+  },
+  {
+    icon: ShieldCheck,
+    title: "Results you can trust",
+    desc: "Verified identities mean researchers get validated, representative responses  not noise from duplicate or fake accounts.",
+  },
+  {
+    icon: Lock,
+    title: "Privacy by design",
+    desc: "We never store your raw NIN. It's hashed and used only to confirm you're real, then discarded  never kept on our systems.",
+  },
 ];
 
 const STEPS = [
   {
     title: "Sign up with email",
-    desc: "OTP login — no password to forget. Pick respondent or researcher role.",
+    desc: "OTP login  no password to forget. Pick respondent or researcher role.",
     icon: Smartphone,
     time: "60 sec",
   },
@@ -73,7 +79,7 @@ const STEPS = [
   },
   {
     title: "Complete surveys",
-    desc: "One question per screen. MCQ, ratings, open text — all on mobile.",
+    desc: "One question per screen. MCQ, ratings, open text  all on mobile.",
     icon: ClipboardList,
     time: "5–20 min",
   },
@@ -128,10 +134,12 @@ const BENTO_FEATURES = [
   },
 ];
 
+// Testimonials hidden until we have real customer quotes  re-enable with the section below
+/*
 const TESTIMONIALS = [
   {
     quote:
-      "We needed 200 Lagos & Abuja responses for a fintech UX study. Phinmon delivered in 36 hours — every response NIN-verified.",
+      "We needed 200 Lagos & Abuja responses for a fintech UX study. Phinmon delivered in 36 hours  every response NIN-verified.",
     name: "Chioma Okonkwo",
     role: "Product Lead · PayFlow",
     location: "Lagos",
@@ -157,6 +165,7 @@ const TESTIMONIALS = [
     stat: "12 campaigns · 4.9★ avg",
   },
 ];
+*/
 
 const COMPARISON = {
   standard: {
@@ -189,13 +198,14 @@ export function LandingPage() {
   const heroY = useTransform(scrollYProgress, [0, 1], [0, 80]);
   const heroOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.3]);
 
-  const pricing = LANDING_PRICING;
+  const pricingConfig = usePricingConfig();
+  const pricing = computeFromTiers(pricingConfig);
 
   return (
     <div className="overflow-hidden bg-white">
       {/* ── Hero ── */}
       <section ref={heroRef} className="relative overflow-hidden border-b border-ink-900/[0.06] bg-paper">
-        {/* Subtle warm grid — quiet, editorial */}
+        {/* Subtle warm grid  quiet, editorial */}
         <div
           className="pointer-events-none absolute inset-0 opacity-[0.5]"
           style={{
@@ -225,7 +235,7 @@ export function LandingPage() {
               transition={{ delay: 0.5 }}
             >
               Phinmon connects researchers with NIN-verified Nigerians. Real identities,
-              real payouts, real insights — built for mobile-first Africa.
+              real payouts, real insights  built for mobile-first Africa.
             </motion.p>
 
             <motion.div
@@ -284,32 +294,45 @@ export function LandingPage() {
         </div>
       </section>
 
-      <LiveActivityTicker />
+      {/* Completed-surveys activity ticker hidden until real data is available */}
+      {/* <LiveActivityTicker /> */}
 
-      {/* ── Stats ── */}
-      <section className="bg-white py-14">
-        <StaggerList className="mx-auto grid max-w-landing gap-8 px-4 sm:grid-cols-2 sm:px-6 lg:grid-cols-4">
-          {PLATFORM_STATS.map((stat) => (
-            <StaggerItem key={stat.label}>
-              <motion.div
-                className="group rounded-2xl border border-ink-900/[0.07] p-5 transition-colors hover:border-primary-200 hover:bg-primary-50/40"
-                whileHover={{ y: -3 }}
-              >
-                <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-ink-900 text-white transition-transform group-hover:scale-110">
-                  <stat.icon className="h-5 w-5" />
-                </div>
-                <p className="mt-4 text-3xl font-extrabold tracking-tight text-ink-900">
-                  <AnimatedCounter value={stat.value} prefix={stat.prefix} suffix={stat.suffix} />
-                </p>
-                <p className="mt-1 text-sm font-semibold text-gray-800">{stat.label}</p>
-                <p className="mt-0.5 text-xs text-gray-400">{stat.detail}</p>
-              </motion.div>
-            </StaggerItem>
-          ))}
-        </StaggerList>
+      {/* ── Why we verify ── */}
+      <section className="bg-white py-20 sm:py-28">
+        <div className="mx-auto max-w-landing px-4 sm:px-6">
+          <FadeIn className="text-center">
+            <SectionLabel icon={ShieldCheck} text="Why we verify" />
+            <h2 className="mt-4 font-display text-3xl font-medium tracking-tight text-ink-900 sm:text-4xl">
+              Verification keeps results real
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-gray-500">
+              We verify every panelist&apos;s identity so researchers get validated, trustworthy
+              results  and respondents are protected. Your NIN is hashed to confirm you&apos;re a real
+              person, never stored on our systems.
+            </p>
+          </FadeIn>
+
+          <StaggerList className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {WHY_VERIFY.map((item) => (
+              <StaggerItem key={item.title}>
+                <motion.div
+                  className="group h-full rounded-2xl border border-ink-900/[0.07] p-6 transition-colors hover:border-primary-200 hover:bg-primary-50/40"
+                  whileHover={{ y: -3 }}
+                >
+                  <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-ink-900 text-white transition-transform group-hover:scale-110">
+                    <item.icon className="h-5 w-5" />
+                  </div>
+                  <p className="mt-4 text-lg font-semibold text-ink-900">{item.title}</p>
+                  <p className="mt-2 text-sm leading-relaxed text-gray-500">{item.desc}</p>
+                </motion.div>
+              </StaggerItem>
+            ))}
+          </StaggerList>
+        </div>
       </section>
 
-      <PartnerMarquee />
+      {/* "Integrated with Nigeria's trusted infrastructure" hidden until real partners are confirmed */}
+      {/* <PartnerMarquee /> */}
 
       {/* ── Survey types marquee ── */}
       <section className="border-y border-ink-900/[0.07] py-6">
@@ -328,7 +351,7 @@ export function LandingPage() {
         </Marquee>
       </section>
 
-      {/* ── How it works — timeline ── */}
+      {/* ── How it works  timeline ── */}
       <section className="py-20 sm:py-28">
         <div className="mx-auto max-w-landing px-4 sm:px-6">
           <FadeIn className="text-center">
@@ -339,7 +362,7 @@ export function LandingPage() {
           </FadeIn>
 
           <div className="relative mt-16">
-            {/* Connecting line — desktop */}
+            {/* Connecting line  desktop */}
             <div className="absolute left-0 right-0 top-8 hidden h-0.5 bg-paper-200 lg:block" />
             <motion.div
               className="absolute left-0 top-8 hidden h-0.5 origin-left bg-primary-500 lg:block"
@@ -434,9 +457,9 @@ export function LandingPage() {
             <ul className="mt-8 space-y-4">
               {[
                 { icon: Target, text: "Target Standard or Premium verification tiers" },
-                { icon: BarChart3, text: "Live dashboard — responses, spend, completion rate" },
+                { icon: BarChart3, text: "Live dashboard  responses, spend, completion rate" },
                 { icon: Download, text: "One-click CSV export with question-level data" },
-                { icon: CreditCard, text: "Pay via Paystack — campaign goes live instantly" },
+                { icon: CreditCard, text: "Pay via Paystack  campaign goes live instantly" },
               ].map(({ icon: Icon, text }) => (
                 <motion.li
                   key={text}
@@ -503,7 +526,8 @@ export function LandingPage() {
         </div>
       </section>
 
-      <ResearchTeamsMarquee />
+      {/* "Research teams collecting insights on Phinmon"  re-enable once we have real teams to feature */}
+      {/* <ResearchTeamsMarquee /> */}
 
       {/* ── Tier comparison ── */}
       <section className="py-20 sm:py-28">
@@ -551,8 +575,8 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* ── Testimonials ── */}
-      <section className="bg-paper-100 py-20 sm:py-28">
+      {/* ── Testimonials  hidden until we have real customer quotes ── */}
+      {/* <section className="bg-paper-100 py-20 sm:py-28">
         <div className="mx-auto max-w-landing px-4 sm:px-6">
           <FadeIn className="text-center">
             <SectionLabel icon={Star} text="Testimonials" color="amber" />
@@ -597,7 +621,7 @@ export function LandingPage() {
             ))}
           </StaggerList>
         </div>
-      </section>
+      </section> */}
 
       {/* ── Pricing ── */}
       <section className="py-20 sm:py-28">
@@ -605,9 +629,12 @@ export function LandingPage() {
           <FadeIn className="text-center">
             <SectionLabel icon={CreditCard} text="Pricing" />
             <h2 className="mt-4 font-display text-3xl font-medium tracking-tight text-ink-900 sm:text-4xl">
-              Time-based pricing. No subscriptions.
+              Transparent pricing. No subscriptions.
             </h2>
-            <p className="mt-3 text-gray-500">25% platform fee included in totals below.</p>
+            <p className="mt-3 text-gray-500">
+              Cost depends on your number of questions, respondents, and question types  shown before
+              you pay. A {pricingConfig.platformFeeRate}% platform fee applies.
+            </p>
           </FadeIn>
 
           <StaggerList className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -627,11 +654,12 @@ export function LandingPage() {
                     </motion.span>
                   )}
                   <p className="text-4xl font-extrabold text-ink-900">{p.responses}</p>
-                  <p className="text-sm text-gray-500">responses · time-based reward</p>
+                  <p className="text-sm text-gray-500">responses · auto-calculated</p>
                   <div className="my-5 space-y-1 border-y border-ink-900/[0.07] py-5 text-sm text-gray-500">
-                    <p>Response cost: ₦{p.budget.toLocaleString()}</p>
-                    <p>Platform fee: ₦{p.platformFee.toLocaleString()}</p>
+                    <p>Response cost: from ₦{p.budget.toLocaleString()}</p>
+                    <p>Platform fee ({pricingConfig.platformFeeRate}%): ₦{p.platformFee.toLocaleString()}</p>
                   </div>
+                  <p className="text-xs uppercase tracking-wide text-gray-400">from</p>
                   <p className="text-2xl font-bold text-primary-600">
                     ₦{p.totalCost.toLocaleString()}
                   </p>

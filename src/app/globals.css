@@ -23,7 +23,7 @@ body {
   color: #0b412d;
 }
 
-/* Editorial serif for display headings — pair with grotesk body */
+/* Editorial serif for display headings  pair with grotesk body */
 .font-display {
   font-family: var(--font-display), Georgia, serif;
   font-optical-sizing: auto;

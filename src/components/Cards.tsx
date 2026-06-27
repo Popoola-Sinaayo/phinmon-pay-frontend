@@ -53,7 +53,7 @@ export function SurveyCard({
       </div>
       {isLocked ? (
         <Link href={href} className="btn-secondary text-center">
-          {lockReason === "liveness" ? "Premium — verify to access" : "Verify identity to start"}
+          {lockReason === "liveness" ? "Premium  verify to access" : "Verify identity to start"}
         </Link>
       ) : (
         <Link href={href} className="btn-primary text-center">

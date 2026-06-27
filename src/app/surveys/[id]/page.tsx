@@ -118,12 +118,26 @@ export default function SurveyDetailPage() {
           )}
 
           {access.allowed && (
-            <Link
-              href={`/surveys/${id}/take`}
-              className="btn-primary mt-8 inline-flex w-full justify-center sm:w-auto"
-            >
-              Start Survey →
-            </Link>
+            <>
+              <div className="mt-8 rounded-xl border border-amber-100 bg-amber-50/60 p-4">
+                <div className="flex gap-3">
+                  <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
+                  <div>
+                    <p className="font-semibold text-gray-900">Responses are reviewed</p>
+                    <p className="mt-1 text-sm text-gray-600">
+                      Nonsensical, low-quality, or inappropriate answers may be flagged. Repeated
+                      violations can lead to account suspension.
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <Link
+                href={`/surveys/${id}/take`}
+                className="btn-primary mt-4 inline-flex w-full justify-center sm:w-auto"
+              >
+                Start Survey →
+              </Link>
+            </>
           )}
         </motion.div>
       )}

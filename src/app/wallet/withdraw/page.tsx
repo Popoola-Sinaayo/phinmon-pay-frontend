@@ -158,7 +158,7 @@ export default function WithdrawPage() {
             >
               {banks.map((b) => (
                 <option key={b._id} value={b._id}>
-                  {b.bankName} — {b.accountName} ({b.accountNumber})
+                  {b.bankName}  {b.accountName} ({b.accountNumber})
                 </option>
               ))}
             </select>

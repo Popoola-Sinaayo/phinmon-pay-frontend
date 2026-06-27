@@ -1,9 +1,9 @@
 "use client";
 
 import { ChevronRight } from "lucide-react";
+import { ResponseStatusBadge } from "@/components/Badges";
 import { type SurveyResponseRecord } from "@/lib/responseAnalytics";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { cn } from "@/lib/utils";
 
 export function ResponseList({
   responses,
@@ -44,7 +44,7 @@ export function ResponseList({
                 </p>
                 <p className="text-xs text-gray-500">{formatDate(r.createdAt)}</p>
               </div>
-              <StatusBadge status={r.status} />
+              <ResponseStatusBadge status={r.status} spamSuspected={r.spamSuspected} />
               <span className="hidden font-semibold text-primary-600 sm:block">
                 {formatCurrency(r.rewardAmount)}
               </span>
@@ -54,23 +54,5 @@ export function ResponseList({
         ))}
       </ul>
     </div>
-  );
-}
-
-function StatusBadge({ status }: { status: string }) {
-  const styles: Record<string, string> = {
-    APPROVED: "bg-primary-50 text-primary-700",
-    PENDING: "bg-amber-50 text-amber-700",
-    REJECTED: "bg-error-500/10 text-error-600",
-  };
-  return (
-    <span
-      className={cn(
-        "shrink-0 rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize",
-        styles[status] || "bg-gray-100 text-gray-600"
-      )}
-    >
-      {status.toLowerCase()}
-    </span>
   );
 }

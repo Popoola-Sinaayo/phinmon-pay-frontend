@@ -150,6 +150,19 @@ function VerificationContent() {
                 your profile details.
               </p>
 
+              <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/70 p-4">
+                <div className="flex items-center gap-2">
+                  <Lock className="h-4 w-4 text-secondary-600" />
+                  <p className="text-sm font-semibold text-gray-900">Why am I verifying?</p>
+                </div>
+                <p className="mt-2 text-sm leading-relaxed text-gray-500">
+                  We verify your NIN only to confirm you&apos;re a real person and to stop bots and
+                  duplicate accounts  this keeps survey results validated and trustworthy. Your NIN
+                  is hashed, not stored on our systems, and is never shared. We only use it to check
+                  you&apos;re genuine.
+                </p>
+              </div>
+
               {!user.ninVerified && (
                 <div className="mt-4">
                   <AnimatePresence mode="wait">

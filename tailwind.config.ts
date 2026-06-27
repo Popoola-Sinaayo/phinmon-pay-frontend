@@ -14,7 +14,7 @@ const config: Config = {
         mono: ["var(--font-mono)", "ui-monospace", "SFMono-Regular", "monospace"],
       },
       colors: {
-        // Signature: a confident "money & trust" green — reserved for accents & key CTAs
+        // Signature: a confident "money & trust" green  reserved for accents & key CTAs
         primary: {
           50: "#eefaf2",
           100: "#d4f2de",
@@ -27,7 +27,7 @@ const config: Config = {
           800: "#0d4f35",
           900: "#0b412d",
         },
-        // Calm teal — quiet support accent (badges, secondary highlights)
+        // Calm teal  quiet support accent (badges, secondary highlights)
         secondary: {
           50: "#eef6f5",
           100: "#d3e9e7",
@@ -36,14 +36,14 @@ const config: Config = {
           600: "#115e59",
           700: "#134e4a",
         },
-        // Warm paper canvas — replaces cold grays for an editorial feel
+        // Warm paper canvas  replaces cold grays for an editorial feel
         paper: {
           DEFAULT: "#fbfaf7",
           100: "#f6f3ee",
           200: "#ece7dd",
           300: "#ddd6c8",
         },
-        // Warm graphite ink — for text & dark feature blocks (not cold black)
+        // Warm graphite ink  for text & dark feature blocks (not cold black)
         ink: {
           500: "#57534e",
           600: "#44403c",

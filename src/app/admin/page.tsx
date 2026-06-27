@@ -58,7 +58,7 @@ export default function AdminPage() {
             <DataTable
               headers={["Name", "Email", "Role", "Status"]}
               rows={(users || []).slice(0, 10).map((u: { name?: string; email: string; role: string; status: string }) => [
-                u.name || "—",
+                u.name || "",
                 u.email,
                 u.role,
                 u.status,
