@@ -115,7 +115,7 @@ export default function WithdrawPage() {
     <DashboardShell
       user={user}
       title="Withdraw Funds"
-      subtitle={`Available: ${formatCurrency(wallet?.availableBalance || 0)} · Minimum: ₦1,000`}
+      subtitle={`Available: ${formatCurrency(wallet?.availableBalance || 0)} · Minimum: ₦100`}
       loading={isLoading}
       backHref="/wallet"
       breadcrumbs={[
@@ -208,7 +208,7 @@ export default function WithdrawPage() {
               className="input"
               value={amount}
               onChange={(e) => setAmount(e.target.value)}
-              min={1000}
+              min={100}
               required
             />
           </div>

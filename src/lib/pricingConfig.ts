@@ -11,6 +11,8 @@ export interface PricingConfig {
   minPremiumReward: number;
   lowestRewardStandard: number;
   lowestRewardPremium: number;
+  aiAnalyticsCost: number;
+  aiSpamFilterCostPerResponse: number;
 }
 
 /** Fallback used until the backend responds (or if the request fails). */
@@ -22,6 +24,8 @@ export const DEFAULT_PRICING_CONFIG: PricingConfig = {
   minPremiumReward: 200,
   lowestRewardStandard: 100,
   lowestRewardPremium: 200,
+  aiAnalyticsCost: 5000,
+  aiSpamFilterCostPerResponse: 20,
 };
 
 export async function fetchPricingConfig(): Promise<PricingConfig> {
@@ -39,6 +43,9 @@ export async function fetchPricingConfig(): Promise<PricingConfig> {
         data.lowestRewardStandard ?? DEFAULT_PRICING_CONFIG.lowestRewardStandard,
       lowestRewardPremium:
         data.lowestRewardPremium ?? DEFAULT_PRICING_CONFIG.lowestRewardPremium,
+      aiAnalyticsCost: data.aiAnalyticsCost ?? DEFAULT_PRICING_CONFIG.aiAnalyticsCost,
+      aiSpamFilterCostPerResponse:
+        data.aiSpamFilterCostPerResponse ?? DEFAULT_PRICING_CONFIG.aiSpamFilterCostPerResponse,
     };
   } catch {
     return DEFAULT_PRICING_CONFIG;

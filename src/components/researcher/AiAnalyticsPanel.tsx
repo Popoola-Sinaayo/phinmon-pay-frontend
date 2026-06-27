@@ -4,7 +4,8 @@ import { useMutation } from "@tanstack/react-query";
 import { Loader2, Lock, Send, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { api } from "@/lib/api";
-import { cn } from "@/lib/utils";
+import { cn, formatCurrency } from "@/lib/utils";
+import { usePricingConfig } from "@/lib/pricingConfig";
 import type { Survey } from "@/types";
 
 type ChatMessage = { role: "user" | "assistant"; content: string };
@@ -18,6 +19,24 @@ const STARTER_PROMPTS = [
 export function AiAnalyticsPanel({ survey }: { survey: Survey }) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
+  const pricingConfig = usePricingConfig();
+
+  const enableMutation = useMutation({
+    mutationFn: async () => {
+      const { data } = await api.post<{ authorizationUrl?: string }>(
+        `/surveys/${survey._id}/enable-analytics`,
+        {}
+      );
+      return data;
+    },
+    onSuccess: (data) => {
+      if (data.authorizationUrl) {
+        window.location.href = data.authorizationUrl;
+      } else {
+        window.location.reload();
+      }
+    },
+  });
 
   const askMutation = useMutation({
     mutationFn: async (question: string) => {
@@ -43,12 +62,37 @@ export function AiAnalyticsPanel({ survey }: { survey: Survey }) {
           <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-200">
             <Lock className="h-5 w-5 text-gray-500" />
           </div>
-          <div>
+          <div className="flex-1">
             <h2 className="text-lg font-semibold text-gray-900">AI analytics chat</h2>
             <p className="mt-1 text-sm text-gray-600">
-              This add-on was not enabled when this campaign was created. Create a new campaign with
-              AI analytics to ask questions about your response data.
+              This add-on wasn&apos;t enabled when this campaign was created. Enable it now to ask
+              questions about your response data — a one-time fee of{" "}
+              {formatCurrency(pricingConfig.aiAnalyticsCost)} applies.
             </p>
+            <button
+              type="button"
+              className="btn-primary mt-4 inline-flex items-center gap-2"
+              onClick={() => enableMutation.mutate()}
+              disabled={enableMutation.isPending}
+            >
+              {enableMutation.isPending ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Redirecting to payment…
+                </>
+              ) : (
+                <>
+                  <Sparkles className="h-4 w-4" />
+                  Enable for {formatCurrency(pricingConfig.aiAnalyticsCost)}
+                </>
+              )}
+            </button>
+            {enableMutation.isError && (
+              <p className="mt-2 text-sm text-error-600">
+                {(enableMutation.error as { response?: { data?: { message?: string } } })?.response
+                  ?.data?.message || "Could not start payment. Please try again."}
+              </p>
+            )}
           </div>
         </div>
       </section>
