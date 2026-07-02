@@ -72,6 +72,7 @@ export interface Survey {
   responsesNeeded: number;
   responsesReceived: number;
   status: string;
+  draftStep?: number;
   billingModel?: "PREPAID" | "PAYG";
   spendingCap?: number;
   amountSpent?: number;

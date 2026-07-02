@@ -165,13 +165,29 @@ export function CampaignRow({
           </span>
         </div>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex flex-wrap items-center gap-3 sm:gap-4">
         <div className="text-right">
           <p className="text-xs text-gray-400">Budget</p>
           <p className="font-bold text-primary-600">
             {formatCurrency(survey.totalCost || 0)}
           </p>
         </div>
+        {survey.status === "DRAFT" && (
+          <Link
+            href={`/researcher/campaigns/new?resume=${survey._id}`}
+            className="btn-primary text-sm"
+          >
+            Continue
+          </Link>
+        )}
+        {survey.status === "PENDING_PAYMENT" && (
+          <Link
+            href={`/researcher/campaigns/new?resume=${survey._id}`}
+            className="btn-primary text-sm"
+          >
+            Complete payment
+          </Link>
+        )}
         <Link
           href={`/researcher/campaigns/${survey._id}`}
           className="btn-secondary text-sm opacity-90 transition group-hover:opacity-100"

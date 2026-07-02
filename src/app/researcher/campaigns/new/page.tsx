@@ -1,14 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useCallback, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { cn, formatCurrency } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { SurveyBuilder } from "@/components/SurveyBuilder";
 import { usePricingConfig } from "@/lib/pricingConfig";
-import type { Question } from "@/types";
+import { validateCampaignQuestions } from "@/lib/surveyValidation";
+import type { Question, Survey } from "@/types";
 
 const STEPS = ["Details", "Questions", "Audience", "Budget", "Review", "Payment", "Launch"];
 
@@ -42,12 +43,30 @@ interface PricingPreview {
   highComplexity: boolean;
 }
 
+const validateDetails = (title: string, description: string): string | null => {
+  if (!title.trim()) return "Title is required";
+  if (!description.trim()) return "Description is required";
+  return null;
+};
+
 export default function NewCampaignPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-center text-gray-500">Loading campaign...</div>}>
+      <NewCampaignForm />
+    </Suspense>
+  );
+}
+
+function NewCampaignForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const resumeId = searchParams.get("resume");
   const { user, isLoading } = useRequireAuth("researcher");
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [surveyId, setSurveyId] = useState<string | null>(null);
+  const [loadingResume, setLoadingResume] = useState(!!resumeId);
+  const [surveyId, setSurveyId] = useState<string | null>(resumeId);
+  const [surveyStatus, setSurveyStatus] = useState<string>("DRAFT");
   const [pricing, setPricing] = useState<PricingPreview | null>(null);
   const [pricingLoading, setPricingLoading] = useState(false);
   const pricingConfig = usePricingConfig();
@@ -65,6 +84,45 @@ export default function NewCampaignPage() {
     aiAnalyticsEnabled: false,
     questions: [] as Question[],
   });
+
+  const questionsLocked = surveyStatus === "PENDING_PAYMENT";
+
+  useEffect(() => {
+    if (!resumeId || !user) return;
+
+    const loadDraft = async () => {
+      setLoadingResume(true);
+      try {
+        const { data } = await api.get<{ survey: Survey }>(`/surveys/${resumeId}`);
+        const survey = data.survey;
+        if (!["DRAFT", "PENDING_PAYMENT"].includes(survey.status)) {
+          router.replace(`/researcher/campaigns/${resumeId}`);
+          return;
+        }
+        setSurveyId(survey._id);
+        setSurveyStatus(survey.status);
+        setForm({
+          title: survey.title || "",
+          description: survey.description || "",
+          category: survey.category || "Market Research",
+          targetAudience: survey.targetAudience === "PREMIUM_ONLY" ? "PREMIUM_ONLY" : "ALL_VERIFIED",
+          responsesNeeded: survey.responsesNeeded || 100,
+          aiSpamFilterEnabled: survey.aiSpamFilterEnabled ?? false,
+          aiAnalyticsEnabled: survey.aiAnalyticsEnabled ?? false,
+          questions: survey.questions || [],
+        });
+        const savedStep = Math.min(Math.max(survey.draftStep ?? 0, 0), STEPS.length - 2);
+        setStep(savedStep);
+      } catch {
+        alert("Could not load saved campaign");
+        router.push("/researcher/campaigns");
+      } finally {
+        setLoadingResume(false);
+      }
+    };
+
+    void loadDraft();
+  }, [resumeId, user, router]);
 
   const fetchPricing = useCallback(async () => {
     if (!form.questions.length) {
@@ -99,49 +157,85 @@ export default function NewCampaignPage() {
       ? pricing?.rewardPerResponsePremium
       : pricing?.rewardPerResponseStandard;
 
-  const saveDraft = async () => {
-    const payload = {
-      title: form.title,
-      description: form.description,
+  const saveDraft = async (nextStep: number) => {
+    const payload: Record<string, unknown> = {
+      title: form.title.trim(),
+      description: form.description.trim(),
       category: form.category,
       targetAudience: form.targetAudience,
       responsesNeeded: form.responsesNeeded,
       aiSpamFilterEnabled: form.aiSpamFilterEnabled,
       aiAnalyticsEnabled: form.aiAnalyticsEnabled,
-      questions: form.questions,
+      draftStep: nextStep,
     };
+
+    if (!questionsLocked) {
+      payload.questions = form.questions.map((q) => ({
+        ...q,
+        questionText: q.questionText.trim(),
+      }));
+    }
+
     if (surveyId) {
       const { data } = await api.patch(`/surveys/${surveyId}`, payload);
-      return data.survey._id;
+      setSurveyStatus(data.survey.status);
+      return data.survey._id as string;
     }
-    const { data } = await api.post("/surveys", payload);
+    const { data } = await api.post("/surveys", {
+      ...payload,
+      questions: form.questions.map((q) => ({
+        ...q,
+        questionText: q.questionText.trim(),
+      })),
+    });
     setSurveyId(data.survey._id);
-    return data.survey._id;
+    setSurveyStatus(data.survey.status);
+    return data.survey._id as string;
+  };
+
+  const validateCurrentStep = (): string | null => {
+    if (step === 0) return validateDetails(form.title, form.description);
+    if (step === 1 && !questionsLocked) return validateCampaignQuestions(form.questions);
+    return null;
   };
 
   const handleNext = async () => {
-    if (step === 1 && !form.questions.length) {
-      alert("Add at least one question");
+    const validationError = validateCurrentStep();
+    if (validationError) {
+      alert(validationError);
       return;
     }
+
     if (step < 4) {
       setLoading(true);
       try {
-        await saveDraft();
+        await saveDraft(step + 1);
         setStep((s) => s + 1);
+      } catch (err: unknown) {
+        const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+        alert(msg || "Failed to save campaign");
       } finally {
         setLoading(false);
       }
       return;
     }
     if (step === 4) {
-      setStep(5);
+      setLoading(true);
+      try {
+        await saveDraft(5);
+        setStep(5);
+      } catch (err: unknown) {
+        const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+        alert(msg || "Failed to save campaign");
+      } finally {
+        setLoading(false);
+      }
       return;
     }
     if (step === 5) {
       setLoading(true);
       try {
-        const id = surveyId || (await saveDraft());
+        const id = surveyId || (await saveDraft(5));
         const { data } = await api.post(`/surveys/${id}/launch`, {});
         if (data.authorizationUrl) {
           window.location.href = data.authorizationUrl;
@@ -160,16 +254,23 @@ export default function NewCampaignPage() {
   return (
     <DashboardShell
       user={user}
-      title="Create Campaign"
+      title={resumeId ? "Continue Campaign" : "Create Campaign"}
       subtitle={`Step ${step + 1} of ${STEPS.length}  ${STEPS[step]}`}
-      loading={isLoading}
+      loading={isLoading || loadingResume}
       backHref="/researcher/campaigns"
       breadcrumbs={[
         { label: "Campaigns", href: "/researcher/campaigns" },
-        { label: "New Campaign" },
+        { label: resumeId ? "Continue" : "New Campaign" },
       ]}
       maxWidth="narrow"
     >
+      {questionsLocked && (
+        <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          Payment was started but not completed. You can review questions and edit campaign settings,
+          but questions are locked until payment is complete.
+        </div>
+      )}
+
       <div className="mb-6 -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
         {STEPS.map((s, i) => (
           <span
@@ -197,7 +298,6 @@ export default function NewCampaignPage() {
                 className="input"
                 value={form.title}
                 onChange={(e) => setForm({ ...form, title: e.target.value })}
-                required
               />
             </div>
             <div>
@@ -206,7 +306,6 @@ export default function NewCampaignPage() {
                 className="input min-h-[100px]"
                 value={form.description}
                 onChange={(e) => setForm({ ...form, description: e.target.value })}
-                required
               />
             </div>
             <div>
@@ -229,6 +328,7 @@ export default function NewCampaignPage() {
           <SurveyBuilder
             questions={form.questions}
             onChange={(q) => setForm({ ...form, questions: q })}
+            readOnly={questionsLocked}
           />
         )}
         {step === 2 && (
@@ -413,7 +513,11 @@ export default function NewCampaignPage() {
           </div>
         )}
         {step === 5 && (
-          <p className="text-gray-600">Redirecting to Paystack for payment...</p>
+          <p className="text-gray-600">
+            {questionsLocked
+              ? "Click below to return to Paystack and complete your payment."
+              : "Redirecting to Paystack for payment..."}
+          </p>
         )}
         {step === 6 && (
           <div className="text-center">
@@ -448,7 +552,9 @@ export default function NewCampaignPage() {
             {loading
               ? "Saving..."
               : step === 5
-                ? "Pay with Paystack"
+                ? questionsLocked
+                  ? "Complete Payment"
+                  : "Pay with Paystack"
                 : step === 4
                   ? "Proceed to Payment"
                   : "Next"}

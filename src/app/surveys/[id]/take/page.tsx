@@ -10,6 +10,7 @@ import { QuestionRenderer } from "@/components/QuestionRenderer";
 import { ProgressBar } from "@/components/ProgressBar";
 import { formatCurrency, getEstimatedMinutes } from "@/lib/utils";
 import { canTakeSurvey } from "@/lib/verification";
+import { isAnswerEmpty } from "@/lib/surveyValidation";
 import type { Survey, Answer } from "@/types";
 
 export default function TakeSurveyPage() {
@@ -56,7 +57,7 @@ export default function TakeSurveyPage() {
   const handleNext = async () => {
     if (!question) return;
     const value = answers[question.questionId];
-    if (question.required && (value === undefined || value === "" || value === null)) {
+    if (question.required && isAnswerEmpty(question, value)) {
       alert("This question is required");
       return;
     }
@@ -135,7 +136,9 @@ export default function TakeSurveyPage() {
             <QuestionRenderer
               question={question}
               value={answers[question.questionId]}
-              onChange={(v) => setAnswers({ ...answers, [question.questionId]: v })}
+              onChange={(v) =>
+                setAnswers((prev) => ({ ...prev, [question.questionId]: v }))
+              }
             />
           )}
         </div>

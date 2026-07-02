@@ -18,7 +18,7 @@ export function QuestionRenderer({
       <h2 className="text-2xl font-semibold text-gray-900">{question.questionText}</h2>
       {question.required && <p className="text-sm text-gray-500">Required</p>}
 
-      {(question.type === "text_short") && (
+      {(question.type === "text_short" || question.type === "text") && (
         <input
           type="text"
           className="input"

@@ -37,19 +37,26 @@ function defaultOptions(type: QuestionType): string[] {
 function QuestionOptionsEditor({
   options,
   onChange,
+  readOnly = false,
 }: {
   options: string[];
   onChange: (options: string[]) => void;
+  readOnly?: boolean;
 }) {
   const updateOption = (index: number, value: string) => {
+    if (readOnly) return;
     const next = [...options];
     next[index] = value;
     onChange(next);
   };
 
-  const addOption = () => onChange([...options, `Option ${options.length + 1}`]);
+  const addOption = () => {
+    if (readOnly) return;
+    onChange([...options, `Option ${options.length + 1}`]);
+  };
 
   const removeOption = (index: number) => {
+    if (readOnly) return;
     if (options.length <= 2) return;
     onChange(options.filter((_, i) => i !== index));
   };
@@ -68,8 +75,10 @@ function QuestionOptionsEditor({
             className="input flex-1"
             placeholder={`Option ${i + 1}`}
             value={opt}
+            readOnly={readOnly}
             onChange={(e) => updateOption(i, e.target.value)}
           />
+          {!readOnly && (
           <button
             type="button"
             onClick={() => removeOption(i)}
@@ -79,8 +88,10 @@ function QuestionOptionsEditor({
           >
             <X className="h-4 w-4" />
           </button>
+          )}
         </div>
       ))}
+      {!readOnly && (
       <button
         type="button"
         onClick={addOption}
@@ -88,6 +99,7 @@ function QuestionOptionsEditor({
       >
         <Plus className="h-4 w-4" /> Add option
       </button>
+      )}
     </div>
   );
 }
@@ -95,11 +107,14 @@ function QuestionOptionsEditor({
 export function SurveyBuilder({
   questions,
   onChange,
+  readOnly = false,
 }: {
   questions: Question[];
   onChange: (questions: Question[]) => void;
+  readOnly?: boolean;
 }) {
   const addQuestion = () => {
+    if (readOnly) return;
     onChange([
       ...questions,
       {
@@ -113,16 +128,19 @@ export function SurveyBuilder({
   };
 
   const updateQuestion = (index: number, updates: Partial<Question>) => {
+    if (readOnly) return;
     const next = [...questions];
     next[index] = { ...next[index], ...updates };
     onChange(next);
   };
 
   const removeQuestion = (index: number) => {
+    if (readOnly) return;
     onChange(questions.filter((_, i) => i !== index));
   };
 
   const duplicateQuestion = (index: number) => {
+    if (readOnly) return;
     const q = questions[index];
     const copy = {
       ...q,
@@ -136,6 +154,7 @@ export function SurveyBuilder({
   };
 
   const moveQuestion = (index: number, direction: -1 | 1) => {
+    if (readOnly) return;
     const newIndex = index + direction;
     if (newIndex < 0 || newIndex >= questions.length) return;
     const next = [...questions];
@@ -145,6 +164,12 @@ export function SurveyBuilder({
 
   return (
     <div className="space-y-4">
+      {readOnly && questions.length > 0 && (
+        <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          Questions are locked while payment is pending. You can still edit campaign details and
+          complete payment.
+        </p>
+      )}
       {questions.length === 0 && (
         <div className="rounded-xl border border-dashed border-gray-200 bg-gray-50/50 px-6 py-10 text-center">
           <p className="text-sm text-gray-500">No questions yet. Add your first question below.</p>
@@ -173,6 +198,8 @@ export function SurveyBuilder({
                 </span>
               </div>
               <div className="flex items-center gap-1">
+                {!readOnly && (
+                  <>
                 <button
                   type="button"
                   className="rounded-lg px-2 py-1 text-xs font-medium text-gray-500 hover:bg-white"
@@ -205,6 +232,8 @@ export function SurveyBuilder({
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
+                  </>
+                )}
               </div>
             </div>
 
@@ -215,10 +244,12 @@ export function SurveyBuilder({
                   className="input"
                   placeholder="What would you like to ask?"
                   value={q.questionText}
+                  readOnly={readOnly}
                   onChange={(e) => updateQuestion(i, { questionText: e.target.value })}
                 />
               </div>
 
+              {!readOnly && (
               <div>
                 <label className="label">Type</label>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
@@ -249,11 +280,13 @@ export function SurveyBuilder({
                   })}
                 </div>
               </div>
+              )}
 
               {["single_choice", "multiple_choice"].includes(q.type) && (
                 <QuestionOptionsEditor
                   options={q.options || []}
                   onChange={(options) => updateQuestion(i, { options })}
+                  readOnly={readOnly}
                 />
               )}
 
@@ -263,6 +296,7 @@ export function SurveyBuilder({
                 </p>
               )}
 
+              {!readOnly && (
               <label className="flex cursor-pointer items-center gap-2.5 rounded-xl border border-gray-100 bg-gray-50/50 px-3 py-2.5">
                 <input
                   type="checkbox"
@@ -272,11 +306,13 @@ export function SurveyBuilder({
                 />
                 <span className="text-sm font-medium text-gray-700">Required question</span>
               </label>
+              )}
             </div>
           </motion.div>
         );
       })}
 
+      {!readOnly && (
       <motion.button
         type="button"
         onClick={addQuestion}
@@ -286,6 +322,7 @@ export function SurveyBuilder({
       >
         <Plus className="h-4 w-4" /> Add Question
       </motion.button>
+      )}
     </div>
   );
 }
