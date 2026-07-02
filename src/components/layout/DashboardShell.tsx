@@ -58,16 +58,16 @@ export function DashboardShell({
   const isResearcher = role === "researcher";
 
   return (
-    <div className="min-h-screen bg-paper">
+    <div className="min-h-screen overflow-x-hidden bg-paper">
       <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(31,157,99,0.07),transparent_55%),radial-gradient(ellipse_at_bottom_left,rgba(221,214,200,0.4),transparent_55%)]" />
-      <div className="relative flex min-h-screen">
+      <div className="relative flex min-h-screen min-w-0">
         <AppSidebar
           items={nav}
           user={user}
           showCreateAction={showCreateAction ?? isResearcher}
         />
 
-        <div className="flex min-h-screen flex-1 flex-col lg:min-w-0">
+        <div className="flex min-h-screen min-w-0 flex-1 flex-col overflow-x-hidden">
           <header className="sticky top-0 z-30 flex h-16 shrink-0 items-center justify-between border-b border-ink-900/[0.07] bg-paper/80 px-4 backdrop-blur-xl sm:px-6">
             <div className="flex min-w-0 items-center gap-3">
               {backHref && (
@@ -108,7 +108,7 @@ export function DashboardShell({
 
           <main
             className={cn(
-              "flex-1 p-4 pb-24 sm:p-6 lg:pb-8",
+              "flex-1 min-w-0 max-w-full overflow-x-hidden p-4 pb-24 sm:p-6 lg:pb-8",
               maxWidth === "narrow" && "mx-auto w-full max-w-form",
               maxWidth === "wide" && "mx-auto w-full max-w-dashboard"
             )}
@@ -122,7 +122,7 @@ export function DashboardShell({
                   className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between"
                 >
                   <div>
-                    <h1 className="font-display text-[1.65rem] font-medium tracking-tight text-ink-900 sm:text-[1.9rem]">
+                    <h1 className="font-display text-xl font-medium tracking-tight text-ink-900 sm:text-[1.9rem]">
                       {title}
                     </h1>
                     {subtitle && (

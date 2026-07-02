@@ -33,7 +33,7 @@ export function ResponseList({
             <button
               type="button"
               onClick={() => onSelect(r)}
-              className="group flex w-full items-center gap-4 px-4 py-4 text-left transition hover:bg-primary-50/40"
+              className="group flex w-full items-center gap-3 px-3 py-4 text-left transition hover:bg-primary-50/40 sm:gap-4 sm:px-4"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-600 group-hover:bg-primary-100 group-hover:text-primary-700">
                 {(r.userId?.name || r.userId?.email || "?")[0].toUpperCase()}
@@ -45,7 +45,7 @@ export function ResponseList({
                 <p className="text-xs text-gray-500">{formatDate(r.createdAt)}</p>
               </div>
               <ResponseStatusBadge status={r.status} spamSuspected={r.spamSuspected} />
-              <span className="hidden font-semibold text-primary-600 sm:block">
+              <span className="hidden shrink-0 font-semibold text-primary-600 sm:inline">
                 {formatCurrency(r.rewardAmount)}
               </span>
               <ChevronRight className="h-4 w-4 shrink-0 text-gray-300 transition group-hover:text-primary-500" />

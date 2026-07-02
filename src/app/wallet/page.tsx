@@ -30,6 +30,13 @@ export default function WalletPage() {
       return data.transactions;
     },
     enabled: !!user,
+    refetchInterval: (query) => {
+      const txs = query.state.data;
+      const hasPendingWithdrawal = txs?.some(
+        (t) => t.type === "WITHDRAWAL" && t.status === "PENDING"
+      );
+      return hasPendingWithdrawal ? 5000 : false;
+    },
   });
 
   return (

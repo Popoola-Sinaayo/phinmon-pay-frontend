@@ -66,7 +66,7 @@ export function ResponseDetailDrawer({
             transition={{ type: "spring", stiffness: 380, damping: 36 }}
             className="fixed inset-y-0 right-0 z-50 flex w-full max-w-lg flex-col border-l border-gray-200 bg-white shadow-2xl"
           >
-            <div className="flex items-start justify-between border-b border-gray-100 px-5 py-4">
+            <div className="flex items-start justify-between gap-3 border-b border-gray-100 px-4 py-4 sm:px-5">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
                   Response detail
@@ -85,7 +85,7 @@ export function ResponseDetailDrawer({
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto px-5 py-4">
+            <div className="flex-1 overflow-y-auto px-4 py-4 sm:px-5">
               <div className="flex flex-wrap gap-2">
                 <ResponseStatusBadge
                   status={response.status}
@@ -133,7 +133,7 @@ export function ResponseDetailDrawer({
             </div>
 
             {response.status === "PENDING" && (
-              <div className="flex flex-col gap-3 border-t border-gray-100 p-5">
+              <div className="flex flex-col gap-3 border-t border-gray-100 p-4 sm:flex-row sm:p-5">
                 <div className="flex gap-3">
                   <button
                     type="button"
@@ -195,7 +195,7 @@ export function ResponseDetailDrawer({
             )}
 
             {response.status === "APPROVED" && (
-              <div className="border-t border-gray-100 p-5">
+              <div className="border-t border-gray-100 p-4 sm:p-5">
                 {!showFlagConfirm ? (
                   <button
                     type="button"

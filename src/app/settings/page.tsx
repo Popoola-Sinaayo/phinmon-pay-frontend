@@ -1,16 +1,29 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import { api, setAuthToken } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { DashboardShell } from "@/components/layout/DashboardShell";
+import { SetWithdrawalPinForm } from "@/components/wallet/SetWithdrawalPinForm";
 import { MotionCard } from "@/components/motion";
 import { motion } from "framer-motion";
-import { LogOut, Mail, Shield, Crown, User as UserIcon } from "lucide-react";
+import { KeyRound, LogOut, Mail, Shield, Crown, User as UserIcon } from "lucide-react";
 
 export default function SettingsPage() {
   const router = useRouter();
   const { user, isLoading } = useRequireAuth();
+
+  const { data: pinStatus } = useQuery({
+    queryKey: ["withdrawal-pin-status"],
+    queryFn: async () => {
+      const { data } = await api.get<{ pinSet: boolean }>("/users/withdrawal-pin/status");
+      return data.pinSet;
+    },
+    enabled: !!user && user.role === "respondent",
+  });
+
+  const pinSet = pinStatus ?? user?.withdrawalPinSet ?? false;
 
   const handleLogout = async () => {
     await api.post("/auth/logout");
@@ -64,6 +77,23 @@ export default function SettingsPage() {
               </p>
             </motion.div>
           ))}
+
+          {user.role === "respondent" && (
+            <div className="border-t border-gray-100 pt-6">
+              <div className="mb-4 flex items-center gap-3">
+                <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-50">
+                  <KeyRound className="h-4 w-4 text-primary-600" />
+                </div>
+                <div>
+                  <p className="font-semibold text-gray-900">Withdrawal PIN</p>
+                  <p className="text-xs text-gray-500">
+                    {pinSet ? "PIN is set" : "Required before you can withdraw"}
+                  </p>
+                </div>
+              </div>
+              <SetWithdrawalPinForm pinSet={pinSet} />
+            </div>
+          )}
 
           <div className="pt-4">
             <motion.button

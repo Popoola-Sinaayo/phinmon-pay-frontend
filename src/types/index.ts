@@ -9,6 +9,7 @@ export interface User {
   ninVerified: boolean;
   livenessVerified: boolean;
   status: UserStatus;
+  withdrawalPinSet?: boolean;
   createdAt?: string;
 }
 

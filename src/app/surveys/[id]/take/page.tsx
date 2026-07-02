@@ -140,17 +140,22 @@ export default function TakeSurveyPage() {
           )}
         </div>
       </div>
-      <div className="border-t border-gray-100 px-4 py-4">
-        <div className="mx-auto flex max-w-survey justify-between">
+      <div className="border-t border-gray-100 px-4 py-4 pb-safe">
+        <div className="mx-auto flex max-w-survey flex-col-reverse gap-3 sm:flex-row sm:justify-between">
           <button
             type="button"
-            className="btn-secondary"
+            className="btn-secondary w-full sm:w-auto"
             disabled={currentIndex === 0}
             onClick={() => setCurrentIndex((i) => i - 1)}
           >
             Back
           </button>
-          <button type="button" className="btn-primary" onClick={handleNext} disabled={submitting}>
+          <button
+            type="button"
+            className="btn-primary w-full sm:w-auto"
+            onClick={handleNext}
+            disabled={submitting}
+          >
             {submitting ? "Submitting..." : isLast ? "Submit" : "Next"}
           </button>
         </div>

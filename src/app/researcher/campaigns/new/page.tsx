@@ -7,6 +7,7 @@ import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { SurveyBuilder } from "@/components/SurveyBuilder";
+import { usePricingConfig } from "@/lib/pricingConfig";
 import type { Question } from "@/types";
 
 const STEPS = ["Details", "Questions", "Audience", "Budget", "Review", "Payment", "Launch"];
@@ -49,6 +50,11 @@ export default function NewCampaignPage() {
   const [surveyId, setSurveyId] = useState<string | null>(null);
   const [pricing, setPricing] = useState<PricingPreview | null>(null);
   const [pricingLoading, setPricingLoading] = useState(false);
+  const pricingConfig = usePricingConfig();
+  const premiumMultiplier =
+    pricingConfig.standardRatePerMinute > 0
+      ? pricingConfig.premiumRatePerMinute / pricingConfig.standardRatePerMinute
+      : 2;
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -164,12 +170,12 @@ export default function NewCampaignPage() {
       ]}
       maxWidth="narrow"
     >
-      <div className="mb-6 flex gap-1.5 overflow-x-auto pb-1">
+      <div className="mb-6 -mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
         {STEPS.map((s, i) => (
           <span
             key={s}
             className={cn(
-              "shrink-0 rounded-full px-3 py-1.5 text-xs font-semibold transition-colors",
+              "shrink-0 rounded-full px-2.5 py-1.5 text-[11px] font-semibold transition-colors sm:px-3 sm:text-xs",
               i === step
                 ? "bg-gray-900 text-white"
                 : i < step
@@ -244,8 +250,8 @@ export default function NewCampaignPage() {
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
                   {a === "ALL_VERIFIED"
-                    ? "NIN verified respondents  standard reward rate"
-                    : "NIN + liveness verified  premium reward rate (2×)"}
+                    ? `NIN verified respondents — ${formatCurrency(pricingConfig.standardRatePerMinute)}/min standard rate`
+                    : `NIN + liveness verified — ${formatCurrency(pricingConfig.premiumRatePerMinute)}/min premium rate (${premiumMultiplier}×)`}
                 </p>
               </button>
             ))}
@@ -285,7 +291,8 @@ export default function NewCampaignPage() {
                     AI spam filtering
                   </span>
                   <span className="text-xs text-gray-500">
-                    ₦20 per response  flags nonsensical text answers for review
+                    {formatCurrency(pricingConfig.aiSpamFilterCostPerResponse)} per response —
+                    flags nonsensical text answers for review
                   </span>
                 </span>
               </label>
@@ -303,7 +310,8 @@ export default function NewCampaignPage() {
                     AI analytics chat
                   </span>
                   <span className="text-xs text-gray-500">
-                    ₦5,000 flat  unlimited Q&amp;A about your survey results
+                    {formatCurrency(pricingConfig.aiAnalyticsCost)} flat — unlimited Q&amp;A about
+                    your survey results
                   </span>
                 </span>
               </label>
@@ -422,16 +430,21 @@ export default function NewCampaignPage() {
       </div>
 
       {step < 6 && (
-        <div className="mt-6 flex justify-between gap-3">
+        <div className="mt-6 flex flex-col-reverse justify-between gap-3 sm:flex-row">
           <button
             type="button"
-            className="btn-secondary"
+            className="btn-secondary w-full sm:w-auto"
             disabled={step === 0}
             onClick={() => setStep((s) => s - 1)}
           >
             Back
           </button>
-          <button type="button" className="btn-primary" onClick={handleNext} disabled={loading}>
+          <button
+            type="button"
+            className="btn-primary w-full sm:w-auto"
+            onClick={handleNext}
+            disabled={loading}
+          >
             {loading
               ? "Saving..."
               : step === 5

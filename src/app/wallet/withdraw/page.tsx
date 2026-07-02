@@ -7,6 +7,8 @@ import { motion } from "framer-motion";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { DashboardShell } from "@/components/layout/DashboardShell";
+import { SetWithdrawalPinForm } from "@/components/wallet/SetWithdrawalPinForm";
+import { WithdrawalStatusPanel } from "@/components/wallet/WithdrawalStatusPanel";
 import { formatCurrency } from "@/lib/utils";
 import type { BankAccount } from "@/types";
 
@@ -17,6 +19,11 @@ export default function WithdrawPage() {
   const [bankId, setBankId] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [withdrawPin, setWithdrawPin] = useState("");
+  const [pendingWithdrawal, setPendingWithdrawal] = useState<{
+    id: string;
+    amount: number;
+  } | null>(null);
 
   const { data: wallet } = useQuery({
     queryKey: ["wallet"],
@@ -38,6 +45,17 @@ export default function WithdrawPage() {
     queryFn: async () =>
       (await api.get("/wallet/banks")).data.banks as { name: string; code: string }[],
   });
+
+  const { data: pinStatus, refetch: refetchPinStatus } = useQuery({
+    queryKey: ["withdrawal-pin-status"],
+    queryFn: async () => {
+      const { data } = await api.get<{ pinSet: boolean }>("/users/withdrawal-pin/status");
+      return data.pinSet;
+    },
+    enabled: !!user,
+  });
+
+  const pinSet = pinStatus ?? user?.withdrawalPinSet ?? false;
 
   const [newBank, setNewBank] = useState({ bankName: "", bankCode: "", accountNumber: "" });
   const [addingBank, setAddingBank] = useState(false);
@@ -101,8 +119,11 @@ export default function WithdrawPage() {
     setLoading(true);
     setError("");
     try {
-      await api.post("/wallet/withdrawals", { amount: Number(amount), bankId });
-      router.push("/wallet");
+      const { data } = await api.post<{
+        withdrawal: { _id: string; amount: number; status: string };
+      }>("/wallet/withdrawals", { amount: Number(amount), bankId, pin: withdrawPin });
+      setPendingWithdrawal({ id: data.withdrawal._id, amount: data.withdrawal.amount });
+      setWithdrawPin("");
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
       setError(msg || "Withdrawal failed");
@@ -117,14 +138,35 @@ export default function WithdrawPage() {
       title="Withdraw Funds"
       subtitle={`Available: ${formatCurrency(wallet?.availableBalance || 0)} · Minimum: ₦100`}
       loading={isLoading}
-      backHref="/wallet"
+      backHref={pendingWithdrawal ? undefined : "/wallet"}
       breadcrumbs={[
         { label: "Wallet", href: "/wallet" },
         { label: "Withdraw" },
       ]}
       maxWidth="narrow"
     >
-      {!banks?.length ? (
+      {pendingWithdrawal ? (
+        <WithdrawalStatusPanel
+          withdrawalId={pendingWithdrawal.id}
+          amount={pendingWithdrawal.amount}
+          onDone={() => router.push("/wallet")}
+        />
+      ) : !pinSet ? (
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="card space-y-4"
+        >
+          <h2 className="font-semibold text-gray-900">Set withdrawal PIN</h2>
+          <p className="text-sm text-gray-500">
+            You need a PIN before you can withdraw earnings. Choose a 4–6 digit code you will remember.
+          </p>
+          <SetWithdrawalPinForm
+            pinSet={false}
+            onSuccess={() => refetchPinStatus()}
+          />
+        </motion.div>
+      ) : !banks?.length ? (
         <motion.form
           onSubmit={handleAddBank}
           initial={{ opacity: 0, y: 12 }}
@@ -177,7 +219,7 @@ export default function WithdrawPage() {
               <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
                 Account name
               </p>
-              <p className="text-sm font-semibold text-gray-900">{resolvedName}</p>
+              <p className="break-words text-sm font-semibold text-gray-900">{resolvedName}</p>
             </div>
           )}
           {resolveError && !resolving && (
@@ -215,23 +257,41 @@ export default function WithdrawPage() {
           <div>
             <label className="label">Bank Account</label>
             <select
-              className="input"
+              className="input max-w-full truncate"
               value={bankId}
               onChange={(e) => setBankId(e.target.value)}
               required
             >
               {banks.map((b) => (
                 <option key={b._id} value={b._id}>
-                  {b.bankName}  {b.accountName} ({b.accountNumber})
+                  {b.bankName} · {b.accountName} ({b.accountNumber})
                 </option>
               ))}
             </select>
+          </div>
+          <div>
+            <label className="label">Withdrawal PIN</label>
+            <input
+              type="password"
+              className="input text-center tracking-[0.4em]"
+              value={withdrawPin}
+              onChange={(e) => setWithdrawPin(e.target.value.replace(/\D/g, "").slice(0, 6))}
+              inputMode="numeric"
+              pattern="[0-9]*"
+              maxLength={6}
+              autoComplete="off"
+              placeholder="••••"
+              required
+            />
+            <p className="mt-1 text-xs text-gray-500">
+              Enter your withdrawal PIN to confirm this transfer.
+            </p>
           </div>
           {error && (
             <p className="rounded-lg bg-error-500/10 px-3 py-2 text-sm text-error-600">{error}</p>
           )}
           <button type="submit" className="btn-primary w-full" disabled={loading}>
-            {loading ? "Processing..." : "Withdraw"}
+            {loading ? "Submitting..." : "Withdraw"}
           </button>
         </motion.form>
       )}

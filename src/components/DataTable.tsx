@@ -38,7 +38,7 @@ export function DataTable({
   }
 
   return (
-    <div className="overflow-hidden rounded-xl border border-gray-100 bg-white shadow-subtle">
+    <div className="max-w-full overflow-hidden rounded-xl border border-gray-100 bg-white shadow-subtle">
       <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead>
@@ -46,7 +46,7 @@ export function DataTable({
               {headers.map((h) => (
                 <th
                   key={h}
-                  className="px-4 py-3.5 text-left text-xs font-semibold uppercase tracking-wide text-gray-500"
+                  className="px-3 py-3 text-left text-xs font-semibold uppercase tracking-wide text-gray-500 sm:px-4 sm:py-3.5"
                 >
                   {h}
                 </th>
@@ -57,7 +57,13 @@ export function DataTable({
             {rows.map((row, i) => (
               <tr key={i} className="transition hover:bg-gray-50/60">
                 {row.map((cell, j) => (
-                  <td key={j} className="whitespace-nowrap px-4 py-3.5 text-gray-700">
+                  <td
+                    key={j}
+                    className={cn(
+                      "px-3 py-3 text-gray-700 sm:px-4 sm:py-3.5",
+                      j === 1 ? "max-w-[140px] break-words sm:max-w-none" : "whitespace-nowrap"
+                    )}
+                  >
                     {statusColumn === j ? <StatusCell value={cell} /> : cell}
                   </td>
                 ))}
