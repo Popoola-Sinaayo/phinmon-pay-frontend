@@ -13,6 +13,9 @@ export interface PricingConfig {
   lowestRewardPremium: number;
   aiAnalyticsCost: number;
   aiSpamFilterCostPerResponse: number;
+  timeWeights?: Record<string, number>;
+  questionTypeLabels?: Record<string, string>;
+  multipleChoiceTimeFormula?: string;
 }
 
 /** Fallback used until the backend responds (or if the request fails). */
@@ -46,6 +49,9 @@ export async function fetchPricingConfig(): Promise<PricingConfig> {
       aiAnalyticsCost: data.aiAnalyticsCost ?? DEFAULT_PRICING_CONFIG.aiAnalyticsCost,
       aiSpamFilterCostPerResponse:
         data.aiSpamFilterCostPerResponse ?? DEFAULT_PRICING_CONFIG.aiSpamFilterCostPerResponse,
+      timeWeights: data.timeWeights,
+      questionTypeLabels: data.questionTypeLabels,
+      multipleChoiceTimeFormula: data.multipleChoiceTimeFormula,
     };
   } catch {
     return DEFAULT_PRICING_CONFIG;

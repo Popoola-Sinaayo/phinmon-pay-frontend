@@ -10,6 +10,7 @@ import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { CampaignStatusBadge } from "@/components/Badges";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { SurveyBuilder } from "@/components/SurveyBuilder";
+import { SurveyPaymentStatusPanel } from "@/components/researcher/SurveyPaymentStatusPanel";
 import { formatCurrency, getEstimatedMinutes } from "@/lib/utils";
 import type { Survey } from "@/types";
 
@@ -66,9 +67,25 @@ export default function CampaignDetailPage() {
             </div>
 
             {survey.status === "PENDING_PAYMENT" && (
-              <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-                Payment incomplete. Continue setup to review your campaign and complete payment.
-              </p>
+              <div className="mt-4 space-y-3">
+                <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                  Payment incomplete. If you already paid on Paystack, confirm your transaction
+                  below. Otherwise continue setup to complete payment.
+                </p>
+                <SurveyPaymentStatusPanel
+                  surveyId={survey._id}
+                  onSuccess={() => window.location.reload()}
+                  onRetryPaystack={async () => {
+                    const { data } = await api.post<{ authorizationUrl?: string }>(
+                      `/surveys/${survey._id}/launch`,
+                      {}
+                    );
+                    if (data.authorizationUrl) {
+                      window.location.href = data.authorizationUrl;
+                    }
+                  }}
+                />
+              </div>
             )}
 
             {survey.status === "DRAFT" && (

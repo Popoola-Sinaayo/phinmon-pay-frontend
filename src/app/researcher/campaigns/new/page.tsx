@@ -7,6 +7,8 @@ import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { SurveyBuilder } from "@/components/SurveyBuilder";
+import { SurveyPricingBreakdown } from "@/components/researcher/SurveyPricingBreakdown";
+import { SurveyPaymentStatusPanel } from "@/components/researcher/SurveyPaymentStatusPanel";
 import { usePricingConfig } from "@/lib/pricingConfig";
 import { validateCampaignQuestions } from "@/lib/surveyValidation";
 import type { Question, Survey } from "@/types";
@@ -34,6 +36,8 @@ interface PricingPreview {
   estimatedTimeMinutes: number;
   rewardPerResponseStandard: number;
   rewardPerResponsePremium: number;
+  payoutPerResponse?: number;
+  budget?: number;
   platformFeeRate: number;
   platformFeeAmount: number;
   aiSpamFilterCost?: number;
@@ -41,6 +45,12 @@ interface PricingPreview {
   aiAddOnsCost?: number;
   totalCost: number;
   highComplexity: boolean;
+  questionBreakdown?: Array<{
+    index: number;
+    type: string;
+    seconds: number;
+    optionCount?: number;
+  }>;
 }
 
 const validateDetails = (title: string, description: string): string | null => {
@@ -112,7 +122,7 @@ function NewCampaignForm() {
           questions: survey.questions || [],
         });
         const savedStep = Math.min(Math.max(survey.draftStep ?? 0, 0), STEPS.length - 2);
-        setStep(savedStep);
+        setStep(survey.status === "PENDING_PAYMENT" ? Math.max(savedStep, 5) : savedStep);
       } catch {
         alert("Could not load saved campaign");
         router.push("/researcher/campaigns");
@@ -151,11 +161,6 @@ function NewCampaignForm() {
     const timer = setTimeout(fetchPricing, 300);
     return () => clearTimeout(timer);
   }, [step, fetchPricing]);
-
-  const applicableReward =
-    form.targetAudience === "PREMIUM_ONLY"
-      ? pricing?.rewardPerResponsePremium
-      : pricing?.rewardPerResponseStandard;
 
   const saveDraft = async (nextStep: number) => {
     const payload: Record<string, unknown> = {
@@ -236,7 +241,7 @@ function NewCampaignForm() {
       setLoading(true);
       try {
         const id = surveyId || (await saveDraft(5));
-        const { data } = await api.post(`/surveys/${id}/launch`, {});
+        const { data } = await api.post<{ authorizationUrl?: string }>(`/surveys/${id}/launch`, {});
         if (data.authorizationUrl) {
           window.location.href = data.authorizationUrl;
         } else {
@@ -248,6 +253,28 @@ function NewCampaignForm() {
       } finally {
         setLoading(false);
       }
+      return;
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    setSurveyStatus("ACTIVE");
+    setStep(6);
+  };
+
+  const handleRetryPaystack = async () => {
+    if (!surveyId) return;
+    setLoading(true);
+    try {
+      const { data } = await api.post<{ authorizationUrl?: string }>(`/surveys/${surveyId}/launch`, {});
+      if (data.authorizationUrl) {
+        window.location.href = data.authorizationUrl;
+      }
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      alert(msg || "Could not open Paystack");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -325,11 +352,19 @@ function NewCampaignForm() {
           </div>
         )}
         {step === 1 && (
-          <SurveyBuilder
-            questions={form.questions}
-            onChange={(q) => setForm({ ...form, questions: q })}
-            readOnly={questionsLocked}
-          />
+          <>
+            <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
+              <strong>Pricing note:</strong> Your campaign cost is not fixed upfront. It is
+              calculated from the estimated time to complete your questions — different question
+              types take different amounts of time. You will see the full breakdown on the Budget
+              step.
+            </div>
+            <SurveyBuilder
+              questions={form.questions}
+              onChange={(q) => setForm({ ...form, questions: q })}
+              readOnly={questionsLocked}
+            />
+          </>
         )}
         {step === 2 && (
           <div className="space-y-3">
@@ -417,60 +452,20 @@ function NewCampaignForm() {
               </label>
             </div>
 
-            <div className="rounded-xl border border-gray-100 bg-gray-50 p-4 text-sm">
-              {pricingLoading ? (
-                <p className="text-gray-500">Calculating pricing...</p>
-              ) : pricing ? (
-                <>
-                  <p>
-                    <strong>Estimated time:</strong> ~{pricing.estimatedTimeMinutes} min (
-                    {pricing.estimatedTimeSeconds}s)
-                  </p>
-                  <p className="mt-2">
-                    <strong>Reward per response:</strong>{" "}
-                    {formatCurrency(applicableReward || 0)}
-                    {form.targetAudience === "ALL_VERIFIED" && (
-                      <span className="text-gray-500">
-                        {" "}
-                        (premium tier: {formatCurrency(pricing.rewardPerResponsePremium)})
-                      </span>
-                    )}
-                  </p>
-                  <p className="mt-2">
-                    Response cost: {formatCurrency((applicableReward || 0) * form.responsesNeeded)}
-                  </p>
-                  <p>
-                    Platform fee ({pricing.platformFeeRate}%):{" "}
-                    {formatCurrency(pricing.platformFeeAmount)}
-                  </p>
-                  {(pricing.aiAddOnsCost || 0) > 0 && (
-                    <>
-                      {form.aiSpamFilterEnabled && (
-                        <p className="mt-2">
-                          AI spam filtering: {formatCurrency(pricing.aiSpamFilterCost || 0)}
-                        </p>
-                      )}
-                      {form.aiAnalyticsEnabled && (
-                        <p>
-                          AI analytics chat: {formatCurrency(pricing.aiAnalyticsCost || 0)}
-                        </p>
-                      )}
-                    </>
-                  )}
-                  <p className="mt-2 font-bold text-primary-600">
-                    Total due at launch: {formatCurrency(pricing.totalCost)}
-                  </p>
-                  {pricing.highComplexity && (
-                    <p className="mt-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
-                      This survey is flagged as high complexity due to multiple-choice questions with
-                      more than 10 options.
-                    </p>
-                  )}
-                </>
-              ) : (
-                <p className="text-gray-500">Add questions to see pricing estimate.</p>
-              )}
-            </div>
+            {pricing ? (
+              <SurveyPricingBreakdown
+                pricing={pricing}
+                pricingConfig={pricingConfig}
+                responsesNeeded={form.responsesNeeded}
+                targetAudience={form.targetAudience}
+                aiSpamFilterEnabled={form.aiSpamFilterEnabled}
+                aiAnalyticsEnabled={form.aiAnalyticsEnabled}
+              />
+            ) : pricingLoading ? (
+              <p className="text-sm text-gray-500">Calculating pricing...</p>
+            ) : (
+              <p className="text-sm text-gray-500">Add questions to see pricing estimate.</p>
+            )}
             <p className="text-xs text-gray-500">
               Reward is calculated automatically from estimated completion time. Researchers cannot
               override per-response payouts.
@@ -498,26 +493,35 @@ function NewCampaignForm() {
               <strong>AI analytics chat:</strong> {form.aiAnalyticsEnabled ? "Yes" : "No"}
             </p>
             {pricing && (
-              <>
-                <p>
-                  <strong>Estimated time:</strong> ~{pricing.estimatedTimeMinutes} min
-                </p>
-                <p>
-                  <strong>Reward per response:</strong> {formatCurrency(applicableReward || 0)}
-                </p>
-                <p>
-                  <strong>Total Cost:</strong> {formatCurrency(pricing.totalCost)}
-                </p>
-              </>
+              <SurveyPricingBreakdown
+                pricing={pricing}
+                pricingConfig={pricingConfig}
+                responsesNeeded={form.responsesNeeded}
+                targetAudience={form.targetAudience}
+                aiSpamFilterEnabled={form.aiSpamFilterEnabled}
+                aiAnalyticsEnabled={form.aiAnalyticsEnabled}
+                compact
+              />
             )}
           </div>
         )}
         {step === 5 && (
-          <p className="text-gray-600">
-            {questionsLocked
-              ? "Click below to return to Paystack and complete your payment."
-              : "Redirecting to Paystack for payment..."}
-          </p>
+          <div className="space-y-4">
+            {questionsLocked && surveyId ? (
+              <SurveyPaymentStatusPanel
+                surveyId={surveyId}
+                onSuccess={handlePaymentSuccess}
+                onRetryPaystack={() => void handleRetryPaystack()}
+                retryLoading={loading}
+              />
+            ) : (
+              <p className="text-gray-600">
+                You will be redirected to Paystack to complete payment. If the payment window does
+                not open or you are not redirected back after paying, return here and use
+                &quot;Confirm payment status&quot; on the next visit.
+              </p>
+            )}
+          </div>
         )}
         {step === 6 && (
           <div className="text-center">
@@ -553,7 +557,7 @@ function NewCampaignForm() {
               ? "Saving..."
               : step === 5
                 ? questionsLocked
-                  ? "Complete Payment"
+                  ? "Return to Paystack"
                   : "Pay with Paystack"
                 : step === 4
                   ? "Proceed to Payment"
