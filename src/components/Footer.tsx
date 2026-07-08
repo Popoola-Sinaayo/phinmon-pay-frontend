@@ -69,9 +69,30 @@ export function Footer() {
             <p className="text-sm text-gray-500">
               © {new Date().getFullYear()} Phinmon. All rights reserved.
             </p>
-            <p className="flex items-center gap-1 text-sm text-gray-500">
-              Built in Nigeria · Lagos · Abuja · PH
-            </p>
+            <div className="space-y-1 text-center sm:text-right">
+              <p className="flex items-center gap-1 text-sm text-gray-500">
+                Built in Nigeria · Lagos · Abuja · PH
+              </p>
+              <p className="text-sm text-gray-500">
+                Powered by{" "}
+                <a
+                  href="https://www.evergreenesoftware.com"
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-primary-400 hover:text-primary-300 transition-colors"
+                >
+                  Evergreene Software Ltd
+                </a>
+              </p>
+              <a
+                href="https://www.evergreenesoftware.com"
+                target="_blank"
+                rel="noreferrer"
+                className="block text-sm text-gray-500 hover:text-primary-400 transition-colors"
+              >
+                www.evergreenesoftware.com
+              </a>
+            </div>
           </div>
         </FadeIn>
       </div>
