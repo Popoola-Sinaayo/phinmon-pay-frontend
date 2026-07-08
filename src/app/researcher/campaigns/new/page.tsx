@@ -2,6 +2,7 @@
 
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { Users } from "lucide-react";
 import { cn, formatCurrency } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
@@ -30,6 +31,11 @@ const CATEGORIES = [
   "Political & Social",
   "Other",
 ];
+
+interface RespondentPoolStats {
+  verifiedRespondents: number;
+  premiumRespondents: number;
+}
 
 interface PricingPreview {
   estimatedTimeSeconds: number;
@@ -79,6 +85,8 @@ function NewCampaignForm() {
   const [surveyStatus, setSurveyStatus] = useState<string>("DRAFT");
   const [pricing, setPricing] = useState<PricingPreview | null>(null);
   const [pricingLoading, setPricingLoading] = useState(false);
+  const [respondentPool, setRespondentPool] = useState<RespondentPoolStats | null>(null);
+  const [respondentPoolLoading, setRespondentPoolLoading] = useState(false);
   const pricingConfig = usePricingConfig();
   const premiumMultiplier =
     pricingConfig.standardRatePerMinute > 0
@@ -96,6 +104,34 @@ function NewCampaignForm() {
   });
 
   const questionsLocked = surveyStatus === "PENDING_PAYMENT";
+
+  const availableForAudience =
+    form.targetAudience === "PREMIUM_ONLY"
+      ? respondentPool?.premiumRespondents
+      : respondentPool?.verifiedRespondents;
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchRespondentPool = async () => {
+      setRespondentPoolLoading(true);
+      try {
+        const { data } = await api.get<RespondentPoolStats & { success: boolean }>(
+          "/surveys/respondent-pool"
+        );
+        setRespondentPool({
+          verifiedRespondents: data.verifiedRespondents,
+          premiumRespondents: data.premiumRespondents,
+        });
+      } catch {
+        setRespondentPool(null);
+      } finally {
+        setRespondentPoolLoading(false);
+      }
+    };
+
+    void fetchRespondentPool();
+  }, [user]);
 
   useEffect(() => {
     if (!resumeId || !user) return;
@@ -413,6 +449,41 @@ function NewCampaignForm() {
         )}
         {step === 2 && (
           <div className="space-y-3">
+            <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+              <div className="flex items-center gap-2 text-sm font-semibold text-gray-900">
+                <Users className="h-4 w-4 text-primary-600" />
+                Respondent pool on Phinmon
+              </div>
+              {respondentPoolLoading ? (
+                <p className="mt-2 text-sm text-gray-500">Loading respondent counts…</p>
+              ) : respondentPool ? (
+                <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-lg border border-white bg-white px-3 py-2">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                      Verified respondents
+                    </p>
+                    <p className="mt-1 text-2xl font-bold text-gray-900">
+                      {respondentPool.verifiedRespondents.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-white bg-white px-3 py-2">
+                    <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
+                      Premium respondents
+                    </p>
+                    <p className="mt-1 text-2xl font-bold text-primary-600">
+                      {respondentPool.premiumRespondents.toLocaleString()}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-gray-500">Could not load respondent counts.</p>
+              )}
+              <p className="mt-3 text-xs text-gray-500">
+                Verified = NIN verified. Premium = NIN + liveness verified. Counts reflect active
+                respondents currently on the platform.
+              </p>
+            </div>
+
             {(["ALL_VERIFIED", "PREMIUM_ONLY"] as const).map((a) => (
               <button
                 key={a}
@@ -433,12 +504,29 @@ function NewCampaignForm() {
                     ? `NIN verified respondents — ${formatCurrency(pricingConfig.standardRatePerMinute)}/min standard rate`
                     : `NIN + liveness verified — ${formatCurrency(pricingConfig.premiumRatePerMinute)}/min premium rate (${premiumMultiplier}×)`}
                 </p>
+                {respondentPool && (
+                  <p className="mt-2 text-sm font-medium text-primary-700">
+                    {a === "ALL_VERIFIED"
+                      ? `${respondentPool.verifiedRespondents.toLocaleString()} verified respondents available`
+                      : `${respondentPool.premiumRespondents.toLocaleString()} premium respondents available`}
+                  </p>
+                )}
               </button>
             ))}
           </div>
         )}
         {step === 3 && (
           <div className="space-y-5">
+            {respondentPool && (
+              <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
+                <span className="font-medium text-gray-900">
+                  {availableForAudience?.toLocaleString() ?? "—"}
+                </span>{" "}
+                {form.targetAudience === "PREMIUM_ONLY" ? "premium" : "verified"} respondents
+                currently on the platform for your selected audience.
+              </div>
+            )}
+
             <div>
               <label className="label">Responses Needed</label>
               <input
@@ -450,6 +538,16 @@ function NewCampaignForm() {
                 }
                 min={1}
               />
+              {respondentPool &&
+                availableForAudience !== undefined &&
+                form.responsesNeeded > availableForAudience && (
+                  <p className="mt-2 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-900">
+                    You&apos;re requesting {form.responsesNeeded.toLocaleString()} responses, but
+                    only {availableForAudience.toLocaleString()}{" "}
+                    {form.targetAudience === "PREMIUM_ONLY" ? "premium" : "verified"} respondents
+                    are currently available. Your campaign may take longer to complete.
+                  </p>
+                )}
             </div>
 
             <div className="rounded-xl border border-gray-200 p-4">

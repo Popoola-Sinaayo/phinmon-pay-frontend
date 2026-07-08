@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Evergreene Marketing Volunteer Flyer</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e8e8;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, sans-serif;
+      padding: 24px;
+    }
+    .flyer {
+      width: 1080px;
+      height: 1440px;
+      background: #f7f6f2;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      color: #1a3d2f;
+      padding: 72px 64px 56px;
+    }
+    .dots {
+      position: absolute;
+      width: 180px;
+      height: 180px;
+      background-image: radial-gradient(#c8d5cf 1.5px, transparent 1.5px);
+      background-size: 14px 14px;
+      opacity: 0.7;
+    }
+    .dots-top { top: 40px; right: 48px; }
+    .dots-mid { top: 520px; left: 40px; }
+    .hills {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 280px;
+      pointer-events: none;
+    }
+    .hill {
+      position: absolute;
+      bottom: 0;
+      border-radius: 50% 50% 0 0;
+    }
+    .hill-1 {
+      width: 120%;
+      left: -10%;
+      height: 220px;
+      background: linear-gradient(180deg, #d8ebe2 0%, #c5dfd3 100%);
+    }
+    .hill-2 {
+      width: 90%;
+      right: -5%;
+      height: 180px;
+      background: linear-gradient(180deg, #b8d4c6 0%, #9fc7b3 100%);
+    }
+    .arrow {
+      position: absolute;
+      right: 60px;
+      bottom: 120px;
+      width: 120px;
+      height: 120px;
+      opacity: 0.25;
+    }
+    .logo {
+      width: 420px;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 36px;
+      position: relative;
+      z-index: 2;
+    }
+    .divider {
+      width: 80px;
+      height: 3px;
+      background: #1f9d63;
+      border-radius: 999px;
+      margin: 0 auto 40px;
+      position: relative;
+      z-index: 2;
+    }
+    h1 {
+      font-size: 58px;
+      line-height: 1.15;
+      font-weight: 800;
+      max-width: 900px;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+    }
+    h2 {
+      font-size: 34px;
+      line-height: 1.25;
+      font-weight: 700;
+      color: #2d6b52;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 2;
+    }
+    .body {
+      font-size: 24px;
+      line-height: 1.5;
+      color: #3d4a44;
+      max-width: 760px;
+      margin-bottom: 36px;
+      position: relative;
+      z-index: 2;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      background: #1a3d2f;
+      color: white;
+      padding: 16px 28px;
+      border-radius: 999px;
+      font-size: 20px;
+      font-weight: 600;
+      margin-bottom: 36px;
+      position: relative;
+      z-index: 2;
+    }
+    .badge-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #1f9d63;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+    }
+    .icon-logo {
+      width: 88px;
+      height: 88px;
+      border-radius: 20px;
+      margin-bottom: 28px;
+      position: relative;
+      z-index: 2;
+      box-shadow: 0 8px 24px rgba(31, 157, 99, 0.2);
+    }
+    .cta-title {
+      font-size: 30px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 2;
+    }
+    .email-box {
+      display: inline-flex;
+      align-items: center;
+      gap: 14px;
+      background: #1a3d2f;
+      color: white;
+      padding: 20px 36px;
+      border-radius: 999px;
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 32px;
+      position: relative;
+      z-index: 2;
+    }
+    .footer {
+      font-size: 20px;
+      color: #5a6b62;
+      position: relative;
+      z-index: 2;
+    }
+    .footer a {
+      color: #1f9d63;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer-powered {
+      margin-top: 8px;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="flyer" id="flyer">
+    <div class="dots dots-top"></div>
+    <div class="dots dots-mid"></div>
+
+    <img
+      class="logo"
+      src="/assets/evergreene-logo-horizontal.png"
+      alt="Evergreene Software"
+    />
+
+    <div class="divider"></div>
+
+    <h1>We're Looking for Marketing Volunteers</h1>
+    <h2>To take our product to market.</h2>
+
+    <p class="body">
+      A real product. Ready to launch. We need people who can help us get it in front of the right audience.
+    </p>
+
+    <div class="badge">
+      <span class="badge-icon">★</span>
+      Performance-based rewards when results are delivered
+    </div>
+
+    <img
+      class="icon-logo"
+      src="/assets/evergreene-logo-icon.png"
+      alt="Evergreene"
+    />
+
+    <p class="cta-title">Interested? Get in touch.</p>
+
+    <div class="email-box">
+      <span>✉</span>
+      hello@evergreenesoftware.com
+    </div>
+
+    <p class="footer">DM or email to join</p>
+    <p class="footer footer-powered">
+      Powered by <a href="https://www.evergreenesoftware.com">Evergreene Software Ltd</a><br />
+      <a href="https://www.evergreenesoftware.com">www.evergreenesoftware.com</a>
+    </p>
+
+    <div class="hills">
+      <div class="hill hill-1"></div>
+      <div class="hill hill-2"></div>
+    </div>
+    <svg class="arrow" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 80 L80 20 M80 20 H40 M80 20 V60" stroke="#1f9d63" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+</body>
+</html>
