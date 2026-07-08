@@ -134,6 +134,51 @@ function NewCampaignForm() {
     void loadDraft();
   }, [resumeId, user, router]);
 
+  // If the user opened this page while payment was still pending, the backend status may
+  // flip to ACTIVE while they keep the tab open. In that case we should stop showing the
+  // "questions are locked" state and redirect them to the campaign detail page.
+  useEffect(() => {
+    if (!resumeId || !user) return;
+    if (surveyStatus !== "PENDING_PAYMENT") return;
+
+    let active = true;
+    let polls = 0;
+    const MAX_POLLS = 60; // ~5 minutes
+
+    const pollSurveyStatus = async () => {
+      try {
+        const { data } = await api.get<{ survey: Survey }>(`/surveys/${resumeId}`);
+        if (!active) return;
+
+        const nextStatus = data.survey.status;
+        if (!["DRAFT", "PENDING_PAYMENT"].includes(nextStatus)) {
+          router.replace(`/researcher/campaigns/${resumeId}`);
+          return;
+        }
+
+        setSurveyStatus(nextStatus);
+      } catch {
+        // Ignore transient network errors and keep polling.
+      }
+    };
+
+    void pollSurveyStatus();
+
+    const intervalId = window.setInterval(() => {
+      polls += 1;
+      if (polls >= MAX_POLLS) {
+        window.clearInterval(intervalId);
+        return;
+      }
+      void pollSurveyStatus();
+    }, 5000);
+
+    return () => {
+      active = false;
+      window.clearInterval(intervalId);
+    };
+  }, [resumeId, user, router, surveyStatus]);
+
   const fetchPricing = useCallback(async () => {
     if (!form.questions.length) {
       setPricing(null);
