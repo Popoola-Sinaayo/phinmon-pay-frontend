@@ -132,7 +132,7 @@ export function SurveyPaymentStatusPanel({
   if (!payment) {
     return (
       <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-        No payment record found for this campaign. Use &quot;Pay with Paystack&quot; to start
+        No payment record found for this project. Use &quot;Pay with Paystack&quot; to start
         checkout.
       </div>
     );
@@ -177,7 +177,7 @@ export function SurveyPaymentStatusPanel({
           <span className="font-medium capitalize text-gray-900">{payment.status.toLowerCase()}</span>
         </p>
         <p className="mt-1">
-          <span className="text-gray-500">Campaign status:</span>{" "}
+          <span className="text-gray-500">Project status:</span>{" "}
           <span className="font-medium capitalize text-gray-900">
             {surveyStatus.replace(/_/g, " ").toLowerCase()}
           </span>

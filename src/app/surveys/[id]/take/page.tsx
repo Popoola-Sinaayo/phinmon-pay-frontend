@@ -86,7 +86,7 @@ export default function TakeSurveyPage() {
         router.push("/verification?step=liveness");
         return;
       }
-      alert(msg || "Failed to submit survey");
+      alert(msg || "Failed to submit task");
     } finally {
       setSubmitting(false);
     }

@@ -21,6 +21,7 @@ import { DashboardShell, QuickAction } from "@/components/layout/DashboardShell"
 import { StaggerList, StaggerItem } from "@/components/motion";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { getSurveyLockReason } from "@/lib/verification";
+import { usePlatformFeatures } from "@/lib/platformFeatures";
 import type { Survey } from "@/types";
 
 function getGreeting() {
@@ -32,6 +33,7 @@ function getGreeting() {
 
 export default function RespondentDashboard() {
   const { user, isLoading } = useRequireAuth("respondent");
+  const platformFeatures = usePlatformFeatures();
 
   const { data: dashboard, isLoading: loadingDash } = useQuery({
     queryKey: ["respondent-dashboard"],
@@ -60,8 +62,12 @@ export default function RespondentDashboard() {
       title={user ? `${getGreeting()}, ${firstName}` : "Dashboard"}
       subtitle={
         dashboard?.isPremium
-          ? "Premium member  higher-paying surveys unlocked"
-          : "Complete verification to unlock premium surveys and faster payouts"
+          ? "Premium member — higher-paying tasks unlocked"
+          : user?.ninVerified
+            ? platformFeatures.premiumLivenessComingSoon
+              ? "You're verified with NIN. Premium liveness check coming soon."
+              : "Complete premium verification for higher-paying tasks"
+            : "Verify your NIN to start earning from tasks"
       }
       loading={isLoading || loadingDash}
     >
@@ -80,10 +86,12 @@ export default function RespondentDashboard() {
                   </p>
                   <p className="mt-1 font-semibold text-gray-900">
                     {user.livenessVerified
-                      ? "You're all set  premium surveys unlocked"
+                      ? "You're all set — premium tasks unlocked"
                       : user.ninVerified
-                        ? "Complete premium verification for 3× higher payouts"
-                        : "Verify your NIN to start earning from surveys"}
+                        ? platformFeatures.premiumLivenessComingSoon
+                          ? "NIN verified. Premium liveness check coming soon."
+                          : "Complete premium verification for higher payouts"
+                        : "Verify your NIN to start earning from tasks"}
                   </p>
                 </div>
                 <Link href="/verification" className="btn-primary shrink-0 self-start">
@@ -128,7 +136,7 @@ export default function RespondentDashboard() {
 
           <StaggerList className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StaggerItem>
-              <QuickAction href="/surveys" icon={ClipboardList} label="Browse Surveys" />
+              <QuickAction href="/surveys" icon={ClipboardList} label="Browse Tasks" />
             </StaggerItem>
             <StaggerItem>
               <QuickAction href="/wallet" icon={Wallet} label="My Wallet" color="secondary" />
@@ -137,7 +145,12 @@ export default function RespondentDashboard() {
               <QuickAction href="/verification" icon={Shield} label="Verification" />
             </StaggerItem>
             <StaggerItem>
-              <QuickAction href="/verification" icon={Crown} label="Go Premium" color="amber" />
+              <QuickAction
+                href="/verification"
+                icon={Crown}
+                label={platformFeatures.premiumLivenessComingSoon ? "Premium (soon)" : "Go Premium"}
+                color="amber"
+              />
             </StaggerItem>
           </StaggerList>
 
@@ -148,7 +161,7 @@ export default function RespondentDashboard() {
               lifetime={dashboard?.wallet?.lifetimeEarnings || 0}
             />
             <MetricCard
-              title="Available Surveys"
+              title="Available Tasks"
               value={dashboard?.availableSurveys || 0}
               subtitle="Ready to complete"
               icon={ClipboardList}
@@ -166,8 +179,20 @@ export default function RespondentDashboard() {
             />
             <MetricCard
               title="Premium Status"
-              value={dashboard?.isPremium ? "Active" : "Standard"}
-              subtitle={dashboard?.isPremium ? "All tiers unlocked" : "Verify to upgrade"}
+              value={
+                dashboard?.isPremium
+                  ? "Active"
+                  : platformFeatures.premiumLivenessComingSoon
+                    ? "Coming soon"
+                    : "Standard"
+              }
+              subtitle={
+                dashboard?.isPremium
+                  ? "All tiers unlocked"
+                  : platformFeatures.premiumLivenessComingSoon
+                    ? "Liveness verification launches soon"
+                    : "Verify to upgrade"
+              }
               icon={Crown}
               iconColor="amber"
               className={dashboard?.isPremium ? "border-amber-200/80 bg-amber-50/20" : ""}
@@ -215,7 +240,7 @@ export default function RespondentDashboard() {
 
           <section className="mt-8">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Top Surveys For You</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Top Tasks For You</h2>
               <Link href="/surveys" className="text-sm font-medium text-primary-600 hover:underline">
                 View all →
               </Link>
@@ -234,9 +259,9 @@ export default function RespondentDashboard() {
               </div>
             ) : (
               <EmptyState
-                title="No surveys available yet"
-                description="New campaigns launch daily. Check back soon or enable notifications."
-                actionLabel="Browse Surveys"
+                title="No tasks available yet"
+                description="New projects launch daily. Check back soon or enable notifications."
+                actionLabel="Browse Tasks"
                 actionHref="/surveys"
               />
             )}

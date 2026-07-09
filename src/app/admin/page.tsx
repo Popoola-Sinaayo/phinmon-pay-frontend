@@ -39,7 +39,7 @@ export default function AdminPage() {
         items={[
           { href: "/admin", label: "Overview" },
           { href: "/admin/users", label: "Users" },
-          { href: "/admin/surveys", label: "Surveys" },
+          { href: "/admin/surveys", label: "Projects" },
           { href: "/admin/withdrawals", label: "Withdrawals" },
         ]}
       />
@@ -47,7 +47,7 @@ export default function AdminPage() {
         <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           <MetricCard title="Users" value={stats?.users || 0} />
-          <MetricCard title="Surveys" value={stats?.surveys || 0} />
+          <MetricCard title="Projects" value={stats?.surveys || 0} />
           <MetricCard title="Transactions" value={stats?.transactions || 0} />
           <MetricCard title="Withdrawals" value={stats?.withdrawals || 0} />
           <MetricCard title="Fraud Flags" value={stats?.fraudFlags || 0} />

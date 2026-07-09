@@ -84,8 +84,8 @@ export default function OnboardingPage() {
               <p className="font-semibold">Important  your details will be verified</p>
               <p className="mt-1 leading-relaxed text-amber-800/90">
                 Use your legal name and date of birth exactly as on your NIN. Mismatched information
-                may delay verification and survey access. You can explore the app now; identity
-                verification is required before taking surveys.
+                may delay verification and task access. You can explore the app now; identity
+                verification is required before completing tasks.
               </p>
             </div>
           </div>

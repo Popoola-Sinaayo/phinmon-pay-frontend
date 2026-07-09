@@ -50,11 +50,11 @@ export default function ResearcherDashboard() {
     <DashboardShell
       user={user}
       title={`Welcome back, ${firstName}`}
-      subtitle="Track campaigns, response quality, and spend in real time"
+      subtitle="Track projects, response quality, and spend in real time"
       loading={isLoading || loadingDash}
       actions={
         <Link href="/researcher/campaigns/new" className="btn-primary">
-          <Plus className="h-4 w-4" /> New Campaign
+          <Plus className="h-4 w-4" /> New Project
         </Link>
       }
     >
@@ -72,7 +72,7 @@ export default function ResearcherDashboard() {
                   <Sparkles className="h-4 w-4" /> Research Hub
                 </p>
                 <p className="mt-2 text-xl font-bold sm:text-2xl">
-                  {dashboard?.activeCampaigns || 0} active campaign
+                  {dashboard?.activeCampaigns || 0} active project
                   {(dashboard?.activeCampaigns || 0) !== 1 ? "s" : ""} collecting data
                 </p>
                 <p className="mt-1 text-sm text-gray-300">
@@ -84,14 +84,14 @@ export default function ResearcherDashboard() {
                 href="/researcher/campaigns"
                 className="inline-flex items-center gap-2 self-start rounded-xl bg-white/10 px-4 py-2.5 text-sm font-semibold backdrop-blur transition hover:bg-white/20"
               >
-                View all campaigns <ArrowUpRight className="h-4 w-4" />
+                View all projects <ArrowUpRight className="h-4 w-4" />
               </Link>
             </div>
           </motion.div>
 
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             <MetricCard
-              title="Total Campaigns"
+              title="Total Projects"
               value={dashboard?.totalCampaigns || 0}
               icon={ClipboardList}
               iconColor="primary"
@@ -193,14 +193,14 @@ export default function ResearcherDashboard() {
                 </span>
               </div>
               <p className="mt-4 font-semibold text-gray-900">Completion Rate</p>
-              <p className="text-sm text-gray-500">Across all campaigns</p>
+              <p className="text-sm text-gray-500">Across all projects</p>
             </motion.div>
           </div>
 
           {recentCampaigns && recentCampaigns.length > 0 && (
             <section className="mt-8">
               <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-lg font-semibold text-gray-900">Recent Campaigns</h2>
+                <h2 className="text-lg font-semibold text-gray-900">Recent Projects</h2>
                 <Link
                   href="/researcher/campaigns"
                   className="text-sm font-medium text-primary-600 hover:underline"

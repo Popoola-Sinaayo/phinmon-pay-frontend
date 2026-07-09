@@ -12,12 +12,14 @@ import { DashboardShell } from "@/components/layout/DashboardShell";
 import { MotionButton } from "@/components/motion";
 import { formatCurrency, getEstimatedMinutes } from "@/lib/utils";
 import { canTakeSurvey } from "@/lib/verification";
+import { usePlatformFeatures } from "@/lib/platformFeatures";
 import type { Survey } from "@/types";
 
 export default function SurveyDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { user, isLoading } = useRequireAuth("respondent");
+  const platformFeatures = usePlatformFeatures();
 
   const { data: survey, isLoading: loadingSurvey } = useQuery({
     queryKey: ["survey", id],
@@ -33,12 +35,12 @@ export default function SurveyDetailPage() {
   return (
     <DashboardShell
       user={user}
-      title={survey?.title || "Survey"}
+      title={survey?.title || "Task"}
       subtitle={survey?.description}
       loading={isLoading || loadingSurvey}
       backHref="/surveys"
       breadcrumbs={[
-        { label: "Surveys", href: "/surveys" },
+        { label: "Tasks", href: "/surveys" },
         { label: survey?.title || "Detail" },
       ]}
       maxWidth="narrow"
@@ -84,7 +86,7 @@ export default function SurveyDetailPage() {
                 <div>
                   <p className="font-semibold text-gray-900">NIN verification required</p>
                   <p className="mt-1 text-sm text-gray-600">
-                    Verify your identity with your NIN before taking this survey.
+                    Verify your identity with your NIN before taking this task.
                   </p>
                   <MotionButton
                     className="btn-primary mt-4"
@@ -102,15 +104,29 @@ export default function SurveyDetailPage() {
               <div className="flex gap-3">
                 <ShieldAlert className="mt-0.5 h-5 w-5 shrink-0 text-amber-600" />
                 <div>
-                  <p className="font-semibold text-gray-900">Premium liveness check required</p>
+                  <p className="font-semibold text-gray-900">
+                    {platformFeatures.premiumLivenessComingSoon
+                      ? "Premium tasks — coming soon"
+                      : "Premium liveness check required"}
+                  </p>
                   <p className="mt-1 text-sm text-gray-600">
-                    This is a premium survey. Complete a quick liveness verification to access it.
+                    {platformFeatures.premiumLivenessComingSoon
+                      ? "Premium liveness verification is being enabled soon. For now, browse NIN-verified tasks."
+                      : "This is a premium task. Complete a quick liveness verification to access it."}
                   </p>
                   <MotionButton
                     className="btn-primary mt-4"
-                    onClick={() => router.push("/verification?step=liveness")}
+                    onClick={() =>
+                      router.push(
+                        platformFeatures.premiumLivenessComingSoon
+                          ? "/surveys"
+                          : "/verification?step=liveness"
+                      )
+                    }
                   >
-                    Complete liveness check
+                    {platformFeatures.premiumLivenessComingSoon
+                      ? "Browse available tasks"
+                      : "Complete liveness check"}
                   </MotionButton>
                 </div>
               </div>
@@ -135,7 +151,7 @@ export default function SurveyDetailPage() {
                 href={`/surveys/${id}/take`}
                 className="btn-primary mt-4 inline-flex w-full justify-center sm:w-auto"
               >
-                Start Survey →
+                Start Task →
               </Link>
             </>
           )}

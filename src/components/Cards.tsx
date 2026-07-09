@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { cn, formatCurrency, getEstimatedMinutes } from "@/lib/utils";
+import { usePlatformFeatures } from "@/lib/platformFeatures";
 import type { Survey } from "@/types";
 import { PremiumBadge } from "./Badges";
 import { Clock, HelpCircle, TrendingUp } from "lucide-react";
@@ -25,6 +26,7 @@ export function SurveyCard({
   locked?: boolean;
   index?: number;
 }) {
+  const platformFeatures = usePlatformFeatures();
   const isLocked = lockReason || locked;
   return (
     <motion.div
@@ -53,11 +55,15 @@ export function SurveyCard({
       </div>
       {isLocked ? (
         <Link href={href} className="btn-secondary text-center">
-          {lockReason === "liveness" ? "Premium  verify to access" : "Verify identity to start"}
+          {lockReason === "liveness"
+            ? platformFeatures.premiumLivenessComingSoon
+              ? "Premium — coming soon"
+              : "Premium — verify to access"
+            : "Verify identity to start"}
         </Link>
       ) : (
         <Link href={href} className="btn-primary text-center">
-          View survey
+          View task
         </Link>
       )}
     </motion.div>

@@ -58,13 +58,18 @@ export function CampaignStatusBadge({ status }: { status: string }) {
   );
 }
 
-export function VerificationBadge({ status }: { status: "not_started" | "pending" | "verified" | "failed" | "locked" }) {
+export function VerificationBadge({
+  status,
+}: {
+  status: "not_started" | "pending" | "verified" | "failed" | "locked" | "coming_soon";
+}) {
   const styles = {
     not_started: "bg-gray-100 text-gray-700",
     pending: "bg-warning-500/10 text-warning-600",
     verified: "bg-primary-100 text-primary-700",
     failed: "bg-error-500/10 text-error-600",
     locked: "bg-gray-100 text-gray-500",
+    coming_soon: "bg-blue-50 text-blue-700",
   };
   const labels = {
     not_started: "Not Started",
@@ -72,6 +77,7 @@ export function VerificationBadge({ status }: { status: "not_started" | "pending
     verified: "Verified",
     failed: "Failed",
     locked: "Locked",
+    coming_soon: "Coming Soon",
   };
   return (
     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${styles[status]}`}>

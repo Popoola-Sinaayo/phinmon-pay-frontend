@@ -19,7 +19,7 @@ export type NavItem = {
 
 export const RESPONDENT_NAV: NavItem[] = [
   { href: "/dashboard", label: "Dashboard", shortLabel: "Home", icon: LayoutDashboard, exact: true },
-  { href: "/surveys", label: "Surveys", shortLabel: "Surveys", icon: ClipboardList },
+  { href: "/surveys", label: "Tasks", shortLabel: "Tasks", icon: ClipboardList },
   { href: "/wallet", label: "Wallet", shortLabel: "Wallet", icon: Wallet },
   { href: "/verification", label: "Verification", shortLabel: "Verify", icon: ShieldCheck, exact: true },
   { href: "/settings", label: "Settings", shortLabel: "Settings", icon: Settings, exact: true },
@@ -27,13 +27,13 @@ export const RESPONDENT_NAV: NavItem[] = [
 
 export const RESEARCHER_NAV: NavItem[] = [
   { href: "/researcher/dashboard", label: "Dashboard", shortLabel: "Home", icon: LayoutDashboard, exact: true },
-  { href: "/researcher/campaigns", label: "Campaigns", shortLabel: "Campaigns", icon: ClipboardList },
+  { href: "/researcher/campaigns", label: "Projects", shortLabel: "Projects", icon: ClipboardList },
   { href: "/settings", label: "Settings", shortLabel: "Settings", icon: Settings, exact: true },
 ];
 
 export const RESEARCHER_CREATE: NavItem = {
   href: "/researcher/campaigns/new",
-  label: "New Campaign",
+  label: "New Project",
   shortLabel: "Create",
   icon: PlusCircle,
 };
@@ -66,8 +66,8 @@ export function getPageTitle(pathname: string, role: string): string {
   const match = nav.find((item) => isNavActive(pathname, item));
   if (match) return match.label;
   if (pathname.includes("/withdraw")) return "Withdraw";
-  if (pathname.includes("/campaigns/new")) return "New Campaign";
-  if (pathname.match(/\/campaigns\/[^/]+$/)) return "Campaign";
-  if (pathname.includes("/take")) return "Survey";
+  if (pathname.includes("/campaigns/new")) return "New Project";
+  if (pathname.match(/\/campaigns\/[^/]+$/)) return "Project";
+  if (pathname.includes("/take")) return "Task";
   return "Phinmon";
 }

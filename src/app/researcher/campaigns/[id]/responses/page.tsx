@@ -34,13 +34,13 @@ export default function CampaignResponsesPage() {
       subtitle={
         survey
           ? `${survey.title} · ${data?.completionPercent || 0}% complete`
-          : "Loading campaign data..."
+          : "Loading project data..."
       }
       loading={isLoading || loadingResponses}
       backHref={`/researcher/campaigns/${id}`}
       breadcrumbs={[
-        { label: "Campaigns", href: "/researcher/campaigns" },
-        { label: survey?.title || "Campaign", href: `/researcher/campaigns/${id}` },
+        { label: "Projects", href: "/researcher/campaigns" },
+        { label: survey?.title || "Project", href: `/researcher/campaigns/${id}` },
         { label: "Responses" },
       ]}
     >

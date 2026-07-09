@@ -13,7 +13,7 @@ export default function PricingPage() {
     <div className="mx-auto max-w-landing px-4 py-16 sm:px-6">
       <h1 className="font-display text-4xl font-medium tracking-tight text-ink-900">Pricing</h1>
       <p className="mt-2 text-gray-600">
-        Campaign pricing is calculated automatically from your survey setup. You see the full total
+        Project pricing is calculated automatically from your task setup. You see the full total
         before you pay  no manual reward overrides.
       </p>
 
@@ -39,11 +39,11 @@ export default function PricingPage() {
             <ul className="mt-4 space-y-2 text-sm text-gray-300">
               <li className="flex items-center gap-2">
                 <CircleDollarSign className="h-4 w-4 text-primary-400" />
-                Respondents join and earn from verified surveys
+                Respondents join and earn from verified tasks
               </li>
               <li className="flex items-center gap-2">
                 <ClipboardList className="h-4 w-4 text-primary-400" />
-                Researchers build draft campaigns at no cost
+                Researchers build draft projects at no cost
               </li>
               <li className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-primary-400" />
@@ -65,7 +65,7 @@ export default function PricingPage() {
         </div>
       </div>
 
-      <h2 className="mt-12 text-xl font-semibold text-gray-900">What drives your campaign cost</h2>
+      <h2 className="mt-12 text-xl font-semibold text-gray-900">What drives your project cost</h2>
       <div className="mt-6 grid gap-6 md:grid-cols-3">
         <div className="card">
           <div className="flex items-center gap-2">
@@ -84,7 +84,7 @@ export default function PricingPage() {
           </div>
           <p className="mt-2 text-sm text-gray-600">
             Set how many verified responses you need. Total payout scales with the number of people
-            who complete your survey.
+            who complete your task.
           </p>
         </div>
         <div className="card border-primary-100 bg-primary-50/30">
@@ -108,7 +108,7 @@ export default function PricingPage() {
           </div>
           <p className="mt-2 text-sm text-gray-600">
             Automatically flag nonsensical or low-quality text answers for review before payout.
-            Priced per response when enabled at survey creation.
+            Priced per response when enabled at project creation.
           </p>
         </div>
         <div className="card">
@@ -117,20 +117,20 @@ export default function PricingPage() {
             <p className="text-lg font-bold text-gray-900">AI analytics chat</p>
           </div>
           <p className="mt-2 text-sm text-gray-600">
-            Ask questions about your survey results and get instant insights from your response data.
-            One flat fee per campaign when enabled.
+            Ask questions about your project results and get instant insights from your response data.
+            One flat fee per project when enabled.
           </p>
         </div>
       </div>
 
       <p className="mt-8 text-center text-sm text-gray-500">
-        Your exact total  including any AI add-ons  is shown in the campaign builder before you
+        Your exact total — including any AI add-ons — is shown in the project builder before you
         pay.
       </p>
 
       <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
         <Link href="/register?role=researcher" className="btn-primary">
-          Launch Your First Survey
+          Launch Your First Project
         </Link>
         <Link href="/register?role=respondent" className="btn-secondary">
           Start for free as a respondent

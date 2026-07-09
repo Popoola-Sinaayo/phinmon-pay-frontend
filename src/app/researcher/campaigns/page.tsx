@@ -26,12 +26,12 @@ export default function CampaignsPage() {
   return (
     <DashboardShell
       user={user}
-      title="Campaigns"
-      subtitle="Manage your research campaigns and track response progress"
+      title="Projects"
+      subtitle="Manage your research projects and track response progress"
       loading={isLoading || loadingSurveys}
       actions={
         <Link href="/researcher/campaigns/new" className="btn-primary">
-          <Plus className="h-4 w-4" /> New Campaign
+          <Plus className="h-4 w-4" /> New Project
         </Link>
       }
     >
@@ -47,9 +47,9 @@ export default function CampaignsPage() {
             </StaggerList>
           ) : (
             <EmptyState
-              title="No campaigns yet"
-              description="Create your first research campaign to start collecting insights."
-              actionLabel="Create Campaign"
+              title="No projects yet"
+              description="Create your first research project to start collecting insights."
+              actionLabel="Create Project"
               actionHref="/researcher/campaigns/new"
             />
           )}

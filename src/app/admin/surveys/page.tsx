@@ -17,7 +17,7 @@ export default function AdminSurveysPage() {
       <Navbar logoHref="/admin" />
       <main className="mx-auto max-w-dashboard p-6">
         <Link href="/admin" className="text-sm text-primary-600">← Admin</Link>
-        <h1 className="mt-4 text-2xl font-bold">Surveys</h1>
+        <h1 className="mt-4 text-2xl font-bold">Projects</h1>
         <div className="mt-6">
           <DataTable
             headers={["Title", "Status", "Responses", "Needed", "Cost"]}

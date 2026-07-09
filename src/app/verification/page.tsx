@@ -18,6 +18,8 @@ import { Crown, Shield, CheckCircle2, Lock, Pencil } from "lucide-react";
 type VerificationStatus = {
   ninVerified?: boolean;
   livenessEnabled?: boolean;
+  premiumLivenessEnabled?: boolean;
+  premiumLivenessComingSoon?: boolean;
   ninLocked?: boolean;
   ninLockedUntil?: string | null;
   retryRemainingMs?: number;
@@ -55,10 +57,10 @@ function VerificationContent() {
     : status?.ninLocked
       ? "failed"
       : "not_started";
-  const livenessStatus = !status?.livenessEnabled
-    ? "locked"
-    : user?.livenessVerified
-      ? "verified"
+  const livenessStatus = user?.livenessVerified
+    ? "verified"
+    : status?.premiumLivenessComingSoon || !status?.livenessEnabled
+      ? "coming_soon"
       : "not_started";
 
   const isLocked = status?.ninLocked && (status.retryRemainingMs || 0) > 0;
@@ -105,14 +107,14 @@ function VerificationContent() {
     { label: "Account created", done: true },
     { label: "Profile details", done: !!status?.profileComplete },
     { label: "NIN verified", done: !!user?.ninVerified },
-    { label: "NIN liveness", done: !!user?.livenessVerified },
+    { label: "NIN liveness", done: !!user?.livenessVerified, optional: true },
   ];
 
   return (
     <DashboardShell
       user={user}
       title="Verification"
-      subtitle="Verify your identity to take surveys and unlock premium opportunities"
+      subtitle="Verify your NIN to start earning. Premium liveness verification is coming soon."
       loading={isLoading}
     >
       {user && (
@@ -131,6 +133,9 @@ function VerificationContent() {
                   className={`text-sm font-medium ${step.done ? "text-gray-900" : "text-gray-400"}`}
                 >
                   {step.label}
+                  {"optional" in step && step.optional && !step.done && (
+                    <span className="ml-1 text-xs text-blue-600">(coming soon)</span>
+                  )}
                 </span>
               </div>
             ))}
@@ -146,7 +151,7 @@ function VerificationContent() {
               </div>
               <h2 className="mt-4 text-lg font-semibold text-gray-900">NIN Verification</h2>
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                Required before taking any survey. Your NIN is securely verified and matched against
+                Required before taking any task. Your NIN is securely verified and matched against
                 your profile details.
               </p>
 
@@ -157,7 +162,7 @@ function VerificationContent() {
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-gray-500">
                   We verify your NIN only to confirm you&apos;re a real person and to stop bots and
-                  duplicate accounts  this keeps survey results validated and trustworthy. Your NIN
+                  duplicate accounts — this keeps task results validated and trustworthy. Your NIN
                   is hashed, not stored on our systems, and is never shared. We only use it to check
                   you&apos;re genuine.
                 </p>
@@ -293,10 +298,19 @@ function VerificationContent() {
                 </div>
                 <VerificationBadge status={livenessStatus} />
               </div>
-              <h2 className="mt-4 text-lg font-semibold text-gray-900">NIN Liveness Check</h2>
+              <h2 className="mt-4 text-lg font-semibold text-gray-900">Premium Liveness Check</h2>
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                Required for premium surveys. Complete a quick liveness check to confirm you&apos;re a
-                real person.
+                {status?.premiumLivenessComingSoon || !status?.livenessEnabled ? (
+                  <>
+                    Coming soon. We&apos;re enabling premium liveness verification shortly. For now,
+                    complete NIN verification to take tasks and earn.
+                  </>
+                ) : (
+                  <>
+                    Required for premium tasks. Complete a quick liveness check to confirm
+                    you&apos;re a real person.
+                  </>
+                )}
               </p>
               {status?.livenessEnabled && user.ninVerified && !user.livenessVerified && (
                 <div className="mt-6 space-y-3">
@@ -315,6 +329,13 @@ function VerificationContent() {
               {status?.livenessEnabled && !user.ninVerified && !user.livenessVerified && (
                 <p className="mt-6 text-sm text-gray-500">Complete NIN verification first.</p>
               )}
+              {(status?.premiumLivenessComingSoon || !status?.livenessEnabled) &&
+                !user.livenessVerified && (
+                  <p className="mt-6 rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-2 text-sm text-blue-900">
+                    Premium verification will be enabled soon. You&apos;ll be notified when it&apos;s
+                    ready.
+                  </p>
+                )}
             </MotionCard>
           </div>
         </>

@@ -166,7 +166,7 @@ export function SurveyBuilder({
     <div className="space-y-4">
       {readOnly && questions.length > 0 && (
         <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-          Questions are locked while payment is pending. You can still edit campaign details and
+          Questions are locked while payment is pending. You can still edit project details and
           complete payment.
         </p>
       )}
@@ -292,7 +292,7 @@ export function SurveyBuilder({
 
               {q.type === "multiple_choice" && (q.options?.length ?? 0) > 10 && (
                 <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
-                  High complexity: more than 10 options may increase survey time and cost.
+                  High complexity: more than 10 options may increase task time and cost.
                 </p>
               )}
 

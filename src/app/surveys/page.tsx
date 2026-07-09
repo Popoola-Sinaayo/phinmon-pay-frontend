@@ -12,11 +12,12 @@ import { DashboardShell, DashboardSkeleton } from "@/components/layout/Dashboard
 import { StaggerList, StaggerItem } from "@/components/motion";
 import { cn } from "@/lib/utils";
 import { getSurveyLockReason } from "@/lib/verification";
+import { usePlatformFeatures } from "@/lib/platformFeatures";
 import type { Survey } from "@/types";
 
 const filters = [
   { key: "", label: "Available" },
-  { key: "premium", label: "Premium" },
+  { key: "premium", label: "Premium", requiresPremium: true },
   { key: "highest_paying", label: "Highest Paying" },
   { key: "newest", label: "Newest" },
 ];
@@ -25,6 +26,7 @@ function SurveysContent() {
   const searchParams = useSearchParams();
   const filter = searchParams.get("filter") || "";
   const { user, isLoading } = useRequireAuth("respondent");
+  const platformFeatures = usePlatformFeatures();
 
   const { data: surveys, isLoading: loadingSurveys } = useQuery({
     queryKey: ["surveys", filter],
@@ -40,27 +42,34 @@ function SurveysContent() {
   return (
     <DashboardShell
       user={user}
-      title="Surveys"
-      subtitle="Find paid research opportunities matched to your profile"
+      title="Tasks"
+      subtitle="Find paid research tasks matched to your profile"
       loading={isLoading || loadingSurveys}
     >
       {!loadingSurveys && (
         <>
           <div className="mb-6 flex gap-2 overflow-x-auto pb-1">
-            {filters.map((f) => (
+            {filters.map((f) => {
+              const isComingSoon = f.requiresPremium && platformFeatures.premiumLivenessComingSoon;
+              return (
               <Link
                 key={f.key}
-                href={f.key ? `/surveys?filter=${f.key}` : "/surveys"}
+                href={isComingSoon ? "/surveys" : f.key ? `/surveys?filter=${f.key}` : "/surveys"}
+                aria-disabled={isComingSoon}
                 className={cn(
                   "shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-all",
-                  filter === f.key
+                  isComingSoon
+                    ? "cursor-not-allowed bg-gray-100 text-gray-400 ring-1 ring-gray-200"
+                    : filter === f.key
                     ? "bg-gray-900 text-white shadow-subtle"
                     : "bg-white text-gray-600 ring-1 ring-gray-200 hover:ring-gray-300"
                 )}
               >
                 {f.label}
+                {isComingSoon && " (soon)"}
               </Link>
-            ))}
+            );
+            })}
           </div>
 
           {surveys?.length ? (
@@ -78,8 +87,8 @@ function SurveysContent() {
             </StaggerList>
           ) : (
             <EmptyState
-              title="No surveys found"
-              description="Try a different filter or check back later for new campaigns."
+              title="No tasks found"
+              description="Try a different filter or check back later for new projects."
             />
           )}
         </>
@@ -92,7 +101,7 @@ export default function SurveysPage() {
   return (
     <Suspense
       fallback={
-        <DashboardShell title="Surveys" loading>
+        <DashboardShell title="Tasks" loading>
           <DashboardSkeleton />
         </DashboardShell>
       }

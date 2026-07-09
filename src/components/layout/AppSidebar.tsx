@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Crown, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { cn } from "@/lib/utils";
+import { usePlatformFeatures } from "@/lib/platformFeatures";
 import { isNavActive, RESEARCHER_CREATE, type NavItem } from "@/config/navigation";
 import type { User } from "@/types";
 
@@ -36,7 +37,7 @@ export function AppSidebar({
             )}
           >
             <RESEARCHER_CREATE.icon className="h-4 w-4" />
-            New campaign
+            New project
           </Link>
         )}
 
@@ -83,6 +84,7 @@ export function AppSidebar({
 }
 
 function VerificationStrip({ user }: { user: User }) {
+  const platformFeatures = usePlatformFeatures();
   const steps = [
     { done: true, label: "Account" },
     { done: user.ninVerified, label: "NIN" },
@@ -116,9 +118,13 @@ function VerificationStrip({ user }: { user: User }) {
             <Crown className="h-3 w-3 text-amber-500" /> Premium active
           </>
         ) : user.ninVerified ? (
-          <>
-            <ShieldCheck className="h-3 w-3 text-primary-500" /> Upgrade to premium
-          </>
+          platformFeatures.premiumLivenessComingSoon ? (
+            <>NIN verified · Premium coming soon</>
+          ) : (
+            <>
+              <ShieldCheck className="h-3 w-3 text-primary-500" /> Upgrade to premium
+            </>
+          )
         ) : (
           "Complete NIN to earn"
         )}

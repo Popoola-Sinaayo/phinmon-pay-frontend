@@ -11,6 +11,7 @@ import { SurveyBuilder } from "@/components/SurveyBuilder";
 import { SurveyPricingBreakdown } from "@/components/researcher/SurveyPricingBreakdown";
 import { SurveyPaymentStatusPanel } from "@/components/researcher/SurveyPaymentStatusPanel";
 import { usePricingConfig } from "@/lib/pricingConfig";
+import { usePlatformFeatures } from "@/lib/platformFeatures";
 import { validateCampaignQuestions } from "@/lib/surveyValidation";
 import type { Question, Survey } from "@/types";
 
@@ -67,7 +68,7 @@ const validateDetails = (title: string, description: string): string | null => {
 
 export default function NewCampaignPage() {
   return (
-    <Suspense fallback={<div className="p-8 text-center text-gray-500">Loading campaign...</div>}>
+    <Suspense fallback={<div className="p-8 text-center text-gray-500">Loading project...</div>}>
       <NewCampaignForm />
     </Suspense>
   );
@@ -88,6 +89,8 @@ function NewCampaignForm() {
   const [respondentPool, setRespondentPool] = useState<RespondentPoolStats | null>(null);
   const [respondentPoolLoading, setRespondentPoolLoading] = useState(false);
   const pricingConfig = usePricingConfig();
+  const platformFeatures = usePlatformFeatures();
+  const premiumAudienceEnabled = platformFeatures.premiumAudienceEnabled;
   const premiumMultiplier =
     pricingConfig.standardRatePerMinute > 0
       ? pricingConfig.premiumRatePerMinute / pricingConfig.standardRatePerMinute
@@ -151,7 +154,12 @@ function NewCampaignForm() {
           title: survey.title || "",
           description: survey.description || "",
           category: survey.category || "Market Research",
-          targetAudience: survey.targetAudience === "PREMIUM_ONLY" ? "PREMIUM_ONLY" : "ALL_VERIFIED",
+          targetAudience:
+            survey.targetAudience === "PREMIUM_ONLY" && !premiumAudienceEnabled
+              ? "ALL_VERIFIED"
+              : survey.targetAudience === "PREMIUM_ONLY"
+                ? "PREMIUM_ONLY"
+                : "ALL_VERIFIED",
           responsesNeeded: survey.responsesNeeded || 100,
           aiSpamFilterEnabled: survey.aiSpamFilterEnabled ?? false,
           aiAnalyticsEnabled: survey.aiAnalyticsEnabled ?? false,
@@ -160,7 +168,7 @@ function NewCampaignForm() {
         const savedStep = Math.min(Math.max(survey.draftStep ?? 0, 0), STEPS.length - 2);
         setStep(survey.status === "PENDING_PAYMENT" ? Math.max(savedStep, 5) : savedStep);
       } catch {
-        alert("Could not load saved campaign");
+        alert("Could not load saved project");
         router.push("/researcher/campaigns");
       } finally {
         setLoadingResume(false);
@@ -168,7 +176,7 @@ function NewCampaignForm() {
     };
 
     void loadDraft();
-  }, [resumeId, user, router]);
+  }, [resumeId, user, router, premiumAudienceEnabled]);
 
   // If the user opened this page while payment was still pending, the backend status may
   // flip to ACTIVE while they keep the tab open. In that case we should stop showing the
@@ -299,7 +307,7 @@ function NewCampaignForm() {
         setStep((s) => s + 1);
       } catch (err: unknown) {
         const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-        alert(msg || "Failed to save campaign");
+        alert(msg || "Failed to save project");
       } finally {
         setLoading(false);
       }
@@ -312,7 +320,7 @@ function NewCampaignForm() {
         setStep(5);
       } catch (err: unknown) {
         const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-        alert(msg || "Failed to save campaign");
+        alert(msg || "Failed to save project");
       } finally {
         setLoading(false);
       }
@@ -362,19 +370,19 @@ function NewCampaignForm() {
   return (
     <DashboardShell
       user={user}
-      title={resumeId ? "Continue Campaign" : "Create Campaign"}
+      title={resumeId ? "Continue Project" : "Create Project"}
       subtitle={`Step ${step + 1} of ${STEPS.length}  ${STEPS[step]}`}
       loading={isLoading || loadingResume}
       backHref="/researcher/campaigns"
       breadcrumbs={[
-        { label: "Campaigns", href: "/researcher/campaigns" },
-        { label: resumeId ? "Continue" : "New Campaign" },
+        { label: "Projects", href: "/researcher/campaigns" },
+        { label: resumeId ? "Continue" : "New Project" },
       ]}
       maxWidth="narrow"
     >
       {questionsLocked && (
         <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          Payment was started but not completed. You can review questions and edit campaign settings,
+          Payment was started but not completed. You can review questions and edit project settings,
           but questions are locked until payment is complete.
         </div>
       )}
@@ -435,7 +443,7 @@ function NewCampaignForm() {
         {step === 1 && (
           <>
             <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
-              <strong>Pricing note:</strong> Your campaign cost is not fixed upfront. It is
+              <strong>Pricing note:</strong> Your project cost is not fixed upfront. It is
               calculated from the estimated time to complete your questions — different question
               types take different amounts of time. You will see the full breakdown on the Budget
               step.
@@ -479,32 +487,56 @@ function NewCampaignForm() {
                 <p className="mt-2 text-sm text-gray-500">Could not load respondent counts.</p>
               )}
               <p className="mt-3 text-xs text-gray-500">
-                Verified = NIN verified. Premium = NIN + liveness verified. Counts reflect active
-                respondents currently on the platform.
+                Verified = NIN verified respondents available now. Premium = NIN + liveness verified
+                {platformFeatures.premiumLivenessComingSoon
+                  ? " (coming soon — not available for new projects yet)."
+                  : "."}
               </p>
             </div>
 
-            {(["ALL_VERIFIED", "PREMIUM_ONLY"] as const).map((a) => (
+            {(["ALL_VERIFIED", "PREMIUM_ONLY"] as const).map((a) => {
+              const isPremiumOption = a === "PREMIUM_ONLY";
+              const isDisabled = isPremiumOption && !premiumAudienceEnabled;
+
+              return (
               <button
                 key={a}
                 type="button"
-                onClick={() => setForm({ ...form, targetAudience: a })}
+                disabled={isDisabled}
+                onClick={() => {
+                  if (!isDisabled) setForm({ ...form, targetAudience: a });
+                }}
                 className={cn(
                   "block w-full rounded-xl border p-4 text-left transition",
-                  form.targetAudience === a
+                  isDisabled
+                    ? "cursor-not-allowed border-gray-200 bg-gray-50 opacity-80"
+                    : form.targetAudience === a
                     ? "border-primary-500 bg-primary-50 ring-1 ring-primary-200"
                     : "border-gray-200 hover:border-gray-300"
                 )}
               >
-                <p className="font-semibold text-gray-900">
-                  {a === "ALL_VERIFIED" ? "Verified Users" : "Premium Users"}
-                </p>
+                <div className="flex items-center justify-between gap-2">
+                  <p className="font-semibold text-gray-900">
+                    {a === "ALL_VERIFIED" ? "Verified Users" : "Premium Users"}
+                  </p>
+                  {isDisabled && (
+                    <span className="shrink-0 rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-semibold text-blue-700">
+                      Coming soon
+                    </span>
+                  )}
+                </div>
                 <p className="mt-1 text-sm text-gray-500">
                   {a === "ALL_VERIFIED"
                     ? `NIN verified respondents — ${formatCurrency(pricingConfig.standardRatePerMinute)}/min standard rate`
                     : `NIN + liveness verified — ${formatCurrency(pricingConfig.premiumRatePerMinute)}/min premium rate (${premiumMultiplier}×)`}
                 </p>
-                {respondentPool && (
+                {isDisabled && (
+                  <p className="mt-2 text-sm text-blue-800">
+                    Premium liveness verification is being enabled soon. Use verified respondents
+                    for now.
+                  </p>
+                )}
+                {respondentPool && !isDisabled && (
                   <p className="mt-2 text-sm font-medium text-primary-700">
                     {a === "ALL_VERIFIED"
                       ? `${respondentPool.verifiedRespondents.toLocaleString()} verified respondents available`
@@ -512,7 +544,8 @@ function NewCampaignForm() {
                   </p>
                 )}
               </button>
-            ))}
+            );
+            })}
           </div>
         )}
         {step === 3 && (
@@ -545,7 +578,7 @@ function NewCampaignForm() {
                     You&apos;re requesting {form.responsesNeeded.toLocaleString()} responses, but
                     only {availableForAudience.toLocaleString()}{" "}
                     {form.targetAudience === "PREMIUM_ONLY" ? "premium" : "verified"} respondents
-                    are currently available. Your campaign may take longer to complete.
+                    are currently available. Your project may take longer to complete.
                   </p>
                 )}
             </div>
@@ -589,7 +622,7 @@ function NewCampaignForm() {
                   </span>
                   <span className="text-xs text-gray-500">
                     {formatCurrency(pricingConfig.aiAnalyticsCost)} flat — unlimited Q&amp;A about
-                    your survey results
+                    your project results
                   </span>
                 </span>
               </label>
@@ -669,12 +702,12 @@ function NewCampaignForm() {
         {step === 6 && (
           <div className="text-center">
             <div className="text-5xl">🚀</div>
-            <h2 className="mt-4 text-xl font-bold">Campaign Activated!</h2>
+            <h2 className="mt-4 text-xl font-bold">Project Activated!</h2>
             <button
               className="btn-primary mt-6"
               onClick={() => router.push("/researcher/campaigns")}
             >
-              View Campaigns
+              View Projects
             </button>
           </div>
         )}

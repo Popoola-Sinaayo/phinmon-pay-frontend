@@ -35,12 +35,12 @@ export default function CampaignDetailPage() {
   return (
     <DashboardShell
       user={user}
-      title={survey?.title || "Campaign"}
+      title={survey?.title || "Project"}
       subtitle={survey?.description}
       loading={isLoading || loadingSurvey}
       backHref="/researcher/campaigns"
       breadcrumbs={[
-        { label: "Campaigns", href: "/researcher/campaigns" },
+        { label: "Projects", href: "/researcher/campaigns" },
         { label: survey?.title || "Detail" },
       ]}
       maxWidth="narrow"
@@ -90,7 +90,7 @@ export default function CampaignDetailPage() {
 
             {survey.status === "DRAFT" && (
               <p className="mt-3 rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm text-blue-900">
-                This campaign is saved as a draft. Continue setup to finish and launch.
+                This project is saved as a draft. Continue setup to finish and launch.
               </p>
             )}
 

@@ -50,12 +50,12 @@ function PaymentCallback() {
         <p className="text-lg font-semibold text-gray-900">Payment verification incomplete</p>
         <p className="max-w-md text-sm text-gray-600">{errorMessage}</p>
         <p className="max-w-md text-sm text-gray-500">
-          If you already paid on Paystack, open your campaign and use &quot;Confirm payment
+          If you already paid on Paystack, open your project and use &quot;Confirm payment
           status&quot; to complete activation without paying again.
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link href="/researcher/campaigns" className="btn-primary">
-            Go to campaigns
+            Go to projects
           </Link>
           {reference && (
             <button

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import { api, setAuthToken } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { usePlatformFeatures } from "@/lib/platformFeatures";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { SetWithdrawalPinForm } from "@/components/wallet/SetWithdrawalPinForm";
 import { MotionCard } from "@/components/motion";
@@ -13,6 +14,7 @@ import { KeyRound, LogOut, Mail, Shield, Crown, User as UserIcon } from "lucide-
 export default function SettingsPage() {
   const router = useRouter();
   const { user, isLoading } = useRequireAuth();
+  const platformFeatures = usePlatformFeatures();
 
   const { data: pinStatus } = useQuery({
     queryKey: ["withdrawal-pin-status"],
@@ -53,7 +55,11 @@ export default function SettingsPage() {
                   },
                   {
                     label: "Premium",
-                    value: user.livenessVerified ? "Active" : "Not active",
+                    value: user.livenessVerified
+                      ? "Active"
+                      : platformFeatures.premiumLivenessComingSoon
+                        ? "Coming soon"
+                        : "Not active",
                     icon: Crown,
                   },
                 ]

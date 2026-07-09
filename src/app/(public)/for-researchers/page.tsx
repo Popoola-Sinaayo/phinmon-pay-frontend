@@ -5,8 +5,8 @@ export default function ForResearchersPage() {
     <div className="mx-auto max-w-landing px-4 py-16 sm:px-6">
       <h1 className="font-display text-4xl font-medium tracking-tight text-ink-900">Collect Quality Insights Faster</h1>
       <p className="mt-4 max-w-2xl text-gray-600">
-        Build surveys, target verified or premium respondents, fund your campaign, and export
-        results  all in one platform.
+        Build tasks, target NIN-verified respondents, fund your project, and export results — all
+        in one platform. Premium (liveness-verified) targeting is coming soon.
       </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         {[
@@ -23,7 +23,7 @@ export default function ForResearchersPage() {
         ))}
       </div>
       <Link href="/register?role=researcher" className="btn-primary mt-8 inline-flex">
-        Create Research Campaign
+        Create Research Project
       </Link>
     </div>
   );

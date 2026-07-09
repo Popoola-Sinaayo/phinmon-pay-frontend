@@ -73,12 +73,12 @@ const STEPS = [
   },
   {
     title: "Verify with NIN",
-    desc: "One-time identity check via NIMC. Required before surveys or withdrawals.",
+    desc: "One-time identity check via NIMC. Required before tasks or withdrawals.",
     icon: Fingerprint,
     time: "2 min",
   },
   {
-    title: "Complete surveys",
+    title: "Complete tasks",
     desc: "One question per screen. MCQ, ratings, open text  all on mobile.",
     icon: ClipboardList,
     time: "5–20 min",
@@ -103,7 +103,7 @@ const SURVEY_TYPES = [
 const BENTO_FEATURES = [
   {
     title: "NIN gate on every respondent",
-    desc: "No anonymous answers. Every panelist passes NIMC identity verification before their first survey.",
+    desc: "No anonymous answers. Every panelist passes NIMC identity verification before their first task.",
     icon: Fingerprint,
     size: "lg",
     image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&q=80",
@@ -116,7 +116,7 @@ const BENTO_FEATURES = [
   },
   {
     title: "Paystack-powered payouts",
-    desc: "Fund campaigns and pay respondents through Nigeria's most trusted payment rail.",
+    desc: "Fund projects and pay respondents through Nigeria's most trusted payment rail.",
     icon: CreditCard,
     size: "sm",
   },
@@ -128,7 +128,7 @@ const BENTO_FEATURES = [
   },
   {
     title: "Real-time fill tracking",
-    desc: "Watch responses roll in live. Pause, extend, or close campaigns from your dashboard.",
+    desc: "Watch responses roll in live. Pause, extend, or close projects from your dashboard.",
     icon: BarChart3,
     size: "sm",
   },
@@ -175,7 +175,7 @@ const COMPARISON = {
     items: [
       { icon: Fingerprint, text: "NIN verified via NIMC" },
       { icon: MapPin, text: "Demographic targeting by state" },
-      { icon: ClipboardList, text: "Standard survey access" },
+      { icon: ClipboardList, text: "Standard task access" },
       { icon: Clock, text: "Typical fill: 2–4 days" },
     ],
   },
@@ -185,7 +185,7 @@ const COMPARISON = {
     icon: Crown,
     items: [
       { icon: ScanFace, text: "NIN + liveness face match" },
-      { icon: Target, text: "Priority survey matching" },
+      { icon: Target, text: "Priority task matching" },
       { icon: Lock, text: "Premium-only studies" },
       { icon: Zap, text: "Typical fill: under 24 hrs" },
     ],
@@ -221,7 +221,7 @@ export function LandingPage() {
             <SectionLabel icon={Users} text="Nigeria's verified research panel" />
 
             <h1 className="font-display mt-5 text-[2.75rem] font-medium leading-[1.04] tracking-[-0.02em] text-ink-900 sm:text-6xl lg:text-[4rem]">
-              <TextReveal text="Earn from surveys." />
+              <TextReveal text="Earn from tasks." />
               <br />
               <span className="italic text-primary-700">
                 <TextReveal text="Trust every response." />
@@ -254,7 +254,7 @@ export function LandingPage() {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Link href="/register?role=researcher" className="btn-secondary w-full px-7 py-3.5 sm:w-auto">
                   <BarChart3 className="h-4 w-4" />
-                  Launch a campaign
+                  Launch a project
                 </Link>
               </motion.div>
             </motion.div>
@@ -459,7 +459,7 @@ export function LandingPage() {
                 { icon: Target, text: "Target Standard or Premium verification tiers" },
                 { icon: BarChart3, text: "Live dashboard  responses, spend, completion rate" },
                 { icon: Download, text: "One-click CSV export with question-level data" },
-                { icon: CreditCard, text: "Pay via Paystack  campaign goes live instantly" },
+                { icon: CreditCard, text: "Pay via Paystack — project goes live instantly" },
               ].map(({ icon: Icon, text }) => (
                 <motion.li
                   key={text}
@@ -477,7 +477,7 @@ export function LandingPage() {
             </ul>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="mt-8 inline-block">
               <Link href="/register?role=researcher" className="btn-primary">
-                Create Research Campaign <ArrowRight className="h-4 w-4" />
+                Create Research Project <ArrowRight className="h-4 w-4" />
               </Link>
             </motion.div>
           </FadeIn>
@@ -490,7 +490,7 @@ export function LandingPage() {
             >
               <div className="flex items-center justify-between border-b border-white/10 pb-4">
                 <div>
-                  <p className="text-xs text-gray-500">Active campaign</p>
+                  <p className="text-xs text-gray-500">Active project</p>
                   <p className="text-lg font-bold">Brand Pulse Q2 · Lagos</p>
                 </div>
                 <span className="flex items-center gap-1.5 rounded-full bg-primary-500/20 px-3 py-1 text-xs font-bold text-primary-400">
@@ -557,7 +557,7 @@ export function LandingPage() {
                     <data.icon className="h-7 w-7" />
                   </div>
                   <h3 className="mt-4 text-2xl font-bold text-ink-900">{data.title}</h3>
-                  <p className="mt-1 text-sm font-semibold text-primary-600">{data.price} per survey</p>
+                  <p className="mt-1 text-sm font-semibold text-primary-600">{data.price} per task</p>
                   <ul className="mt-6 space-y-3">
                     {data.items.map(({ icon: Icon, text }) => (
                       <li key={text} className="flex items-center gap-3 text-sm text-ink-600">
@@ -701,7 +701,7 @@ export function LandingPage() {
             </motion.div>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
               <Link href="/register?role=researcher" className="inline-flex items-center gap-2 rounded-btn border border-gray-600 px-10 py-3.5 text-base font-semibold text-white transition hover:bg-white/10">
-                <BarChart3 className="h-4 w-4" /> Create a campaign
+                <BarChart3 className="h-4 w-4" /> Create a project
               </Link>
             </motion.div>
           </div>

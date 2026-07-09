@@ -65,7 +65,7 @@ export function AiAnalyticsPanel({ survey }: { survey: Survey }) {
           <div className="flex-1">
             <h2 className="text-lg font-semibold text-gray-900">AI analytics chat</h2>
             <p className="mt-1 text-sm text-gray-600">
-              This add-on wasn&apos;t enabled when this campaign was created. Enable it now to ask
+              This add-on wasn&apos;t enabled when this project was created. Enable it now to ask
               questions about your response data — a one-time fee of{" "}
               {formatCurrency(pricingConfig.aiAnalyticsCost)} applies.
             </p>
@@ -112,7 +112,7 @@ export function AiAnalyticsPanel({ survey }: { survey: Survey }) {
         <h2 className="text-lg font-semibold text-gray-900">AI analytics chat</h2>
       </div>
       <p className="mt-1 text-sm text-gray-500">
-        Ask questions about your survey responses. Answers are generated from your collected data.
+        Ask questions about your project responses. Answers are generated from your collected data.
       </p>
 
       {messages.length > 0 && (
@@ -162,7 +162,7 @@ export function AiAnalyticsPanel({ survey }: { survey: Survey }) {
       >
         <input
           className="input flex-1"
-          placeholder="Ask about your survey data..."
+          placeholder="Ask about your project data..."
           value={input}
           onChange={(e) => setInput(e.target.value)}
           disabled={askMutation.isPending}

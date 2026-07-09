@@ -18,10 +18,12 @@ import { cn } from "@/lib/utils";
 const ICONS: Record<string, LucideIcon> = {
   Dashboard: LayoutDashboard,
   Surveys: ClipboardList,
+  Tasks: ClipboardList,
   Wallet: Wallet,
   Verification: Shield,
   Settings: Settings,
   Campaigns: ClipboardList,
+  Projects: ClipboardList,
   Billing: CreditCard,
   Home: Home,
 };
