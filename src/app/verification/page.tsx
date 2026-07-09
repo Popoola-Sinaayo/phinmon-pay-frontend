@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
-import { useQoreIdLiveness } from "@/hooks/useQoreIdLiveness";
+import { usePlatformFeatures, isPremiumLivenessAvailable } from "@/lib/platformFeatures";
 import { VerificationBadge } from "@/components/Badges";
 import { DashboardShell } from "@/components/layout/DashboardShell";
 import { RetryCountdown } from "@/components/onboarding/RetryCountdown";
@@ -33,6 +33,8 @@ function VerificationContent() {
   const searchParams = useSearchParams();
   const focusStep = searchParams.get("step");
   const { user, isLoading, refetch } = useRequireAuth("respondent");
+  const platformFeatures = usePlatformFeatures();
+  const premiumLivenessAvailable = isPremiumLivenessAvailable(platformFeatures);
   const { runLivenessCheck, loading: livenessLoading, error: livenessError } = useQoreIdLiveness();
   const [nin, setNin] = useState("");
   const [ninError, setNinError] = useState("");
@@ -59,7 +61,9 @@ function VerificationContent() {
       : "not_started";
   const livenessStatus = user?.livenessVerified
     ? "verified"
-    : status?.premiumLivenessComingSoon || !status?.livenessEnabled
+    : !premiumLivenessAvailable ||
+        status?.premiumLivenessComingSoon ||
+        !status?.premiumLivenessEnabled
       ? "coming_soon"
       : "not_started";
 
@@ -93,7 +97,7 @@ function VerificationContent() {
   };
 
   const handleLiveness = async () => {
-    if (!user) return;
+    if (!user || !premiumLivenessAvailable) return;
     try {
       await runLivenessCheck(user, { dateOfBirth: status?.dateOfBirth || undefined });
       await refetch();
@@ -300,7 +304,9 @@ function VerificationContent() {
               </div>
               <h2 className="mt-4 text-lg font-semibold text-gray-900">Premium Liveness Check</h2>
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                {status?.premiumLivenessComingSoon || !status?.livenessEnabled ? (
+                {!premiumLivenessAvailable ||
+                status?.premiumLivenessComingSoon ||
+                !status?.premiumLivenessEnabled ? (
                   <>
                     Coming soon. We&apos;re enabling premium liveness verification shortly. For now,
                     complete NIN verification to take tasks and earn.
@@ -312,7 +318,10 @@ function VerificationContent() {
                   </>
                 )}
               </p>
-              {status?.livenessEnabled && user.ninVerified && !user.livenessVerified && (
+              {premiumLivenessAvailable &&
+                status?.premiumLivenessEnabled &&
+                user.ninVerified &&
+                !user.livenessVerified && (
                 <div className="mt-6 space-y-3">
                   {livenessError && (
                     <p className="text-sm text-error-600">{livenessError}</p>
@@ -326,10 +335,15 @@ function VerificationContent() {
                   </MotionButton>
                 </div>
               )}
-              {status?.livenessEnabled && !user.ninVerified && !user.livenessVerified && (
+              {premiumLivenessAvailable &&
+                status?.premiumLivenessEnabled &&
+                !user.ninVerified &&
+                !user.livenessVerified && (
                 <p className="mt-6 text-sm text-gray-500">Complete NIN verification first.</p>
               )}
-              {(status?.premiumLivenessComingSoon || !status?.livenessEnabled) &&
+              {(!premiumLivenessAvailable ||
+                status?.premiumLivenessComingSoon ||
+                !status?.premiumLivenessEnabled) &&
                 !user.livenessVerified && (
                   <p className="mt-6 rounded-lg border border-blue-100 bg-blue-50/80 px-3 py-2 text-sm text-blue-900">
                     Premium verification will be enabled soon. You&apos;ll be notified when it&apos;s

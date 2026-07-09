@@ -31,6 +31,10 @@ export async function fetchPlatformFeatures(): Promise<PlatformFeatures> {
   }
 }
 
+export function isPremiumLivenessAvailable(features: PlatformFeatures): boolean {
+  return features.premiumLivenessEnabled && !features.premiumLivenessComingSoon;
+}
+
 export function usePlatformFeatures(): PlatformFeatures {
   const [features, setFeatures] = useState<PlatformFeatures>(DEFAULT_PLATFORM_FEATURES);
 

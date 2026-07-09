@@ -10,6 +10,7 @@ import { QuestionRenderer } from "@/components/QuestionRenderer";
 import { ProgressBar } from "@/components/ProgressBar";
 import { formatCurrency, getEstimatedMinutes } from "@/lib/utils";
 import { canTakeSurvey } from "@/lib/verification";
+import { usePlatformFeatures, isPremiumLivenessAvailable } from "@/lib/platformFeatures";
 import { isAnswerEmpty } from "@/lib/surveyValidation";
 import type { Survey, Answer } from "@/types";
 
@@ -17,6 +18,7 @@ export default function TakeSurveyPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const { data: user, isLoading } = useAuth();
+  const platformFeatures = usePlatformFeatures();
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, unknown>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -40,12 +42,19 @@ export default function TakeSurveyPage() {
     if (user && survey) {
       const access = canTakeSurvey(survey, user);
       if (!access.allowed) {
+        if (
+          access.reason === "liveness" &&
+          !isPremiumLivenessAvailable(platformFeatures)
+        ) {
+          router.replace("/surveys");
+          return;
+        }
         router.replace(
           access.reason === "liveness" ? "/verification?step=liveness" : "/verification?step=nin"
         );
       }
     }
-  }, [user, isLoading, survey, router]);
+  }, [user, isLoading, survey, router, platformFeatures]);
 
   if (isLoading || !survey || !user) {
     return <div className="flex min-h-screen items-center justify-center">Loading...</div>;
@@ -83,7 +92,11 @@ export default function TakeSurveyPage() {
         return;
       }
       if (msg?.toLowerCase().includes("premium") || msg?.toLowerCase().includes("eligible")) {
-        router.push("/verification?step=liveness");
+        if (isPremiumLivenessAvailable(platformFeatures)) {
+          router.push("/verification?step=liveness");
+        } else {
+          router.push("/surveys");
+        }
         return;
       }
       alert(msg || "Failed to submit task");
