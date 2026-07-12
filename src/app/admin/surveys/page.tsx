@@ -2,35 +2,41 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import { Navbar } from "@/components/Navbar";
 import { DataTable } from "@/components/DataTable";
-import Link from "next/link";
+import { AdminShell } from "@/components/layout/AdminShell";
+import { TableSkeleton } from "@/components/ui/Skeleton";
 
 export default function AdminSurveysPage() {
-  const { data: surveys } = useQuery({
+  const { data: surveys, isLoading } = useQuery({
     queryKey: ["admin-surveys"],
     queryFn: async () => (await api.get("/admin/surveys")).data.surveys,
   });
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Navbar logoHref="/admin" />
-      <main className="mx-auto max-w-dashboard p-6">
-        <Link href="/admin" className="text-sm text-primary-600">← Admin</Link>
-        <h1 className="mt-4 text-2xl font-bold">Projects</h1>
-        <div className="mt-6">
-          <DataTable
-            headers={["Title", "Status", "Responses", "Needed", "Cost"]}
-            rows={(surveys || []).map((s: { title: string; status: string; responsesReceived: number; responsesNeeded: number; totalCost: number }) => [
+    <AdminShell title="Projects" subtitle="All research projects across the platform" backHref="/admin">
+      {isLoading ? (
+        <TableSkeleton rows={8} cols={5} />
+      ) : (
+        <DataTable
+          headers={["Title", "Status", "Responses", "Needed", "Cost"]}
+          statusColumn={1}
+          rows={(surveys || []).map(
+            (s: {
+              title: string;
+              status: string;
+              responsesReceived: number;
+              responsesNeeded: number;
+              totalCost: number;
+            }) => [
               s.title,
               s.status,
               s.responsesReceived,
               s.responsesNeeded,
-              `₦${s.totalCost.toLocaleString()}`,
-            ])}
-          />
-        </div>
-      </main>
-    </div>
+              `\u20a6${s.totalCost.toLocaleString()}`,
+            ]
+          )}
+        />
+      )}
+    </AdminShell>
   );
 }

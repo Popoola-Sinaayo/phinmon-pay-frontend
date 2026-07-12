@@ -71,6 +71,7 @@ export interface Survey {
   rewardPerResponsePremium?: number;
   responsesNeeded: number;
   responsesReceived: number;
+  reservedSlots?: number;
   status: string;
   draftStep?: number;
   billingModel?: "PREPAID" | "PAYG";

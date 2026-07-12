@@ -10,10 +10,12 @@ import { DashboardShell } from "@/components/layout/DashboardShell";
 import { SetWithdrawalPinForm } from "@/components/wallet/SetWithdrawalPinForm";
 import { WithdrawalStatusPanel } from "@/components/wallet/WithdrawalStatusPanel";
 import { formatCurrency } from "@/lib/utils";
+import { useToast } from "@/components/ui/Toast";
 import type { BankAccount } from "@/types";
 
 export default function WithdrawPage() {
   const router = useRouter();
+  const toast = useToast();
   const { user, isLoading } = useRequireAuth("respondent");
   const [amount, setAmount] = useState("");
   const [bankId, setBankId] = useState("");
@@ -106,9 +108,10 @@ export default function WithdrawPage() {
       await refetchBanks();
       setNewBank({ bankName: "", bankCode: "", accountNumber: "" });
       setResolvedName("");
+      toast.success("Bank account added");
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      alert(msg || "Failed to add bank account");
+      toast.error(msg || "Failed to add bank account");
     } finally {
       setAddingBank(false);
     }

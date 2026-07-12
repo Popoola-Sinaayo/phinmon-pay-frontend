@@ -6,6 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
 import { api } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
+import { useQoreIdLiveness } from "@/hooks/useQoreIdLiveness";
 import { usePlatformFeatures, isPremiumLivenessAvailable } from "@/lib/platformFeatures";
 import { VerificationBadge } from "@/components/Badges";
 import { DashboardShell } from "@/components/layout/DashboardShell";

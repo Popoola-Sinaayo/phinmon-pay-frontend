@@ -13,6 +13,7 @@ import { SurveyPaymentStatusPanel } from "@/components/researcher/SurveyPaymentS
 import { usePricingConfig } from "@/lib/pricingConfig";
 import { usePlatformFeatures } from "@/lib/platformFeatures";
 import { validateCampaignQuestions } from "@/lib/surveyValidation";
+import { useToast } from "@/components/ui/Toast";
 import type { Question, Survey } from "@/types";
 
 const STEPS = ["Details", "Questions", "Audience", "Budget", "Review", "Payment", "Launch"];
@@ -78,6 +79,7 @@ function NewCampaignForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const resumeId = searchParams.get("resume");
+  const toast = useToast();
   const { user, isLoading } = useRequireAuth("researcher");
   const [step, setStep] = useState(0);
   const [loading, setLoading] = useState(false);
@@ -168,7 +170,7 @@ function NewCampaignForm() {
         const savedStep = Math.min(Math.max(survey.draftStep ?? 0, 0), STEPS.length - 2);
         setStep(survey.status === "PENDING_PAYMENT" ? Math.max(savedStep, 5) : savedStep);
       } catch {
-        alert("Could not load saved project");
+        toast.error("Could not load saved project");
         router.push("/researcher/campaigns");
       } finally {
         setLoadingResume(false);
@@ -176,6 +178,7 @@ function NewCampaignForm() {
     };
 
     void loadDraft();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [resumeId, user, router, premiumAudienceEnabled]);
 
   // If the user opened this page while payment was still pending, the backend status may
@@ -296,7 +299,7 @@ function NewCampaignForm() {
   const handleNext = async () => {
     const validationError = validateCurrentStep();
     if (validationError) {
-      alert(validationError);
+      toast.warning(validationError);
       return;
     }
 
@@ -307,7 +310,7 @@ function NewCampaignForm() {
         setStep((s) => s + 1);
       } catch (err: unknown) {
         const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-        alert(msg || "Failed to save project");
+        toast.error(msg || "Failed to save project");
       } finally {
         setLoading(false);
       }
@@ -320,7 +323,7 @@ function NewCampaignForm() {
         setStep(5);
       } catch (err: unknown) {
         const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-        alert(msg || "Failed to save project");
+        toast.error(msg || "Failed to save project");
       } finally {
         setLoading(false);
       }
@@ -338,7 +341,7 @@ function NewCampaignForm() {
         }
       } catch (err: unknown) {
         const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-        alert(msg || "Launch failed");
+        toast.error(msg || "Launch failed");
       } finally {
         setLoading(false);
       }
@@ -361,7 +364,7 @@ function NewCampaignForm() {
       }
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      alert(msg || "Could not open Paystack");
+      toast.error(msg || "Could not open Paystack");
     } finally {
       setLoading(false);
     }

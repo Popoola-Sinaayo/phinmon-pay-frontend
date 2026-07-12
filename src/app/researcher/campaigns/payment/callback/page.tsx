@@ -85,15 +85,23 @@ function PaymentCallback() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <p>Payment confirmed. Redirecting…</p>
+    <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-paper px-4 text-center">
+      <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+      <p className="text-ink-600">Payment confirmed. Redirecting&hellip;</p>
     </div>
   );
 }
 
 export default function PaymentCallbackPage() {
   return (
-    <Suspense fallback={<div className="p-16 text-center">Loading...</div>}>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen flex-col items-center justify-center gap-3 bg-paper px-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary-600" />
+          <p className="text-ink-600">Loading&hellip;</p>
+        </div>
+      }
+    >
       <PaymentCallback />
     </Suspense>
   );
