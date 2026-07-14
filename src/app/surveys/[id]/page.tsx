@@ -106,7 +106,7 @@ export default function SurveyDetailPage() {
                 <div>
                   <p className="font-semibold text-gray-900">
                     {platformFeatures.premiumLivenessComingSoon
-                      ? "Premium tasks — coming soon"
+                      ? "Premium tasks  coming soon"
                       : "Premium liveness check required"}
                   </p>
                   <p className="mt-1 text-sm text-gray-600">

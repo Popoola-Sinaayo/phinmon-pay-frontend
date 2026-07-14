@@ -447,7 +447,7 @@ function NewCampaignForm() {
           <>
             <div className="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-sm text-blue-900">
               <strong>Pricing note:</strong> Your project cost is not fixed upfront. It is
-              calculated from the estimated time to complete your questions — different question
+              calculated from the estimated time to complete your questions  different question
               types take different amounts of time. You will see the full breakdown on the Budget
               step.
             </div>
@@ -492,7 +492,7 @@ function NewCampaignForm() {
               <p className="mt-3 text-xs text-gray-500">
                 Verified = NIN verified respondents available now. Premium = NIN + liveness verified
                 {platformFeatures.premiumLivenessComingSoon
-                  ? " (coming soon — not available for new projects yet)."
+                  ? " (coming soon  not available for new projects yet)."
                   : "."}
               </p>
             </div>
@@ -530,8 +530,8 @@ function NewCampaignForm() {
                 </div>
                 <p className="mt-1 text-sm text-gray-500">
                   {a === "ALL_VERIFIED"
-                    ? `NIN verified respondents — ${formatCurrency(pricingConfig.standardRatePerMinute)}/min standard rate`
-                    : `NIN + liveness verified — ${formatCurrency(pricingConfig.premiumRatePerMinute)}/min premium rate (${premiumMultiplier}×)`}
+                    ? `NIN verified respondents  ${formatCurrency(pricingConfig.standardRatePerMinute)}/min standard rate`
+                    : `NIN + liveness verified  ${formatCurrency(pricingConfig.premiumRatePerMinute)}/min premium rate (${premiumMultiplier}×)`}
                 </p>
                 {isDisabled && (
                   <p className="mt-2 text-sm text-blue-800">
@@ -556,7 +556,7 @@ function NewCampaignForm() {
             {respondentPool && (
               <div className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm text-gray-700">
                 <span className="font-medium text-gray-900">
-                  {availableForAudience?.toLocaleString() ?? "—"}
+                  {availableForAudience?.toLocaleString() ?? ""}
                 </span>{" "}
                 {form.targetAudience === "PREMIUM_ONLY" ? "premium" : "verified"} respondents
                 currently on the platform for your selected audience.
@@ -605,7 +605,7 @@ function NewCampaignForm() {
                     AI spam filtering
                   </span>
                   <span className="text-xs text-gray-500">
-                    {formatCurrency(pricingConfig.aiSpamFilterCostPerResponse)} per response —
+                    {formatCurrency(pricingConfig.aiSpamFilterCostPerResponse)} per response 
                     flags nonsensical text answers for review
                   </span>
                 </span>
@@ -624,7 +624,7 @@ function NewCampaignForm() {
                     AI analytics chat
                   </span>
                   <span className="text-xs text-gray-500">
-                    {formatCurrency(pricingConfig.aiAnalyticsCost)} flat — unlimited Q&amp;A about
+                    {formatCurrency(pricingConfig.aiAnalyticsCost)} flat  unlimited Q&amp;A about
                     your project results
                   </span>
                 </span>

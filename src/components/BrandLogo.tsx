@@ -14,9 +14,9 @@ type BrandLogoProps = {
   /** Use white mark + wordmark for dark backgrounds. */
   onDark?: boolean;
   /**
-   * `mark` — icon only (or icon + text if showText).
-   * `stacked` — full stacked lockup image (ignores showText).
-   * `horizontal` — full horizontal lockup image (ignores showText).
+   * `mark`  icon only (or icon + text if showText).
+   * `stacked`  full stacked lockup image (ignores showText).
+   * `horizontal`  full horizontal lockup image (ignores showText).
    */
   variant?: "mark" | "stacked" | "horizontal";
 };
@@ -27,7 +27,7 @@ const sizes = {
   lg: { icon: 42, text: "text-lg", lockupH: 40, stackedH: 96 },
 };
 
-/** Vector mark — uses currentColor so it inherits text color. */
+/** Vector mark  uses currentColor so it inherits text color. */
 export function PhinmonMark({
   size = 40,
   className,

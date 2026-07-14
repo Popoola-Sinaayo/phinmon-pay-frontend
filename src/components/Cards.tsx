@@ -57,8 +57,8 @@ export function SurveyCard({
         <Link href={href} className="btn-secondary text-center">
           {lockReason === "liveness"
             ? platformFeatures.premiumLivenessComingSoon
-              ? "Premium — coming soon"
-              : "Premium — verify to access"
+              ? "Premium  coming soon"
+              : "Premium  verify to access"
             : "Verify identity to start"}
         </Link>
       ) : (

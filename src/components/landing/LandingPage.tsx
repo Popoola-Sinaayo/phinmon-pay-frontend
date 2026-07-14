@@ -459,7 +459,7 @@ export function LandingPage() {
                 { icon: Target, text: "Target Standard or Premium verification tiers" },
                 { icon: BarChart3, text: "Live dashboard  responses, spend, completion rate" },
                 { icon: Download, text: "One-click CSV export with question-level data" },
-                { icon: CreditCard, text: "Pay securely — project goes live instantly" },
+                { icon: CreditCard, text: "Pay securely  project goes live instantly" },
               ].map(({ icon: Icon, text }) => (
                 <motion.li
                   key={text}

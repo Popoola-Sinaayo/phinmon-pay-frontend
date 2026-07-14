@@ -21,7 +21,7 @@ export default function ForRespondentsPage() {
             </span>
           </div>
           <p className="mt-2 text-sm text-gray-500">
-            Higher payouts with liveness verification — we&apos;re enabling this soon. For now, earn
+            Higher payouts with liveness verification  we&apos;re enabling this soon. For now, earn
             with NIN-verified tasks.
           </p>
         </div>

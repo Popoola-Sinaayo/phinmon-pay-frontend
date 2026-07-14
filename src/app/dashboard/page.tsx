@@ -62,7 +62,7 @@ export default function RespondentDashboard() {
       title={user ? `${getGreeting()}, ${firstName}` : "Dashboard"}
       subtitle={
         dashboard?.isPremium
-          ? "Premium member — higher-paying tasks unlocked"
+          ? "Premium member  higher-paying tasks unlocked"
           : user?.ninVerified
             ? platformFeatures.premiumLivenessComingSoon
               ? "You're verified with NIN. Premium liveness check coming soon."
@@ -86,7 +86,7 @@ export default function RespondentDashboard() {
                   </p>
                   <p className="mt-1 font-semibold text-gray-900">
                     {user.livenessVerified
-                      ? "You're all set — premium tasks unlocked"
+                      ? "You're all set  premium tasks unlocked"
                       : user.ninVerified
                         ? platformFeatures.premiumLivenessComingSoon
                           ? "NIN verified. Premium liveness check coming soon."

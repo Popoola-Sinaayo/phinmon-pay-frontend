@@ -172,7 +172,7 @@ export function SurveyPricingBreakdown({
       {expanded && (
         <div className="space-y-4 rounded-xl border border-gray-200 p-4 text-sm text-gray-700">
           <div>
-            <p className="font-semibold text-gray-900">Step 1 — Estimate completion time</p>
+            <p className="font-semibold text-gray-900">Step 1  Estimate completion time</p>
             <p className="mt-1">
               Each question type has a time weight. Multiple-choice questions add 2 seconds per
               option ({pricingConfig.multipleChoiceTimeFormula || "6s base + 2s per option"}).
@@ -207,7 +207,7 @@ export function SurveyPricingBreakdown({
                 <ul className="mt-1 space-y-1 text-xs">
                   {pricing.questionBreakdown.map((q) => (
                     <li key={q.index}>
-                      Q{q.index}: {formatQuestionType(q.type, typeLabels, q.optionCount)} —{" "}
+                      Q{q.index}: {formatQuestionType(q.type, typeLabels, q.optionCount)} {" "}
                       {q.seconds}s
                     </li>
                   ))}
@@ -220,7 +220,7 @@ export function SurveyPricingBreakdown({
           </div>
 
           <div>
-            <p className="font-semibold text-gray-900">Step 2 — Reward per response</p>
+            <p className="font-semibold text-gray-900">Step 2  Reward per response</p>
             <p className="mt-1">
               {formatCurrency(ratePerMinute)}/min × {pricing.estimatedTimeMinutes} min ={" "}
               {formatCurrency(rawRewardFromTime)}
@@ -236,7 +236,7 @@ export function SurveyPricingBreakdown({
           </div>
 
           <div>
-            <p className="font-semibold text-gray-900">Step 3 — Response budget</p>
+            <p className="font-semibold text-gray-900">Step 3  Response budget</p>
             <p className="mt-1">
               {formatCurrency(rewardPerResponse)} × {responsesNeeded} responses ={" "}
               {formatCurrency(responseCost)}
@@ -244,7 +244,7 @@ export function SurveyPricingBreakdown({
           </div>
 
           <div>
-            <p className="font-semibold text-gray-900">Step 4 — Platform fee</p>
+            <p className="font-semibold text-gray-900">Step 4  Platform fee</p>
             <p className="mt-1">
               {pricing.platformFeeRate}% of {formatCurrency(responseCost)} ={" "}
               {formatCurrency(pricing.platformFeeAmount)}
@@ -253,7 +253,7 @@ export function SurveyPricingBreakdown({
 
           {(pricing.aiAddOnsCost || 0) > 0 && (
             <div>
-              <p className="font-semibold text-gray-900">Step 5 — AI add-ons</p>
+              <p className="font-semibold text-gray-900">Step 5  AI add-ons</p>
               {aiSpamFilterEnabled && (
                 <p className="mt-1">
                   Spam filter: {formatCurrency(pricingConfig.aiSpamFilterCostPerResponse)} ×{" "}

@@ -124,7 +124,7 @@ export default function PricingPage() {
       </div>
 
       <p className="mt-8 text-center text-sm text-gray-500">
-        Your exact total — including any AI add-ons — is shown in the project builder before you
+        Your exact total  including any AI add-ons  is shown in the project builder before you
         pay.
       </p>
 
