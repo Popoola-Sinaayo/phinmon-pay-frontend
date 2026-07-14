@@ -21,14 +21,14 @@ interface SurveyPaymentInfo {
 interface SurveyPaymentStatusPanelProps {
   surveyId: string;
   onSuccess?: () => void;
-  onRetryPaystack?: () => void;
+  onRetryPayment?: () => void;
   retryLoading?: boolean;
 }
 
 export function SurveyPaymentStatusPanel({
   surveyId,
   onSuccess,
-  onRetryPaystack,
+  onRetryPayment,
   retryLoading = false,
 }: SurveyPaymentStatusPanelProps) {
   const [payment, setPayment] = useState<SurveyPaymentInfo | null>(null);
@@ -132,7 +132,7 @@ export function SurveyPaymentStatusPanel({
   if (!payment) {
     return (
       <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-        No payment record found for this project. Use &quot;Pay with Paystack&quot; to start
+        No payment record found for this project. Use &quot;Proceed to payment&quot; to start
         checkout.
       </div>
     );
@@ -166,8 +166,8 @@ export function SurveyPaymentStatusPanel({
 
       {isPending && (
         <div className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          If you already paid on Paystack but were not redirected back, your payment may still be
-          processing. We check automatically every few seconds, or you can confirm manually below.
+          If you already paid but were not redirected back, your payment may still be processing.
+          We check automatically every few seconds, or you can confirm manually below.
         </div>
       )}
 
@@ -210,20 +210,20 @@ export function SurveyPaymentStatusPanel({
               </>
             )}
           </button>
-          {(payment.authorizationUrl || onRetryPaystack) && (
+          {(payment.authorizationUrl || onRetryPayment) && (
             <button
               type="button"
               className="btn-secondary flex-1"
               onClick={() => {
-                if (onRetryPaystack) {
-                  onRetryPaystack();
+                if (onRetryPayment) {
+                  onRetryPayment();
                 } else if (payment.authorizationUrl) {
                   window.location.href = payment.authorizationUrl;
                 }
               }}
               disabled={retryLoading}
             >
-              {retryLoading ? "Opening…" : "Return to Paystack"}
+              {retryLoading ? "Opening…" : "Return to payment"}
             </button>
           )}
         </div>
@@ -231,16 +231,16 @@ export function SurveyPaymentStatusPanel({
 
       {isPending && timedOut && (
         <p className="text-center text-xs text-gray-500">
-          Automatic checks paused. Use &quot;Confirm payment status&quot; if you completed payment on
-          Paystack.
+          Automatic checks paused. Use &quot;Confirm payment status&quot; if you already completed
+          payment.
         </p>
       )}
 
-      {isFailed && onRetryPaystack && (
+      {isFailed && onRetryPayment && (
         <button
           type="button"
           className="btn-primary w-full"
-          onClick={onRetryPaystack}
+          onClick={onRetryPayment}
           disabled={retryLoading}
         >
           {retryLoading ? "Opening…" : "Try payment again"}

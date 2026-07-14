@@ -3,10 +3,8 @@
 import { Marquee } from "./LandingPrimitives";
 
 const PARTNERS = [
-  { name: "Paystack", abbr: "PS", color: "bg-[#011B33] text-white" },
   { name: "GTBank", abbr: "GT", color: "bg-[#E65100] text-white" },
   { name: "Access Bank", abbr: "AB", color: "bg-[#FF8200] text-white" },
-  { name: "Flutterwave", abbr: "FW", color: "bg-[#F5A623] text-gray-900" },
   { name: "NIMC", abbr: "NIN", color: "bg-[#1B4332] text-white" },
   { name: "UBA", abbr: "UBA", color: "bg-[#D71920] text-white" },
   { name: "Zenith Bank", abbr: "ZB", color: "bg-[#E30613] text-white" },

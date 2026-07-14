@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phinmon — Get Paid For Your Opinion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #d4d0c8;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      padding: 24px;
+    }
+
+    /* Portrait social / print — 1080 × 1350 (4:5) */
+    .flyer {
+      width: 1080px;
+      height: 1350px;
+      position: relative;
+      overflow: hidden;
+      background: #fbfaf7;
+      color: #1a1815;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Warm mesh + grid (matches app landing) */
+    .bg-mesh {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 90% 60% at 15% 0%, rgba(31, 157, 99, 0.14), transparent 55%),
+        radial-gradient(ellipse 70% 50% at 95% 20%, rgba(221, 214, 200, 0.55), transparent 50%),
+        radial-gradient(ellipse 80% 40% at 50% 100%, rgba(16, 122, 76, 0.08), transparent 60%);
+      pointer-events: none;
+    }
+
+    .bg-grid {
+      position: absolute;
+      inset: 0;
+      opacity: 0.35;
+      background-image:
+        linear-gradient(to right, rgba(26, 24, 21, 0.04) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(26, 24, 21, 0.04) 1px, transparent 1px);
+      background-size: 48px 48px;
+      mask-image: radial-gradient(ellipse 85% 75% at 50% 35%, #000 30%, transparent 100%);
+      pointer-events: none;
+    }
+
+    .content {
+      position: relative;
+      z-index: 2;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 56px 56px 48px;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 36px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-name {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 32px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #1a1815;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.85);
+      border: 1px solid rgba(26, 24, 21, 0.08);
+      font-size: 13px;
+      font-weight: 600;
+      color: #107a4c;
+      box-shadow: 0 1px 2px rgba(26, 24, 21, 0.04);
+    }
+
+    .pill-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #1f9d63;
+      box-shadow: 0 0 0 3px rgba(31, 157, 99, 0.25);
+    }
+
+    /* Hero */
+    .hero {
+      text-align: left;
+      max-width: 620px;
+    }
+
+    .eyebrow {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #107a4c;
+      margin-bottom: 16px;
+    }
+
+    .headline {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 72px;
+      font-weight: 600;
+      line-height: 1.02;
+      letter-spacing: -0.03em;
+      color: #1a1815;
+    }
+
+    .headline em {
+      font-style: italic;
+      color: #107a4c;
+    }
+
+    .subhead {
+      margin-top: 20px;
+      font-size: 22px;
+      line-height: 1.45;
+      color: #57534e;
+      max-width: 520px;
+    }
+
+    /* Main layout: copy + phone */
+    .main {
+      display: grid;
+      grid-template-columns: 1fr 380px;
+      gap: 32px;
+      align-items: center;
+      margin-top: 40px;
+      flex: 1;
+    }
+
+    /* Earnings highlight */
+    .earn-card {
+      margin-top: 28px;
+      padding: 24px 28px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #1a1815 0%, #23211e 100%);
+      color: #fbfaf7;
+      box-shadow: 0 18px 40px -18px rgba(26, 24, 21, 0.35);
+      max-width: 480px;
+    }
+
+    .earn-label {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(251, 250, 247, 0.65);
+    }
+
+    .earn-amount {
+      margin-top: 8px;
+      font-family: Fraunces, Georgia, serif;
+      font-size: 42px;
+      font-weight: 600;
+      color: #71d09b;
+    }
+
+    .earn-note {
+      margin-top: 8px;
+      font-size: 15px;
+      color: rgba(251, 250, 247, 0.75);
+      line-height: 1.4;
+    }
+
+    /* Steps */
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 28px;
+      max-width: 480px;
+    }
+
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid rgba(26, 24, 21, 0.07);
+      box-shadow: 0 2px 8px rgba(26, 24, 21, 0.04);
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      background: #eefaf2;
+      color: #107a4c;
+      font-size: 14px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .step-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #1a1815;
+    }
+
+    .step-desc {
+      font-size: 12px;
+      color: #57534e;
+      margin-top: 2px;
+      line-height: 1.35;
+    }
+
+    /* Phone mockup */
+    .phone-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .phone {
+      width: 320px;
+      height: 640px;
+      border-radius: 40px;
+      background: #1a1815;
+      padding: 12px;
+      box-shadow:
+        0 0 0 1px rgba(255, 255, 255, 0.08),
+        0 40px 80px -24px rgba(26, 24, 21, 0.45);
+      transform: rotate(-2deg);
+    }
+
+    .phone-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 32px;
+      background: #fbfaf7;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .phone-status {
+      padding: 14px 20px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11px;
+      font-weight: 600;
+      color: #1a1815;
+    }
+
+    .phone-header {
+      padding: 8px 20px 16px;
+    }
+
+    .phone-greeting {
+      font-size: 13px;
+      color: #57534e;
+    }
+
+    .phone-title {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 20px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .wallet-chip {
+      margin: 0 20px 16px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #107a4c, #1f9d63);
+      color: white;
+    }
+
+    .wallet-label {
+      font-size: 11px;
+      opacity: 0.85;
+      font-weight: 500;
+    }
+
+    .wallet-balance {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 28px;
+      font-weight: 600;
+      margin-top: 4px;
+    }
+
+    .task-list {
+      padding: 0 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .task {
+      padding: 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(26, 24, 21, 0.08);
+      background: white;
+    }
+
+    .task-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .task-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #1a1815;
+      line-height: 1.3;
+    }
+
+    .task-pay {
+      font-size: 13px;
+      font-weight: 800;
+      color: #107a4c;
+      white-space: nowrap;
+    }
+
+    .task-meta {
+      margin-top: 6px;
+      font-size: 10px;
+      color: #57534e;
+    }
+
+    /* Trust row */
+    .trust {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 24px;
+      max-width: 520px;
+    }
+
+    .trust-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: white;
+      border: 1px solid rgba(26, 24, 21, 0.08);
+      font-size: 12px;
+      font-weight: 600;
+      color: #44403c;
+    }
+
+    .trust-item svg {
+      width: 14px;
+      height: 14px;
+      color: #1f9d63;
+    }
+
+    /* CTA footer */
+    .footer {
+      position: relative;
+      z-index: 2;
+      margin-top: auto;
+      padding: 0 56px 56px;
+    }
+
+    .cta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      padding: 28px 36px;
+      border-radius: 24px;
+      background: #1a1815;
+      color: #fbfaf7;
+      box-shadow: 0 24px 48px -20px rgba(26, 24, 21, 0.5);
+    }
+
+    .cta-text h2 {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+    }
+
+    .cta-text p {
+      margin-top: 6px;
+      font-size: 15px;
+      color: rgba(251, 250, 247, 0.7);
+    }
+
+    .cta-url {
+      flex-shrink: 0;
+      text-align: center;
+      padding: 20px 32px;
+      border-radius: 18px;
+      background: #1f9d63;
+      color: white;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      box-shadow: 0 8px 24px rgba(31, 157, 99, 0.45);
+    }
+
+    .cta-url small {
+      display: block;
+      margin-top: 4px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .powered {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 12px;
+      color: #78716c;
+    }
+
+    .powered strong {
+      color: #57534e;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+      .flyer { box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <article class="flyer" aria-label="Phinmon marketing flyer">
+    <div class="bg-mesh" aria-hidden="true"></div>
+    <div class="bg-grid" aria-hidden="true"></div>
+
+    <div class="content">
+      <header class="header">
+        <div class="brand">
+          <img src="../brand/phinmon-logo-horizontal.png" alt="Phinmon" style="height:48px;width:auto;" />
+        </div>
+        <div class="pill">
+          <span class="pill-dot"></span>
+          Nigeria · Verified panel
+        </div>
+      </header>
+
+      <div class="hero">
+        <p class="eyebrow">Share your voice · Get real money</p>
+        <h1 class="headline">Get paid for<br /><em>your opinion.</em></h1>
+        <p class="subhead">
+          Complete quick research tasks on your phone. Cash out straight to your Nigerian bank account — free to join.
+        </p>
+      </div>
+
+      <div class="main">
+        <div class="left">
+          <div class="earn-card">
+            <p class="earn-label">Typical task rewards</p>
+            <p class="earn-amount">₦600 – ₦2,400+</p>
+            <p class="earn-note">Short surveys &amp; feedback tasks · 5–20 minutes · Paid when you submit</p>
+          </div>
+
+          <div class="steps">
+            <div class="step">
+              <span class="step-num">1</span>
+              <div>
+                <p class="step-title">Sign up free</p>
+                <p class="step-desc">Email + OTP at phinmon.com — no password hassle</p>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-num">2</span>
+              <div>
+                <p class="step-title">Verify with NIN</p>
+                <p class="step-desc">One-time check so payouts stay fair &amp; secure</p>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-num">3</span>
+              <div>
+                <p class="step-title">Complete tasks</p>
+                <p class="step-desc">Brands &amp; researchers — one question at a time</p>
+              </div>
+            </div>
+            <div class="step">
+              <span class="step-num">4</span>
+              <div>
+                <p class="step-title">Withdraw to bank</p>
+                <p class="step-desc">GTBank, Access, UBA, Zenith &amp; more</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="trust">
+            <span class="trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              NIN verified
+            </span>
+            <span class="trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>
+              Bank payouts
+            </span>
+            <span class="trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              Real cash
+            </span>
+            <span class="trust-item">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+              Mobile-first
+            </span>
+          </div>
+        </div>
+
+        <div class="phone-wrap">
+          <div class="phone" aria-hidden="true">
+            <div class="phone-screen">
+              <div class="phone-status">
+                <span>9:41</span>
+                <span>●●●</span>
+              </div>
+              <div class="phone-header">
+                <p class="phone-greeting">Good afternoon, Ada</p>
+                <p class="phone-title">Available tasks</p>
+              </div>
+              <div class="wallet-chip">
+                <p class="wallet-label">Wallet balance</p>
+                <p class="wallet-balance">₦12,450</p>
+              </div>
+              <div class="task-list">
+                <div class="task">
+                  <div class="task-row">
+                    <span class="task-name">Mobile Banking UX Study</span>
+                    <span class="task-pay">₦850</span>
+                  </div>
+                  <p class="task-meta">~12 min · Verified task</p>
+                </div>
+                <div class="task">
+                  <div class="task-row">
+                    <span class="task-name">Lagos Transport Feedback</span>
+                    <span class="task-pay">₦600</span>
+                  </div>
+                  <p class="task-meta">~8 min · Verified task</p>
+                </div>
+                <div class="task">
+                  <div class="task-row">
+                    <span class="task-name">FMCG Brand Preference</span>
+                    <span class="task-pay">₦1,200</span>
+                  </div>
+                  <p class="task-meta">~15 min · Verified task</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <div class="cta-bar">
+        <div class="cta-text">
+          <h2>Start earning today</h2>
+          <p>Free to join · No hidden fees · Your opinion shapes real products</p>
+        </div>
+        <div class="cta-url">
+          www.phinmon.com
+          <small>Sign up now</small>
+        </div>
+      </div>
+      <p class="powered">Powered by <strong>Evergreene Software Ltd</strong></p>
+    </footer>
+  </article>
+</body>
+</html>

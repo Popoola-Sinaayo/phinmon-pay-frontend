@@ -69,13 +69,13 @@ export default function CampaignDetailPage() {
             {survey.status === "PENDING_PAYMENT" && (
               <div className="mt-4 space-y-3">
                 <p className="rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-900">
-                  Payment incomplete. If you already paid on Paystack, confirm your transaction
-                  below. Otherwise continue setup to complete payment.
+                  Payment incomplete. If you already paid, confirm your transaction below.
+                  Otherwise continue setup to complete payment.
                 </p>
                 <SurveyPaymentStatusPanel
                   surveyId={survey._id}
                   onSuccess={() => window.location.reload()}
-                  onRetryPaystack={async () => {
+                  onRetryPayment={async () => {
                     const { data } = await api.post<{ authorizationUrl?: string }>(
                       `/surveys/${survey._id}/launch`,
                       {}

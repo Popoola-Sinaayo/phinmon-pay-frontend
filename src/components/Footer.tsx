@@ -18,7 +18,7 @@ const links = {
 
 const TRUST_BADGES = [
   { icon: Fingerprint, label: "NIN Verified" },
-  { icon: CreditCard, label: "Paystack" },
+  { icon: CreditCard, label: "Bank Payouts" },
   { icon: ShieldCheck, label: "CBN Compliant" },
   { icon: Lock, label: "NDPR Ready" },
 ];
@@ -32,8 +32,8 @@ export function Footer() {
             <div className="md:col-span-2">
               <BrandLogo href="/" size="lg" onDark />
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-400">
-                Nigeria&apos;s verified research marketplace.                 NIN-checked respondents,
-                Paystack payouts, and export-ready task data.
+                Nigeria&apos;s verified research marketplace. NIN-checked respondents,
+                secure bank payouts, and export-ready task data.
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {TRUST_BADGES.map(({ icon: Icon, label }) => (

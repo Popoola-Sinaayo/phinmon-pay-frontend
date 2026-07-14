@@ -115,8 +115,8 @@ const BENTO_FEATURES = [
     size: "sm",
   },
   {
-    title: "Paystack-powered payouts",
-    desc: "Fund projects and pay respondents through Nigeria's most trusted payment rail.",
+    title: "Fast bank payouts",
+    desc: "Fund projects and pay respondents directly to Nigerian bank accounts.",
     icon: CreditCard,
     size: "sm",
   },
@@ -268,7 +268,7 @@ export function LandingPage() {
             >
               {[
                 { icon: Fingerprint, label: "NIMC NIN check" },
-                { icon: CreditCard, label: "Paystack payments" },
+                { icon: CreditCard, label: "Bank payouts" },
                 { icon: MapPin, label: "36 states + FCT" },
                 { icon: Lock, label: "NDPR-ready" },
               ].map(({ icon: Icon, label }) => (
@@ -459,7 +459,7 @@ export function LandingPage() {
                 { icon: Target, text: "Target Standard or Premium verification tiers" },
                 { icon: BarChart3, text: "Live dashboard  responses, spend, completion rate" },
                 { icon: Download, text: "One-click CSV export with question-level data" },
-                { icon: CreditCard, text: "Pay via Paystack — project goes live instantly" },
+                { icon: CreditCard, text: "Pay securely — project goes live instantly" },
               ].map(({ icon: Icon, text }) => (
                 <motion.li
                   key={text}

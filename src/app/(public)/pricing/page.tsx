@@ -47,7 +47,7 @@ export default function PricingPage() {
               </li>
               <li className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-primary-400" />
-                Pay in full via Paystack when you launch a live study
+                Pay in full when you launch a live study
               </li>
             </ul>
           </div>

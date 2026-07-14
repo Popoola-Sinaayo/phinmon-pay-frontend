@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phinmon — Get Paid For Your Opinions</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #e8e6e1;
+      font-family: Inter, ui-sans-serif, system-ui, sans-serif;
+      padding: 24px;
+    }
+
+    .flyer {
+      width: 1080px;
+      height: 1350px;
+      background: #ffffff;
+      color: #1a1815;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 72px 80px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Single soft accent — top only */
+    .flyer::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 6px;
+      background: linear-gradient(90deg, #107a4c, #1f9d63);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 56px;
+    }
+
+    .logo-name {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      color: #1a1815;
+    }
+
+    .headline {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 58px;
+      font-weight: 600;
+      line-height: 1.12;
+      letter-spacing: -0.025em;
+      color: #1a1815;
+      max-width: 820px;
+    }
+
+    .subheadline {
+      margin-top: 28px;
+      font-size: 21px;
+      line-height: 1.55;
+      color: #57534e;
+      max-width: 780px;
+      font-weight: 400;
+    }
+
+    .divider {
+      width: 48px;
+      height: 3px;
+      background: #1f9d63;
+      border-radius: 2px;
+      margin: 48px auto;
+    }
+
+    .section-label {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #107a4c;
+      margin-bottom: 24px;
+    }
+
+    .benefits {
+      list-style: none;
+      text-align: left;
+      display: inline-block;
+      max-width: 520px;
+      width: 100%;
+    }
+
+    .benefits li {
+      font-size: 19px;
+      line-height: 1.5;
+      color: #33302c;
+      padding: 11px 0;
+      border-bottom: 1px solid #f0eeea;
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+    }
+
+    .benefits li:last-child {
+      border-bottom: none;
+    }
+
+    .benefits .icon {
+      flex-shrink: 0;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+
+    .steps {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px 20px;
+      max-width: 900px;
+    }
+
+    .step {
+      font-size: 17px;
+      font-weight: 500;
+      color: #44403c;
+      padding: 14px 22px;
+      border-radius: 999px;
+      border: 1px solid #ece7dd;
+      background: #fbfaf7;
+      white-space: nowrap;
+    }
+
+    .cta-block {
+      margin-top: auto;
+      padding-top: 48px;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    .cta-title {
+      font-family: Fraunces, Georgia, serif;
+      font-size: 36px;
+      font-weight: 600;
+      color: #1a1815;
+      margin-bottom: 32px;
+    }
+
+    .cta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 36px;
+      padding: 32px 40px;
+      border-radius: 20px;
+      background: #fbfaf7;
+      border: 1px solid #ece7dd;
+    }
+
+    .qr {
+      width: 140px;
+      height: 140px;
+      border-radius: 12px;
+      background: white;
+      padding: 8px;
+      border: 1px solid #ece7dd;
+    }
+
+    .qr img {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .visit {
+      text-align: left;
+    }
+
+    .visit p {
+      font-size: 15px;
+      color: #78716c;
+      margin-bottom: 8px;
+    }
+
+    .visit a {
+      font-size: 32px;
+      font-weight: 700;
+      color: #107a4c;
+      text-decoration: none;
+      letter-spacing: -0.02em;
+    }
+
+    .footer-tagline {
+      margin-top: 40px;
+      font-family: Fraunces, Georgia, serif;
+      font-size: 22px;
+      font-style: italic;
+      color: #57534e;
+      letter-spacing: -0.01em;
+    }
+
+    @media print {
+      body { background: white; padding: 0; }
+    }
+  </style>
+</head>
+<body>
+  <article class="flyer" aria-label="Phinmon launch flyer for respondents">
+    <header class="logo">
+      <img src="../brand/phinmon-logo-horizontal.png" alt="Phinmon" width="220" height="40" style="height:44px;width:auto;" />
+    </header>
+
+    <h1 class="headline">💰 Get Paid for Your Opinions</h1>
+    <p class="subheadline">
+      Join Nigeria&apos;s verified insights marketplace and earn rewards by participating in paid
+      studies from businesses, startups, and researchers.
+    </p>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <p class="section-label">Benefits</p>
+    <ul class="benefits">
+      <li><span class="icon">✅</span> Earn money for every completed study</li>
+      <li><span class="icon">✅</span> 100% Free to Join</li>
+      <li><span class="icon">✅</span> Secure payouts</li>
+      <li><span class="icon">✅</span> NIN verified platform</li>
+      <li><span class="icon">✅</span> Premium members earn even more</li>
+    </ul>
+
+    <div class="divider" aria-hidden="true"></div>
+
+    <p class="section-label">How It Works</p>
+    <div class="steps">
+      <span class="step">1️⃣ Sign up</span>
+      <span class="step">2️⃣ Verify your NIN</span>
+      <span class="step">3️⃣ Complete paid studies</span>
+      <span class="step">4️⃣ Get paid</span>
+    </div>
+
+    <div class="cta-block">
+      <h2 class="cta-title">Join Today</h2>
+      <div class="cta-row">
+        <div class="qr">
+          <img src="phinmon-qr.png" alt="QR code — scan to visit www.phinmon.com" width="140" height="140" />
+        </div>
+        <div class="visit">
+          <p>Scan the QR code or visit:</p>
+          <a href="https://www.phinmon.com">www.phinmon.com</a>
+        </div>
+      </div>
+      <p class="footer-tagline">&ldquo;Real opinions. Real rewards.&rdquo;</p>
+    </div>
+  </article>
+</body>
+</html>

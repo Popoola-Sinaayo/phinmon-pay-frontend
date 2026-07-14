@@ -354,7 +354,7 @@ function NewCampaignForm() {
     setStep(6);
   };
 
-  const handleRetryPaystack = async () => {
+  const handleRetryPayment = async () => {
     if (!surveyId) return;
     setLoading(true);
     try {
@@ -364,7 +364,7 @@ function NewCampaignForm() {
       }
     } catch (err: unknown) {
       const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      toast.error(msg || "Could not open Paystack");
+      toast.error(msg || "Could not open payment");
     } finally {
       setLoading(false);
     }
@@ -690,14 +690,14 @@ function NewCampaignForm() {
               <SurveyPaymentStatusPanel
                 surveyId={surveyId}
                 onSuccess={handlePaymentSuccess}
-                onRetryPaystack={() => void handleRetryPaystack()}
+                onRetryPayment={() => void handleRetryPayment()}
                 retryLoading={loading}
               />
             ) : (
               <p className="text-gray-600">
-                You will be redirected to Paystack to complete payment. If the payment window does
-                not open or you are not redirected back after paying, return here and use
-                &quot;Confirm payment status&quot; on the next visit.
+                Proceed to make payment to activate your project. If the payment window does not
+                open or you are not redirected back after paying, return here and use &quot;Confirm
+                payment status&quot; on the next visit.
               </p>
             )}
           </div>
@@ -736,8 +736,8 @@ function NewCampaignForm() {
               ? "Saving..."
               : step === 5
                 ? questionsLocked
-                  ? "Return to Paystack"
-                  : "Pay with Paystack"
+                  ? "Return to payment"
+                  : "Proceed to make payment"
                 : step === 4
                   ? "Proceed to Payment"
                   : "Next"}

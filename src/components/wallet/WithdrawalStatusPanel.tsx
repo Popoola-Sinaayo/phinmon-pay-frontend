@@ -115,7 +115,7 @@ export function WithdrawalStatusPanel({
         <p className="text-xs text-gray-500">
           {timedOut
             ? "This is taking longer than usual. You can check your wallet for updates."
-            : "Waiting for Paystack to confirm the transfer…"}
+            : "Waiting to confirm your transfer…"}
         </p>
       )}
 
