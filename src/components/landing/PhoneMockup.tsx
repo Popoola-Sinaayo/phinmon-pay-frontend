@@ -14,7 +14,7 @@ import {
 const SCREENS = [
   {
     id: "surveys",
-    header: "Available Tasks",
+    header: "Available Studies",
     body: (
       <div className="space-y-2.5">
         {[
@@ -91,7 +91,7 @@ const SCREENS = [
           </motion.p>
         </div>
         {[
-          { label: "Task completed", amount: "+₦850", time: "2m ago" },
+          { label: "Opinion shared", amount: "+₦850", time: "2m ago" },
           { label: "Withdrawal to GTBank", amount: "-₦5,000", time: "Yesterday" },
         ].map((tx, i) => (
           <motion.div
@@ -193,7 +193,7 @@ export function PhoneMockup() {
             <CheckCircle2 className="h-4 w-4 text-primary-600" />
           </div>
           <div>
-            <p className="text-[10px] font-semibold text-gray-900">Task completed</p>
+            <p className="text-[10px] font-semibold text-gray-900">Opinion shared</p>
             <p className="text-[10px] text-primary-600">+₦850 earned</p>
           </div>
         </div>

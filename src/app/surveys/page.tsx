@@ -43,7 +43,7 @@ function SurveysContent() {
     <DashboardShell
       user={user}
       title="Tasks"
-      subtitle="Find paid research tasks matched to your profile"
+      subtitle="Share your opinions in paid studies matched to your profile"
       loading={isLoading || loadingSurveys}
     >
       {!loadingSurveys && (
@@ -87,8 +87,8 @@ function SurveysContent() {
             </StaggerList>
           ) : (
             <EmptyState
-              title="No tasks found"
-              description="Try a different filter or check back later for new projects."
+              title="No studies found"
+              description="Try a different filter or check back later for new opinion studies."
             />
           )}
         </>

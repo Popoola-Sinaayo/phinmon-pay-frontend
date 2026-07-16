@@ -73,13 +73,13 @@ const STEPS = [
   },
   {
     title: "Verify with NIN",
-    desc: "One-time identity check via NIMC. Required before tasks or withdrawals.",
+    desc: "One-time identity check via NIMC. Required before you get paid or withdraw.",
     icon: Fingerprint,
     time: "2 min",
   },
   {
-    title: "Complete tasks",
-    desc: "One question per screen. MCQ, ratings, open text  all on mobile.",
+    title: "Share your opinions",
+    desc: "Answer quick studies one question at a time — MCQ, ratings, open text, all on mobile.",
     icon: ClipboardList,
     time: "5–20 min",
   },
@@ -103,7 +103,7 @@ const SURVEY_TYPES = [
 const BENTO_FEATURES = [
   {
     title: "NIN gate on every respondent",
-    desc: "No anonymous answers. Every panelist passes NIMC identity verification before their first task.",
+    desc: "No anonymous answers. Every panelist passes NIMC identity verification before their first paid study.",
     icon: Fingerprint,
     size: "lg",
     image: "https://images.unsplash.com/photo-1563986768609-322da13575f3?w=600&q=80",
@@ -175,7 +175,7 @@ const COMPARISON = {
     items: [
       { icon: Fingerprint, text: "NIN verified via NIMC" },
       { icon: MapPin, text: "Demographic targeting by state" },
-      { icon: ClipboardList, text: "Standard task access" },
+      { icon: ClipboardList, text: "Access to paid opinion studies" },
       { icon: Clock, text: "Typical fill: 2–4 days" },
     ],
   },
@@ -185,7 +185,7 @@ const COMPARISON = {
     icon: Crown,
     items: [
       { icon: ScanFace, text: "NIN + liveness face match" },
-      { icon: Target, text: "Priority task matching" },
+      { icon: Target, text: "Priority study matching" },
       { icon: Lock, text: "Premium-only studies" },
       { icon: Zap, text: "Typical fill: under 24 hrs" },
     ],
@@ -221,7 +221,7 @@ export function LandingPage() {
             <SectionLabel icon={Users} text="Nigeria's verified research panel" />
 
             <h1 className="font-display mt-5 text-[2.75rem] font-medium leading-[1.04] tracking-[-0.02em] text-ink-900 sm:text-6xl lg:text-[4rem]">
-              <TextReveal text="Earn from tasks." />
+              <TextReveal text="Get paid for your opinions." />
               <br />
               <span className="italic text-primary-700">
                 <TextReveal text="Trust every response." />
@@ -234,8 +234,8 @@ export function LandingPage() {
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5 }}
             >
-              Phinmon connects researchers with NIN-verified Nigerians. Real identities,
-              real payouts, real insights  built for mobile-first Africa.
+              Share your views in paid studies from businesses and researchers. NIN-verified
+              Nigerians, real payouts to your bank — built for mobile-first Africa.
             </motion.p>
 
             <motion.div
@@ -247,7 +247,7 @@ export function LandingPage() {
               <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                 <Link href="/register?role=respondent" className="btn-accent w-full px-7 py-3.5 sm:w-auto">
                   <CircleDollarSign className="h-4 w-4" />
-                  Start earning
+                  Get paid for your opinions
                   <ArrowRight className="h-4 w-4" />
                 </Link>
               </motion.div>
@@ -557,7 +557,7 @@ export function LandingPage() {
                     <data.icon className="h-7 w-7" />
                   </div>
                   <h3 className="mt-4 text-2xl font-bold text-ink-900">{data.title}</h3>
-                  <p className="mt-1 text-sm font-semibold text-primary-600">{data.price} per task</p>
+                  <p className="mt-1 text-sm font-semibold text-primary-600">{data.price} per response</p>
                   <ul className="mt-6 space-y-3">
                     {data.items.map(({ icon: Icon, text }) => (
                       <li key={text} className="flex items-center gap-3 text-sm text-ink-600">
@@ -688,15 +688,15 @@ export function LandingPage() {
         />
         <FadeIn className="relative mx-auto max-w-landing px-4 text-center sm:px-6">
           <h2 className="font-display text-3xl font-medium tracking-tight text-white sm:text-4xl">
-            Ready to earn or launch your first study?
+            Ready to get paid for your opinions?
           </h2>
           <p className="mx-auto mt-4 max-w-lg text-gray-400">
-            Join 12,400+ verified Nigerians and hundreds of research teams already on Phinmon.
+            Join verified Nigerians sharing insights — and research teams collecting them — on Phinmon.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
               <Link href="/register?role=respondent" className="btn-primary px-10 py-3.5 text-base">
-                <CircleDollarSign className="h-4 w-4" /> Start earning
+                <CircleDollarSign className="h-4 w-4" /> Start sharing opinions
               </Link>
             </motion.div>
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>

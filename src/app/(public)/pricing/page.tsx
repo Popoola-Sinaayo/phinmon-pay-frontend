@@ -13,8 +13,8 @@ export default function PricingPage() {
     <div className="mx-auto max-w-landing px-4 py-16 sm:px-6">
       <h1 className="font-display text-4xl font-medium tracking-tight text-ink-900">Pricing</h1>
       <p className="mt-2 text-gray-600">
-        Project pricing is calculated automatically from your task setup. You see the full total
-        before you pay  no manual reward overrides.
+        Project pricing is calculated automatically from your study setup. You see the full total
+        before you pay — no manual reward overrides.
       </p>
 
       <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm">
@@ -39,7 +39,7 @@ export default function PricingPage() {
             <ul className="mt-4 space-y-2 text-sm text-gray-300">
               <li className="flex items-center gap-2">
                 <CircleDollarSign className="h-4 w-4 text-primary-400" />
-                Respondents join and earn from verified tasks
+                Respondents join and get paid for their opinions
               </li>
               <li className="flex items-center gap-2">
                 <ClipboardList className="h-4 w-4 text-primary-400" />
@@ -84,7 +84,7 @@ export default function PricingPage() {
           </div>
           <p className="mt-2 text-sm text-gray-600">
             Set how many verified responses you need. Total payout scales with the number of people
-            who complete your task.
+            who share their opinions in your study.
           </p>
         </div>
         <div className="card border-primary-100 bg-primary-50/30">

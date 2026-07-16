@@ -86,7 +86,7 @@ export default function SurveyDetailPage() {
                 <div>
                   <p className="font-semibold text-gray-900">NIN verification required</p>
                   <p className="mt-1 text-sm text-gray-600">
-                    Verify your identity with your NIN before taking this task.
+                    Verify your identity with your NIN before sharing your opinions.
                   </p>
                   <MotionButton
                     className="btn-primary mt-4"
@@ -106,13 +106,13 @@ export default function SurveyDetailPage() {
                 <div>
                   <p className="font-semibold text-gray-900">
                     {platformFeatures.premiumLivenessComingSoon
-                      ? "Premium tasks  coming soon"
+                      ? "Premium studies — coming soon"
                       : "Premium liveness check required"}
                   </p>
                   <p className="mt-1 text-sm text-gray-600">
                     {platformFeatures.premiumLivenessComingSoon
-                      ? "Premium liveness verification is being enabled soon. For now, browse NIN-verified tasks."
-                      : "This is a premium task. Complete a quick liveness verification to access it."}
+                      ? "Premium liveness verification is being enabled soon. For now, browse NIN-verified opinion studies."
+                      : "This is a premium study. Complete a quick liveness verification to access it."}
                   </p>
                   <MotionButton
                     className="btn-primary mt-4"
@@ -125,7 +125,7 @@ export default function SurveyDetailPage() {
                     }
                   >
                     {platformFeatures.premiumLivenessComingSoon
-                      ? "Browse available tasks"
+                      ? "Browse available studies"
                       : "Complete liveness check"}
                   </MotionButton>
                 </div>
@@ -151,7 +151,7 @@ export default function SurveyDetailPage() {
                 href={`/surveys/${id}/take`}
                 className="btn-primary mt-4 inline-flex w-full justify-center sm:w-auto"
               >
-                Start Task →
+                Share your opinions →
               </Link>
             </>
           )}

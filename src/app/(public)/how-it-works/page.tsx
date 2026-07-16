@@ -6,7 +6,7 @@ export default function HowItWorksPage() {
         <div>
           <h2 className="text-xl font-semibold text-primary-600">For Respondents</h2>
           <ol className="mt-4 space-y-4">
-            {["Create Account", "Verify Identity with NIN", "Complete Tasks", "Earn Money"].map(
+            {["Create Account", "Verify Identity with NIN", "Share Your Opinions", "Get Paid"].map(
               (step, i) => (
                 <li key={step} className="flex gap-3">
                   <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-100 text-sm font-bold text-primary-700">

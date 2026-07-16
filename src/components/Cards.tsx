@@ -63,7 +63,7 @@ export function SurveyCard({
         </Link>
       ) : (
         <Link href={href} className="btn-primary text-center">
-          View task
+          View study
         </Link>
       )}
     </motion.div>

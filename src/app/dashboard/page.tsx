@@ -62,12 +62,12 @@ export default function RespondentDashboard() {
       title={user ? `${getGreeting()}, ${firstName}` : "Dashboard"}
       subtitle={
         dashboard?.isPremium
-          ? "Premium member  higher-paying tasks unlocked"
+          ? "Premium member — higher-paying opinion studies unlocked"
           : user?.ninVerified
             ? platformFeatures.premiumLivenessComingSoon
               ? "You're verified with NIN. Premium liveness check coming soon."
-              : "Complete premium verification for higher-paying tasks"
-            : "Verify your NIN to start earning from tasks"
+              : "Complete premium verification for higher-paying opinion studies"
+            : "Verify your NIN to get paid for your opinions"
       }
       loading={isLoading || loadingDash}
     >
@@ -86,12 +86,12 @@ export default function RespondentDashboard() {
                   </p>
                   <p className="mt-1 font-semibold text-gray-900">
                     {user.livenessVerified
-                      ? "You're all set  premium tasks unlocked"
+                      ? "You're all set — premium opinion studies unlocked"
                       : user.ninVerified
                         ? platformFeatures.premiumLivenessComingSoon
                           ? "NIN verified. Premium liveness check coming soon."
                           : "Complete premium verification for higher payouts"
-                        : "Verify your NIN to start earning from tasks"}
+                        : "Verify your NIN to get paid for your opinions"}
                   </p>
                 </div>
                 <Link href="/verification" className="btn-primary shrink-0 self-start">
@@ -136,7 +136,7 @@ export default function RespondentDashboard() {
 
           <StaggerList className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
             <StaggerItem>
-              <QuickAction href="/surveys" icon={ClipboardList} label="Browse Tasks" />
+              <QuickAction href="/surveys" icon={ClipboardList} label="Share Opinions" />
             </StaggerItem>
             <StaggerItem>
               <QuickAction href="/wallet" icon={Wallet} label="My Wallet" color="secondary" />
@@ -161,9 +161,9 @@ export default function RespondentDashboard() {
               lifetime={dashboard?.wallet?.lifetimeEarnings || 0}
             />
             <MetricCard
-              title="Available Tasks"
+              title="Available Studies"
               value={dashboard?.availableSurveys || 0}
-              subtitle="Ready to complete"
+              subtitle="Ready for your opinions"
               icon={ClipboardList}
               iconColor="primary"
               trend="+12 this week"
@@ -240,7 +240,7 @@ export default function RespondentDashboard() {
 
           <section className="mt-8">
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">Top Tasks For You</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Top Studies For You</h2>
               <Link href="/surveys" className="text-sm font-medium text-primary-600 hover:underline">
                 View all →
               </Link>
@@ -259,9 +259,9 @@ export default function RespondentDashboard() {
               </div>
             ) : (
               <EmptyState
-                title="No tasks available yet"
-                description="New projects launch daily. Check back soon or enable notifications."
-                actionLabel="Browse Tasks"
+                title="No studies available yet"
+                description="New opinion studies launch daily. Check back soon or enable notifications."
+                actionLabel="Browse Studies"
                 actionHref="/surveys"
               />
             )}

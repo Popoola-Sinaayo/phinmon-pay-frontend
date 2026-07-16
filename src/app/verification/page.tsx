@@ -119,7 +119,7 @@ function VerificationContent() {
     <DashboardShell
       user={user}
       title="Verification"
-      subtitle="Verify your NIN to start earning. Premium liveness verification is coming soon."
+      subtitle="Verify your NIN to get paid for your opinions. Premium liveness verification is coming soon."
       loading={isLoading}
     >
       {user && (
@@ -156,8 +156,8 @@ function VerificationContent() {
               </div>
               <h2 className="mt-4 text-lg font-semibold text-gray-900">NIN Verification</h2>
               <p className="mt-2 text-sm leading-relaxed text-gray-500">
-                Required before taking any task. Your NIN is securely verified and matched against
-                your profile details.
+                Required before sharing your opinions. Your NIN is securely verified and matched
+                against your profile details.
               </p>
 
               <div className="mt-4 rounded-xl border border-gray-100 bg-gray-50/70 p-4">
@@ -167,7 +167,7 @@ function VerificationContent() {
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-gray-500">
                   We verify your NIN only to confirm you&apos;re a real person and to stop bots and
-                  duplicate accounts  this keeps task results validated and trustworthy. Your NIN
+                  duplicate accounts — this keeps responses validated and trustworthy. Your NIN
                   is hashed, not stored on our systems, and is never shared. We only use it to check
                   you&apos;re genuine.
                 </p>
@@ -310,11 +310,11 @@ function VerificationContent() {
                 !status?.premiumLivenessEnabled ? (
                   <>
                     Coming soon. We&apos;re enabling premium liveness verification shortly. For now,
-                    complete NIN verification to take tasks and earn.
+                    complete NIN verification to get paid for your opinions.
                   </>
                 ) : (
                   <>
-                    Required for premium tasks. Complete a quick liveness check to confirm
+                    Required for premium studies. Complete a quick liveness check to confirm
                     you&apos;re a real person.
                   </>
                 )}

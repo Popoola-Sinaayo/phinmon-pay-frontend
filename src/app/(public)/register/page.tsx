@@ -47,7 +47,7 @@ function RegisterForm() {
                     : "border-gray-200 text-gray-600"
                 }`}
               >
-                {r === "respondent" ? "Earn Money" : "Run Research"}
+                {r === "respondent" ? "Get paid for opinions" : "Run Research"}
               </Link>
             ))}
           </div>

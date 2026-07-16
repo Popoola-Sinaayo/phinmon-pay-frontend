@@ -32,8 +32,8 @@ export function Footer() {
             <div className="md:col-span-2">
               <BrandLogo href="/" size="lg" onDark />
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-gray-400">
-                Nigeria&apos;s verified research marketplace. NIN-checked respondents,
-                secure bank payouts, and export-ready task data.
+                Nigeria&apos;s verified insights marketplace. Get paid for your opinions,
+                reach NIN-verified respondents, and cash out to your bank.
               </p>
               <div className="mt-6 flex flex-wrap gap-2">
                 {TRUST_BADGES.map(({ icon: Icon, label }) => (

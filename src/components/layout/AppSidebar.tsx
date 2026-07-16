@@ -126,7 +126,7 @@ function VerificationStrip({ user }: { user: User }) {
             </>
           )
         ) : (
-          "Complete NIN to earn"
+          "Complete NIN to get paid"
         )}
       </p>
     </Link>
