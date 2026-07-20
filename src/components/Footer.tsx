@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CreditCard, Fingerprint, Lock, ShieldCheck } from "lucide-react";
+import { CreditCard, Fingerprint } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
 import { FadeIn } from "./motion";
 
@@ -20,8 +20,6 @@ const links = {
 const TRUST_BADGES = [
   { icon: Fingerprint, label: "NIN Verified" },
   { icon: CreditCard, label: "Bank Payouts" },
-  { icon: ShieldCheck, label: "CBN Compliant" },
-  { icon: Lock, label: "NDPR Ready" },
 ];
 
 export function Footer() {

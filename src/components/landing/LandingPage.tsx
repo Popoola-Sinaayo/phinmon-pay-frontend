@@ -270,7 +270,6 @@ export function LandingPage() {
                 { icon: Fingerprint, label: "NIMC NIN check" },
                 { icon: CreditCard, label: "Bank payouts" },
                 { icon: MapPin, label: "36 states + FCT" },
-                { icon: Lock, label: "NDPR-ready" },
               ].map(({ icon: Icon, label }) => (
                 <span
                   key={label}
