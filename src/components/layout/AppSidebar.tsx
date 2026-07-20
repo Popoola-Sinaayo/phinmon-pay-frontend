@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect } from "react";
 import { motion } from "framer-motion";
 import { Crown, ShieldCheck } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
@@ -135,6 +136,13 @@ function VerificationStrip({ user }: { user: User }) {
 
 export function MobileBottomNav({ items }: { items: NavItem[] }) {
   const pathname = usePathname();
+
+  useEffect(() => {
+    document.body.classList.add("has-mobile-bottom-nav");
+    return () => {
+      document.body.classList.remove("has-mobile-bottom-nav");
+    };
+  }, []);
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 border-t border-ink-900/[0.07] bg-paper/95 backdrop-blur-xl lg:hidden">

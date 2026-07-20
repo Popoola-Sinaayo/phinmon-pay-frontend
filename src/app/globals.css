@@ -25,6 +25,17 @@ body {
   z-index: 999999 !important;
 }
 
+/*
+ * JS in CrispChat.tsx applies the real bottom offset (Crisp nests fixed nodes).
+ * This is a fallback for the outer wrappers only.
+ */
+@media (max-width: 1023px) {
+  body.has-mobile-bottom-nav #crisp-chatbox,
+  body.has-mobile-bottom-nav .crisp-client {
+    bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
 ::selection {
   background: rgb(31 157 99 / 0.18);
   color: #0b412d;
