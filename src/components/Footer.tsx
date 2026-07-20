@@ -13,6 +13,7 @@ const links = {
   Company: [
     { href: "/login", label: "Login" },
     { href: "/register", label: "Sign Up" },
+    { href: "/privacy", label: "Privacy Policy" },
   ],
 };
 
@@ -66,9 +67,17 @@ export function Footer() {
             ))}
           </div>
           <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-white/10 pt-8 sm:flex-row">
-            <p className="text-sm text-gray-500">
-              © {new Date().getFullYear()} Phinmon. All rights reserved.
-            </p>
+            <div className="flex flex-col items-center gap-2 sm:items-start">
+              <p className="text-sm text-gray-500">
+                © {new Date().getFullYear()} Phinmon. All rights reserved.
+              </p>
+              <Link
+                href="/privacy"
+                className="text-sm text-gray-500 transition-colors hover:text-primary-400"
+              >
+                Privacy Policy
+              </Link>
+            </div>
             <div className="space-y-1 text-center sm:text-right">
               <p className="flex items-center gap-1 text-sm text-gray-500">
                 Built in Nigeria · Lagos · Abuja · PH
