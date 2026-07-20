@@ -202,7 +202,7 @@ export function LandingPage() {
   const pricing = computeFromTiers(pricingConfig);
 
   return (
-    <div className="overflow-hidden bg-white">
+    <div className="overflow-x-hidden bg-white">
       {/* ── Hero ── */}
       <section ref={heroRef} className="relative overflow-hidden border-b border-ink-900/[0.06] bg-paper">
         {/* Subtle warm grid  quiet, editorial */}

@@ -58,23 +58,29 @@ export function AdminInsightsCharts({
   usersByStatus: Breakdown[];
   usersByRole: Breakdown[];
   surveysByStatus: Breakdown[];
-  verification: {
+  verification?: {
     ninVerified: number;
     ninUnverified: number;
     livenessVerified: number;
     pendingVerification: number;
   };
 }) {
+  const verificationSafe = verification ?? {
+    ninVerified: 0,
+    ninUnverified: 0,
+    livenessVerified: 0,
+    pendingVerification: 0,
+  };
   const verificationPie = [
-    { label: "NIN verified", count: verification.ninVerified },
-    { label: "Unverified", count: verification.ninUnverified },
+    { label: "NIN verified", count: verificationSafe.ninVerified },
+    { label: "Unverified", count: verificationSafe.ninUnverified },
   ].filter((d) => d.count > 0);
 
   return (
     <div className="mt-8 grid gap-4 lg:grid-cols-2">
       <ChartCard title="New signups" subtitle="Last 30 days">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={signupsByDay}>
+          <AreaChart data={signupsByDay ?? []}>
             <defs>
               <linearGradient id="signupFill" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor="#107a4c" stopOpacity={0.35} />

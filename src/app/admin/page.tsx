@@ -21,22 +21,31 @@ type AdminStats = {
   transactions: number;
   withdrawals: number;
   fraudFlags: number;
-  activeSurveys: number;
-  newUsers7d: number;
-  newUsers30d: number;
-  totalEarnings: number;
-  totalWithdrawn: number;
-  verification: {
+  activeSurveys?: number;
+  newUsers7d?: number;
+  newUsers30d?: number;
+  totalEarnings?: number;
+  totalWithdrawn?: number;
+  verification?: {
     ninVerified: number;
     ninUnverified: number;
     livenessVerified: number;
     pendingVerification: number;
   };
-  usersByStatus: Array<{ label: string; count: number }>;
-  usersByRole: Array<{ label: string; count: number }>;
-  surveysByStatus: Array<{ label: string; count: number }>;
-  signupsByDay: Array<{ date: string; count: number; amount: number }>;
-  transactionsByDay: Array<{ date: string; count: number; amount: number }>;
+  usersByStatus?: Array<{ label: string; count: number }>;
+  usersByRole?: Array<{ label: string; count: number }>;
+  surveysByStatus?: Array<{ label: string; count: number }>;
+  signupsByDay?: Array<{ date: string; count: number; amount: number }>;
+  transactionsByDay?: Array<{ date: string; count: number; amount: number }>;
+};
+
+const EMPTY_SERIES: Array<{ date: string; count: number; amount: number }> = [];
+const EMPTY_BREAKDOWN: Array<{ label: string; count: number }> = [];
+const EMPTY_VERIFICATION = {
+  ninVerified: 0,
+  ninUnverified: 0,
+  livenessVerified: 0,
+  pendingVerification: 0,
 };
 
 export default function AdminPage() {
@@ -44,7 +53,7 @@ export default function AdminPage() {
   const { data: user, isLoading } = useAuth();
 
   const { data: stats, isLoading: statsLoading } = useQuery({
-    queryKey: ["admin-stats"],
+    queryKey: ["admin-stats", "v2"],
     queryFn: async () => (await api.get("/admin/stats")).data.stats as AdminStats,
     enabled: user?.role === "admin",
   });
@@ -81,40 +90,40 @@ export default function AdminPage() {
           <>
             <MetricCard
               title="Users"
-              value={stats.users}
-              subtitle={`${stats.newUsers7d} new this week`}
+              value={stats.users ?? 0}
+              subtitle={`${stats.newUsers7d ?? 0} new this week`}
               icon={Users}
               iconColor="primary"
               index={0}
             />
             <MetricCard
               title="Active projects"
-              value={stats.activeSurveys}
-              subtitle={`${stats.surveys} total`}
+              value={stats.activeSurveys ?? 0}
+              subtitle={`${stats.surveys ?? 0} total`}
               icon={FolderKanban}
               iconColor="secondary"
               index={1}
             />
             <MetricCard
               title="Total earnings paid"
-              value={formatCurrency(stats.totalEarnings)}
-              subtitle={`${stats.transactions} transactions`}
+              value={formatCurrency(stats.totalEarnings ?? 0)}
+              subtitle={`${stats.transactions ?? 0} transactions`}
               icon={Wallet}
               iconColor="amber"
               index={2}
             />
             <MetricCard
               title="Withdrawn"
-              value={formatCurrency(stats.totalWithdrawn)}
-              subtitle={`${stats.withdrawals} requests`}
+              value={formatCurrency(stats.totalWithdrawn ?? 0)}
+              subtitle={`${stats.withdrawals ?? 0} requests`}
               icon={Wallet}
               iconColor="default"
               index={3}
             />
             <MetricCard
               title="Unverified"
-              value={stats.verification.ninUnverified}
-              subtitle={`${stats.fraudFlags} open fraud flags`}
+              value={stats.verification?.ninUnverified ?? 0}
+              subtitle={`${stats.fraudFlags ?? 0} open fraud flags`}
               icon={Flag}
               iconColor="amber"
               index={4}
@@ -123,14 +132,14 @@ export default function AdminPage() {
         )}
       </div>
 
-      {!statsLoading && stats && (
+      {!statsLoading && stats?.signupsByDay && (
         <AdminInsightsCharts
-          signupsByDay={stats.signupsByDay}
-          transactionsByDay={stats.transactionsByDay}
-          usersByStatus={stats.usersByStatus}
-          usersByRole={stats.usersByRole}
-          surveysByStatus={stats.surveysByStatus}
-          verification={stats.verification}
+          signupsByDay={stats.signupsByDay ?? EMPTY_SERIES}
+          transactionsByDay={stats.transactionsByDay ?? EMPTY_SERIES}
+          usersByStatus={stats.usersByStatus ?? EMPTY_BREAKDOWN}
+          usersByRole={stats.usersByRole ?? EMPTY_BREAKDOWN}
+          surveysByStatus={stats.surveysByStatus ?? EMPTY_BREAKDOWN}
+          verification={stats.verification ?? EMPTY_VERIFICATION}
         />
       )}
 

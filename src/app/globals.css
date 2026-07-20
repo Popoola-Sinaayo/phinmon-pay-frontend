@@ -20,6 +20,11 @@ body {
   overflow-x: hidden;
 }
 
+/* Keep Crisp above landing overlays / sticky chrome */
+#crisp-chatbox {
+  z-index: 999999 !important;
+}
+
 ::selection {
   background: rgb(31 157 99 / 0.18);
   color: #0b412d;
