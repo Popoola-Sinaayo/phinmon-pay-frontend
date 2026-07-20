@@ -8,6 +8,7 @@ import { Navbar } from "@/components/Navbar";
 const ADMIN_NAV = [
   { href: "/admin", label: "Overview" },
   { href: "/admin/users", label: "Users" },
+  { href: "/admin/emails", label: "Emails" },
   { href: "/admin/surveys", label: "Projects" },
   { href: "/admin/withdrawals", label: "Withdrawals" },
 ];

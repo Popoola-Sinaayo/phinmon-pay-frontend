@@ -1,20 +1,27 @@
 import { cn } from "@/lib/utils";
 
 function StatusCell({ value }: { value: string | number }) {
-  const str = String(value).toUpperCase();
+  const str = String(value).toUpperCase().replace(/\s+/g, "_");
   const styles: Record<string, string> = {
     COMPLETED: "bg-primary-50 text-primary-700",
     APPROVED: "bg-primary-50 text-primary-700",
+    VERIFIED: "bg-primary-50 text-primary-700",
+    PREMIUM: "bg-amber-50 text-amber-700",
+    PENDING_VERIFICATION: "bg-amber-50 text-amber-700",
     PENDING: "bg-amber-50 text-amber-700",
     PROCESSING: "bg-amber-50 text-amber-700",
     FAILED: "bg-error-500/10 text-error-600",
     REJECTED: "bg-error-500/10 text-error-600",
+    SUSPENDED: "bg-error-500/10 text-error-600",
   };
-  const matched = Object.keys(styles).find((k) => str.includes(k));
-  if (!matched) return <>{value}</>;
+  const matched =
+    styles[str] !== undefined
+      ? str
+      : Object.keys(styles).find((k) => str.includes(k) && k !== "VERIFIED");
+  if (!matched || styles[matched] === undefined) return <>{value}</>;
   return (
     <span className={cn("inline-flex rounded-full px-2 py-0.5 text-xs font-semibold", styles[matched])}>
-      {value}
+      {String(value).replace(/_/g, " ")}
     </span>
   );
 }
