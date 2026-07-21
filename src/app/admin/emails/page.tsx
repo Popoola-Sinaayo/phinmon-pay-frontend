@@ -197,7 +197,7 @@ export default function AdminEmailsPage() {
       subtitle="Target audiences, pick specific users, filter by signup date, and track send history"
       backHref="/admin"
     >
-      <form onSubmit={onSubmit} className="grid gap-6 xl:grid-cols-[1fr_380px]">
+      <form onSubmit={onSubmit} className="grid gap-6 xl:grid-cols-[1fr_minmax(380px,480px)]">
         <div className="space-y-6">
           <div className="rounded-xl border border-gray-100 bg-white p-5 shadow-subtle sm:p-6">
             <div className="flex items-start gap-3">
