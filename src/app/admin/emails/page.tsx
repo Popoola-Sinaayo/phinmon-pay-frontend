@@ -108,10 +108,15 @@ export default function AdminEmailsPage() {
     if (!authLoading && (!authUser || authUser.role !== "admin")) router.push("/login");
   }, [authUser, authLoading, router]);
 
+  const signedUpSinceIso =
+    mode === "signed_up_since" && signedUpSince
+      ? new Date(signedUpSince).toISOString()
+      : undefined;
+
   const previewParams = {
     audience,
     ...(mode === "specific_users" ? { userIds: selectedUserIds.join(",") } : {}),
-    ...(mode === "signed_up_since" && signedUpSince ? { signedUpSince } : {}),
+    ...(signedUpSinceIso ? { signedUpSince: signedUpSinceIso } : {}),
   };
 
   const { data: preview, isFetching: previewLoading } = useQuery({
@@ -147,7 +152,9 @@ export default function AdminEmailsPage() {
         audience,
         template,
         ...(mode === "specific_users" ? { userIds: selectedUserIds } : {}),
-        ...(mode === "signed_up_since" ? { signedUpSince } : {}),
+        ...(mode === "signed_up_since" && signedUpSinceIso
+          ? { signedUpSince: signedUpSinceIso }
+          : {}),
         ...(template === "custom" ? { subject, headline, message, ctaLabel } : {}),
       });
       return res.data as {
@@ -194,7 +201,7 @@ export default function AdminEmailsPage() {
   return (
     <AdminShell
       title="Email users"
-      subtitle="Target audiences, pick specific users, filter by signup date, and track send history"
+      subtitle="Target audiences, pick specific users, filter by signup date & time, and track send history"
       backHref="/admin"
     >
       <form onSubmit={onSubmit} className="grid gap-6 xl:grid-cols-[1fr_minmax(380px,480px)]">
@@ -207,7 +214,8 @@ export default function AdminEmailsPage() {
               <div>
                 <h2 className="font-semibold text-ink-900">Recipients</h2>
                 <p className="mt-1 text-sm text-ink-500">
-                  Choose a preset group, users who signed up from a date, or hand-pick accounts.
+                  Choose a preset group, users who signed up from a date and time, or hand-pick
+                  accounts.
                 </p>
               </div>
             </div>
@@ -266,18 +274,18 @@ export default function AdminEmailsPage() {
               <div className="mt-5">
                 <label className="block">
                   <span className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-ink-500">
-                    <Calendar className="h-3.5 w-3.5" /> Signup date (from → today)
+                    <Calendar className="h-3.5 w-3.5" /> Signup from (date &amp; time → now)
                   </span>
                   <input
-                    type="date"
-                    className="input max-w-xs"
+                    type="datetime-local"
+                    className="input max-w-sm"
                     value={signedUpSince}
                     onChange={(e) => setSignedUpSince(e.target.value)}
                     required
                   />
                 </label>
                 <p className="mt-2 text-sm text-ink-500">
-                  Includes everyone who registered on or after this date, up to now.
+                  Includes everyone who registered on or after this date and time, up to now.
                 </p>
               </div>
             )}
