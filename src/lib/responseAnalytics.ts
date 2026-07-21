@@ -1,5 +1,11 @@
 import type { Survey } from "@/types";
 
+export type SurveyResponseUser = {
+  _id?: string;
+  ninVerified?: boolean;
+  livenessVerified?: boolean;
+};
+
 export type SurveyResponseRecord = {
   _id: string;
   status: "PENDING" | "APPROVED" | "REJECTED" | "FLAGGED";
@@ -8,8 +14,20 @@ export type SurveyResponseRecord = {
   flagReason?: string;
   createdAt: string;
   answers: Array<{ questionId: string; type: string; value: unknown }>;
-  userId?: { name?: string; email?: string; ninVerified?: boolean; livenessVerified?: boolean };
+  userId?: SurveyResponseUser | string;
 };
+
+export function getResponseUser(userId?: SurveyResponseUser | string): SurveyResponseUser | null {
+  if (!userId || typeof userId === "string") return null;
+  return userId;
+}
+
+export function getRespondentLabel(userId?: SurveyResponseUser | string): string {
+  if (!userId) return "Respondent · anon";
+  if (typeof userId === "string") return `Respondent · ${userId.slice(-6)}`;
+  const id = userId._id?.toString() || "";
+  return `Respondent · ${id.slice(-6) || "anon"}`;
+}
 
 export type QuestionInsight =
   | {
@@ -40,8 +58,8 @@ export function computeResponseSummary(
     if (r.status === "PENDING") pendingRewards += r.rewardAmount;
   }
 
-  const premiumCount = responses.filter((r) => r.userId?.livenessVerified).length;
-  const verifiedCount = responses.filter((r) => r.userId?.ninVerified).length;
+  const premiumCount = responses.filter((r) => getResponseUser(r.userId)?.livenessVerified).length;
+  const verifiedCount = responses.filter((r) => getResponseUser(r.userId)?.ninVerified).length;
 
   return {
     total: responses.length,

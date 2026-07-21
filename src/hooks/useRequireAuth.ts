@@ -22,6 +22,10 @@ export function useRequireAuth(
       router.push("/login");
       return;
     }
+    if (user.needsTermsAcceptance) {
+      router.push("/accept-terms");
+      return;
+    }
     if (requireNin && requiresNinVerification(user) && !user.ninVerified) {
       router.push("/verification?step=nin");
       return;

@@ -125,9 +125,9 @@ export default function RespondentDashboard() {
                   <p className="text-sm font-semibold text-gray-900">Why we verify your details</p>
                   <p className="mt-1 text-sm leading-relaxed text-gray-600">
                     We verify your NIN only to confirm you&apos;re a real person and to stop bots and
-                    duplicate accounts  this keeps survey results validated and fair. Your details are
-                    hashed and <span className="font-medium">never stored on our systems</span>; we
-                    only validate them, then discard them.
+                    duplicate accounts — this keeps survey results validated and fair. We do not store
+                    your raw NIN; after verification we keep it encrypted (plus a hash) so the same NIN
+                    cannot be used on more than one account.
                   </p>
                 </div>
               </div>

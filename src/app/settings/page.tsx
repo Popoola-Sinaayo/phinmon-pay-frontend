@@ -1,7 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useState } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, setAuthToken } from "@/lib/api";
 import { useRequireAuth } from "@/hooks/useRequireAuth";
 import { usePlatformFeatures } from "@/lib/platformFeatures";
@@ -9,12 +10,17 @@ import { DashboardShell } from "@/components/layout/DashboardShell";
 import { SetWithdrawalPinForm } from "@/components/wallet/SetWithdrawalPinForm";
 import { MotionCard } from "@/components/motion";
 import { motion } from "framer-motion";
-import { KeyRound, LogOut, Mail, Shield, Crown, User as UserIcon } from "lucide-react";
+import { KeyRound, LogOut, Mail, Shield, Crown, User as UserIcon, Trash2 } from "lucide-react";
+import type { User } from "@/types";
 
 export default function SettingsPage() {
   const router = useRouter();
-  const { user, isLoading } = useRequireAuth();
+  const queryClient = useQueryClient();
+  const { user, isLoading, refetch } = useRequireAuth();
   const platformFeatures = usePlatformFeatures();
+  const [deletionLoading, setDeletionLoading] = useState(false);
+  const [deletionMessage, setDeletionMessage] = useState("");
+  const [deletionError, setDeletionError] = useState("");
 
   const { data: pinStatus } = useQuery({
     queryKey: ["withdrawal-pin-status"],
@@ -31,6 +37,27 @@ export default function SettingsPage() {
     await api.post("/auth/logout");
     setAuthToken(null);
     router.push("/login");
+  };
+
+  const handleDeletionRequest = async () => {
+    const confirmed = window.confirm(
+      "Request account deletion? We will review your request, settle open balances if needed, and may retain limited records for fraud prevention or legal requirements."
+    );
+    if (!confirmed) return;
+    setDeletionLoading(true);
+    setDeletionError("");
+    setDeletionMessage("");
+    try {
+      const { data } = await api.post<{ message: string; user: User }>("/users/deletion-request");
+      setDeletionMessage(data.message);
+      queryClient.setQueryData(["auth", "me"], data.user);
+      await refetch();
+    } catch (err: unknown) {
+      const msg = (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
+      setDeletionError(msg || "Could not submit deletion request.");
+    } finally {
+      setDeletionLoading(false);
+    }
   };
 
   return (
@@ -100,6 +127,38 @@ export default function SettingsPage() {
               <SetWithdrawalPinForm pinSet={pinSet} />
             </div>
           )}
+
+          <div className="border-t border-gray-100 pt-6">
+            <div className="mb-3 flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-error-500/10">
+                <Trash2 className="h-4 w-4 text-error-600" />
+              </div>
+              <div>
+                <p className="font-semibold text-gray-900">Delete account</p>
+                <p className="text-xs text-gray-500">
+                  Request deletion under our Privacy Policy. Studies and withdrawals pause while a
+                  request is pending.
+                </p>
+              </div>
+            </div>
+            {user.deletionRequestedAt ? (
+              <p className="rounded-xl bg-amber-50 px-3 py-2 text-sm text-amber-900">
+                Deletion requested on {new Date(user.deletionRequestedAt).toLocaleDateString()}. Our
+                team will process it shortly.
+              </p>
+            ) : (
+              <button
+                type="button"
+                onClick={handleDeletionRequest}
+                disabled={deletionLoading}
+                className="rounded-xl border border-error-500/20 bg-error-500/5 px-4 py-2.5 text-sm font-semibold text-error-600 transition hover:bg-error-500/10 disabled:opacity-60"
+              >
+                {deletionLoading ? "Submitting..." : "Request account deletion"}
+              </button>
+            )}
+            {deletionMessage && <p className="mt-2 text-sm text-gray-600">{deletionMessage}</p>}
+            {deletionError && <p className="mt-2 text-sm text-error-600">{deletionError}</p>}
+          </div>
 
           <div className="pt-4">
             <motion.button

@@ -7,6 +7,8 @@ import { Crisp } from "crisp-sdk-web";
 import { api, getAuthToken } from "@/lib/api";
 import type { User } from "@/types";
 
+import { useCookieConsent } from "@/components/CookieConsent";
+
 const websiteId = process.env.NEXT_PUBLIC_CRISP_WEBSITE_ID?.trim();
 
 /** Crisp's usual corner inset. */
@@ -70,6 +72,7 @@ function applyCrispMobileNavOffset() {
 
 export function CrispChat() {
   const pathname = usePathname();
+  const { analyticsAllowed, ready } = useCookieConsent();
 
   const { data: user } = useQuery({
     queryKey: ["auth", "me"],
@@ -77,13 +80,18 @@ export function CrispChat() {
       const { data } = await api.get<{ user: User }>("/auth/me");
       return data.user;
     },
-    enabled: Boolean(websiteId) && typeof window !== "undefined" && !!getAuthToken(),
+    enabled:
+      Boolean(websiteId) &&
+      ready &&
+      analyticsAllowed &&
+      typeof window !== "undefined" &&
+      !!getAuthToken(),
     retry: false,
     staleTime: 30_000,
   });
 
   useEffect(() => {
-    if (!websiteId) return;
+    if (!websiteId || !ready || !analyticsAllowed) return;
 
     Crisp.configure(websiteId);
     Crisp.session.onLoaded(() => {
@@ -128,16 +136,16 @@ export function CrispChat() {
       observer.disconnect();
       Crisp.session.offLoaded();
     };
-  }, []);
+  }, [ready, analyticsAllowed]);
 
   useEffect(() => {
-    if (!websiteId) return;
+    if (!websiteId || !analyticsAllowed) return;
     forceShowChat();
     applyCrispMobileNavOffset();
-  }, [pathname]);
+  }, [pathname, analyticsAllowed]);
 
   useEffect(() => {
-    if (!websiteId || !user) return;
+    if (!websiteId || !analyticsAllowed || !user) return;
     Crisp.user.setEmail(user.email);
     if (user.name) Crisp.user.setNickname(user.name);
     Crisp.session.setData({
@@ -145,7 +153,7 @@ export function CrispChat() {
       role: user.role,
       status: user.status,
     });
-  }, [user]);
+  }, [user, analyticsAllowed]);
 
   return null;
 }

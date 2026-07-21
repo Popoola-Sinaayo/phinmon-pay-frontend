@@ -6,7 +6,7 @@ import { AlertTriangle, Crown, Flag, ShieldCheck, X } from "lucide-react";
 import { useState } from "react";
 import { ResponseStatusBadge } from "@/components/Badges";
 import { api } from "@/lib/api";
-import { formatAnswerValue, type SurveyResponseRecord } from "@/lib/responseAnalytics";
+import { formatAnswerValue, getRespondentLabel, getResponseUser, type SurveyResponseRecord } from "@/lib/responseAnalytics";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Question, Survey } from "@/types";
 
@@ -72,7 +72,7 @@ export function ResponseDetailDrawer({
                   Response detail
                 </p>
                 <h2 className="mt-1 text-lg font-bold text-gray-900">
-                  {response.userId?.name || response.userId?.email || "Respondent"}
+                  {getRespondentLabel(response.userId)}
                 </h2>
                 <p className="text-sm text-gray-500">{formatDate(response.createdAt)}</p>
               </div>
@@ -94,12 +94,12 @@ export function ResponseDetailDrawer({
                 <span className="inline-flex items-center rounded-full bg-primary-50 px-2.5 py-0.5 text-xs font-semibold text-primary-700">
                   {formatCurrency(response.rewardAmount)}
                 </span>
-                {response.userId?.ninVerified && (
+                {getResponseUser(response.userId)?.ninVerified && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-semibold text-gray-600">
                     <ShieldCheck className="h-3 w-3" /> NIN
                   </span>
                 )}
-                {response.userId?.livenessVerified && (
+                {getResponseUser(response.userId)?.livenessVerified && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-amber-50 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
                     <Crown className="h-3 w-3" /> Premium
                   </span>

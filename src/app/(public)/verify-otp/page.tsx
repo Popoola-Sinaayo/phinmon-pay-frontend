@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { api, setAuthToken } from "@/lib/api";
@@ -9,14 +9,36 @@ import { FadeIn } from "@/components/motion";
 import type { User } from "@/types";
 import { ShieldCheck } from "lucide-react";
 
+const RESEND_COOLDOWN_SECONDS = 120;
+
+function formatCountdown(seconds: number) {
+  const m = Math.floor(seconds / 60);
+  const s = seconds % 60;
+  return `${m}:${s.toString().padStart(2, "0")}`;
+}
+
 function VerifyOtpForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
+
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const id = window.setTimeout(() => {
+      setCooldown((prev) => prev - 1);
+    }, 1000);
+    return () => window.clearTimeout(id);
+  }, [cooldown]);
 
   const redirectUser = (user: User) => {
+    if (user.needsTermsAcceptance) {
+      router.push("/accept-terms");
+      return;
+    }
     if (!user.name) {
       router.push("/onboarding");
       return;
@@ -44,8 +66,20 @@ function VerifyOtpForm() {
   };
 
   const handleResend = async () => {
-    await api.post("/auth/request-otp", { email });
+    if (cooldown > 0 || resendLoading) return;
+    setResendLoading(true);
+    setError("");
+    try {
+      await api.post("/auth/request-otp", { email });
+      setCooldown(RESEND_COOLDOWN_SECONDS);
+    } catch {
+      setError("Could not resend code. Please try again.");
+    } finally {
+      setResendLoading(false);
+    }
   };
+
+  const resendDisabled = cooldown > 0 || resendLoading;
 
   return (
     <div className="mesh-bg flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 py-12">
@@ -83,9 +117,18 @@ function VerifyOtpForm() {
           <button
             type="button"
             onClick={handleResend}
-            className="mt-6 text-sm font-medium text-primary-600 hover:underline"
+            disabled={resendDisabled}
+            className={`mt-6 text-sm font-medium ${
+              resendDisabled
+                ? "cursor-not-allowed text-gray-400"
+                : "text-primary-600 hover:underline"
+            }`}
           >
-            Resend code
+            {resendLoading
+              ? "Sending..."
+              : cooldown > 0
+                ? `Resend code in ${formatCountdown(cooldown)}`
+                : "Resend code"}
           </button>
         </motion.div>
       </FadeIn>

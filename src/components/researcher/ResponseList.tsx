@@ -2,7 +2,7 @@
 
 import { ChevronRight } from "lucide-react";
 import { ResponseStatusBadge } from "@/components/Badges";
-import { type SurveyResponseRecord } from "@/lib/responseAnalytics";
+import { type SurveyResponseRecord, getRespondentLabel } from "@/lib/responseAnalytics";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export function ResponseList({
@@ -36,12 +36,10 @@ export function ResponseList({
               className="group flex w-full items-center gap-3 px-3 py-4 text-left transition hover:bg-primary-50/40 sm:gap-4 sm:px-4"
             >
               <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gray-100 text-sm font-bold text-gray-600 group-hover:bg-primary-100 group-hover:text-primary-700">
-                {(r.userId?.name || r.userId?.email || "?")[0].toUpperCase()}
+                R
               </div>
               <div className="min-w-0 flex-1">
-                <p className="truncate font-medium text-gray-900">
-                  {r.userId?.name || r.userId?.email || "Anonymous"}
-                </p>
+                <p className="truncate font-medium text-gray-900">{getRespondentLabel(r.userId)}</p>
                 <p className="text-xs text-gray-500">{formatDate(r.createdAt)}</p>
               </div>
               <ResponseStatusBadge status={r.status} spamSuspected={r.spamSuspected} />

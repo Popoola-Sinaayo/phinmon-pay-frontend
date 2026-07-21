@@ -10,6 +10,11 @@ export interface User {
   livenessVerified: boolean;
   status: UserStatus;
   withdrawalPinSet?: boolean;
+  termsAcceptedAt?: string | null;
+  termsVersion?: string | null;
+  needsTermsAcceptance?: boolean;
+  deletionRequestedAt?: string | null;
+  currentTermsVersion?: string;
   createdAt?: string;
 }
 

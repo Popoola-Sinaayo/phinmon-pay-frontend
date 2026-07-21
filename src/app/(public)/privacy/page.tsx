@@ -7,7 +7,7 @@ export const metadata: Metadata = {
     "How Phinmon collects, uses, and protects your personal data, including Google Analytics and Crisp chat.",
 };
 
-const LAST_UPDATED = "20 July 2026";
+const LAST_UPDATED = "21 July 2026";
 
 export default function PrivacyPolicyPage() {
   return (
@@ -21,7 +21,12 @@ export default function PrivacyPolicyPage() {
         This Privacy Policy explains how Phinmon (&quot;we&quot;, &quot;us&quot;, or &quot;our&quot;),
         operated by Evergreene Software Ltd, collects, uses, stores, and protects your information when
         you use our website and services. We are committed to handling personal data responsibly and in
-        line with Nigeria&apos;s Nigeria Data Protection Act (NDPA) / NDPR principles.
+        line with Nigeria&apos;s Nigeria Data Protection Act (NDPA) / NDPR principles. Using Phinmon
+        requires accepting this Privacy Policy and our{" "}
+        <Link href="/terms" className="font-medium text-primary-600 hover:underline">
+          Terms of Service
+        </Link>
+        .
       </p>
 
       <div className="prose-privacy mt-12 space-y-10 text-ink-700">
@@ -54,17 +59,21 @@ export default function PrivacyPolicyPage() {
           <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed">
             <li>
               <strong className="text-ink-900">Account details:</strong> name, email address, role
-              (respondent, researcher, or admin), and account status.
+              (respondent, researcher, or admin), account status, and records of your acceptance of our
+              Terms and this Privacy Policy.
             </li>
             <li>
               <strong className="text-ink-900">Identity verification data:</strong> legal name, date of
-              birth, National Identification Number (NIN) related verification results, and (where
-              enabled) liveness checks. NIN data is handled with encryption and used only to verify
-              identity on our platform.
+              birth, National Identification Number (NIN) verification results, and (where enabled)
+              liveness checks. We do <strong className="text-ink-900">not</strong> store your raw
+              (plaintext) NIN on the platform. After verification we retain your NIN only in{" "}
+              <strong className="text-ink-900">encrypted</strong> form, plus a one-way hash, so we can
+              verify identity and <strong className="text-ink-900">prevent the same NIN from being
+              registered on more than one account</strong>. We do not use NIN for marketing.
             </li>
             <li>
-              <strong className="text-ink-900">Profile information:</strong> optional demographics you
-              provide (for example gender, state, occupation) to improve study matching.
+              <strong className="text-ink-900">Profile information:</strong> demographics you provide
+              (for example gender, state, occupation) to improve study matching.
             </li>
             <li>
               <strong className="text-ink-900">Survey and campaign data:</strong> survey responses you
@@ -116,6 +125,8 @@ export default function PrivacyPolicyPage() {
             We use <strong className="text-ink-900">Google Analytics</strong> to understand how visitors
             and users navigate Phinmon — for example which pages are visited, how often features are used,
             and where people drop off. This helps us improve product design, performance, and content.
+            Analytics scripts load only after you accept non-essential cookies in our cookie banner (or
+            equivalent preference).
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed">
             <li>
@@ -145,7 +156,8 @@ export default function PrivacyPolicyPage() {
           <h2 className="font-display text-xl font-medium text-ink-900">5. Crisp chat</h2>
           <p className="mt-3 leading-relaxed">
             We use <strong className="text-ink-900">Crisp</strong> to power in-app customer support chat so
-            we can answer questions, help with account issues, and reply to users on our platform.
+            we can answer questions, help with account issues, and reply to users on our platform. The
+            chat widget loads only after you accept non-essential cookies.
           </p>
           <ul className="mt-3 list-disc space-y-2 pl-5 leading-relaxed">
             <li>
@@ -176,13 +188,12 @@ export default function PrivacyPolicyPage() {
             6. Cookies and similar technologies
           </h2>
           <p className="mt-3 leading-relaxed">
-            We use cookies and similar technologies that are necessary to keep you signed in, protect
-            accounts, and remember preferences. Analytics cookies or scripts (including Google Analytics)
-            and chat widgets (including Crisp) may also set cookies or local storage to function.
-          </p>
-          <p className="mt-3 leading-relaxed">
-            You can control cookies through your browser settings. Blocking some cookies may limit parts
-            of the service (for example staying logged in or using chat).
+            We use <strong className="text-ink-900">essential</strong> cookies and similar technologies
+            that are necessary to keep you signed in, protect accounts, and remember security preferences.
+            <strong className="text-ink-900"> Non-essential</strong> analytics (Google Analytics) and
+            support chat (Crisp) cookies or scripts load only if you accept them via our cookie banner.
+            You can change your browser settings to block cookies; blocking essential cookies may limit
+            parts of the service (for example staying logged in).
           </p>
         </section>
 
@@ -209,7 +220,7 @@ export default function PrivacyPolicyPage() {
             </li>
             <li>
               <strong className="text-ink-900">Google Analytics</strong> and{" "}
-              <strong className="text-ink-900">Crisp</strong>, as described above
+              <strong className="text-ink-900">Crisp</strong>, as described above (when you consent)
             </li>
             <li>
               <strong className="text-ink-900">Hosting and infrastructure</strong> providers that store or
@@ -221,9 +232,11 @@ export default function PrivacyPolicyPage() {
             the rights, safety, and integrity of Phinmon, our users, or the public.
           </p>
           <p className="mt-3 leading-relaxed">
-            When you complete a survey, researchers receive your responses and limited verification
-            context needed for research quality. They are expected to use that data only for the study
-            purpose and not for unrelated third-party resale.
+            When you complete a survey, researchers receive your responses together with an anonymised
+            respondent identifier and limited verification flags needed for research quality (for example
+            whether NIN verification is complete). They do not receive your email or legal name in
+            standard response exports. They are expected to use that data only for the study purpose and
+            not for unrelated third-party resale.
           </p>
         </section>
 
@@ -231,9 +244,9 @@ export default function PrivacyPolicyPage() {
           <h2 className="font-display text-xl font-medium text-ink-900">8. Data security</h2>
           <p className="mt-3 leading-relaxed">
             We use technical and organisational measures appropriate to the sensitivity of the data,
-            including encryption for sensitive identity fields, access controls, and secure transmission.
-            No method of transmission or storage is 100% secure; we work to reduce risk and respond to
-            incidents promptly.
+            including encryption for sensitive identity fields (such as NIN), access controls, and secure
+            transmission. No method of transmission or storage is 100% secure; we work to reduce risk and
+            respond to incidents promptly.
           </p>
         </section>
 
@@ -241,8 +254,9 @@ export default function PrivacyPolicyPage() {
           <h2 className="font-display text-xl font-medium text-ink-900">9. Data retention</h2>
           <p className="mt-3 leading-relaxed">
             We keep personal data only as long as needed for the purposes in this policy — including
-            operating your account, completing payouts, preventing fraud, and meeting legal or accounting
-            requirements. When data is no longer required, we delete or anonymise it where practicable.
+            operating your account, completing payouts, preventing fraud (including encrypted NIN and
+            hash records used to block duplicate NINs), and meeting legal or accounting requirements.
+            When data is no longer required, we delete or anonymise it where practicable.
           </p>
         </section>
 
@@ -256,11 +270,13 @@ export default function PrivacyPolicyPage() {
             <li>Request correction of inaccurate data</li>
             <li>Request deletion or restriction, where legally available</li>
             <li>Object to certain processing</li>
-            <li>Withdraw consent where processing is consent-based</li>
+            <li>Withdraw consent where processing is consent-based (including non-essential cookies)</li>
           </ul>
           <p className="mt-3 leading-relaxed">
-            To exercise these rights, contact us through Crisp chat on the platform or via Evergreene
-            Software Ltd. We may need to verify your identity before fulfilling a request.
+            You can request account deletion from Settings in the product. You may also contact us through
+            Crisp chat or via Evergreene Software Ltd. We may need to verify your identity, settle open
+            balances, and retain limited records where required for fraud prevention, accounting, or law
+            before completing a deletion request.
           </p>
         </section>
 
@@ -269,9 +285,9 @@ export default function PrivacyPolicyPage() {
             11. Children&apos;s privacy
           </h2>
           <p className="mt-3 leading-relaxed">
-            Phinmon is intended for adults who can lawfully create an account and complete identity
-            verification. We do not knowingly collect personal data from children. If you believe a
-            child has provided data to us, contact us so we can take appropriate action.
+            Phinmon is intended for adults aged 18 and over who can lawfully create an account and
+            complete identity verification. We do not knowingly collect personal data from children. If
+            you believe a child has provided data to us, contact us so we can take appropriate action.
           </p>
         </section>
 
@@ -292,9 +308,8 @@ export default function PrivacyPolicyPage() {
           </h2>
           <p className="mt-3 leading-relaxed">
             We may update this Privacy Policy from time to time. The &quot;Last updated&quot; date at the
-            top will change when we do. Continued use of Phinmon after an update means you acknowledge
-            the revised policy. Material changes may also be highlighted in-product or by email where
-            appropriate.
+            top will change when we do. Material changes may require in-product re-acceptance of this
+            Privacy Policy together with our Terms of Service before you continue using Phinmon.
           </p>
         </section>
 
@@ -302,7 +317,7 @@ export default function PrivacyPolicyPage() {
           <h2 className="font-display text-xl font-medium text-ink-900">14. Contact</h2>
           <p className="mt-3 leading-relaxed">
             Questions about privacy, Google Analytics, Crisp chat, or your data rights: use the Crisp
-            chat widget on Phinmon, or reach Evergreene Software Ltd at{" "}
+            chat widget on Phinmon (when enabled), or reach Evergreene Software Ltd at{" "}
             <a
               href="https://www.evergreenesoftware.com"
               target="_blank"
@@ -317,7 +332,11 @@ export default function PrivacyPolicyPage() {
       </div>
 
       <p className="mt-12 text-sm text-ink-500">
-        See also how the product works in{" "}
+        See also our{" "}
+        <Link href="/terms" className="font-medium text-primary-600 hover:underline">
+          Terms of Service
+        </Link>{" "}
+        and{" "}
         <Link href="/how-it-works" className="font-medium text-primary-600 hover:underline">
           How It Works
         </Link>

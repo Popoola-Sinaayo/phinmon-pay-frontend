@@ -8,7 +8,6 @@ type LivenessStartResponse = {
   sessionId: string;
   sdkSessionToken?: string;
   customerReference?: string;
-  idNumber?: string;
 };
 
 type ApplicantData = {
@@ -84,9 +83,7 @@ export function useQoreIdLiveness() {
               token: data.sdkSessionToken!,
               customerReference: data.customerReference || data.sessionId,
               applicantData,
-              ...(data.idNumber
-                ? { identityData: { idType: "nin", idNumber: data.idNumber } }
-                : {}),
+              // NIN stays server-side; session token is minted without exposing idNumber to the client.
             }).catch(reject);
           });
         } else {

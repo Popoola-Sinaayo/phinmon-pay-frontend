@@ -30,6 +30,13 @@ api.interceptors.response.use(
         });
         window.location.href = `/login?${params.toString()}`;
       }
+      if (
+        error.response?.status === 403 &&
+        code === "TERMS_REQUIRED" &&
+        !window.location.pathname.startsWith("/accept-terms")
+      ) {
+        window.location.href = "/accept-terms";
+      }
     }
     return Promise.reject(error);
   }

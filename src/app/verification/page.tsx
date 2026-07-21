@@ -167,9 +167,9 @@ function VerificationContent() {
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-gray-500">
                   We verify your NIN only to confirm you&apos;re a real person and to stop bots and
-                  duplicate accounts — this keeps responses validated and trustworthy. Your NIN
-                  is hashed, not stored on our systems, and is never shared. We only use it to check
-                  you&apos;re genuine.
+                  duplicate accounts — this keeps responses validated and trustworthy. We do not store
+                  your raw NIN; after verification we keep it encrypted (plus a hash) so the same NIN
+                  cannot be used on more than one account. We do not use it for marketing.
                 </p>
               </div>
 

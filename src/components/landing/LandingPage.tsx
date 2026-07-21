@@ -60,7 +60,7 @@ const WHY_VERIFY = [
   {
     icon: Lock,
     title: "Privacy by design",
-    desc: "We never store your raw NIN. It's hashed and used only to confirm you're real, then discarded  never kept on our systems.",
+    desc: "We do not store your raw NIN. After verification we keep it encrypted (plus a hash) so the same NIN cannot be used twice — and the number stays unreadable at rest.",
   },
 ];
 
@@ -306,8 +306,8 @@ export function LandingPage() {
             </h2>
             <p className="mx-auto mt-3 max-w-2xl text-gray-500">
               We verify every panelist&apos;s identity so researchers get validated, trustworthy
-              results  and respondents are protected. Your NIN is hashed to confirm you&apos;re a real
-              person, never stored on our systems.
+              results — and respondents are protected. Your raw NIN is not stored; we keep it
+              encrypted (plus a hash) so one person cannot register the same NIN on multiple accounts.
             </p>
           </FadeIn>
 

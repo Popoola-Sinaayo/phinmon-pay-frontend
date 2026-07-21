@@ -13,6 +13,7 @@ const links = {
   Company: [
     { href: "/login", label: "Login" },
     { href: "/register", label: "Sign Up" },
+    { href: "/terms", label: "Terms of Service" },
     { href: "/privacy", label: "Privacy Policy" },
   ],
 };
@@ -69,12 +70,23 @@ export function Footer() {
               <p className="text-sm text-gray-500">
                 © {new Date().getFullYear()} Phinmon. All rights reserved.
               </p>
-              <Link
-                href="/privacy"
-                className="text-sm text-gray-500 transition-colors hover:text-primary-400"
-              >
-                Privacy Policy
-              </Link>
+              <div className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1 sm:justify-start">
+                <Link
+                  href="/terms"
+                  className="text-sm text-gray-500 transition-colors hover:text-primary-400"
+                >
+                  Terms of Service
+                </Link>
+                <span className="text-gray-600" aria-hidden>
+                  ·
+                </span>
+                <Link
+                  href="/privacy"
+                  className="text-sm text-gray-500 transition-colors hover:text-primary-400"
+                >
+                  Privacy Policy
+                </Link>
+              </div>
             </div>
             <div className="space-y-1 text-center sm:text-right">
               <p className="flex items-center gap-1 text-sm text-gray-500">

@@ -34,7 +34,14 @@ export default function OnboardingPage() {
   const isRespondent = user?.role === "respondent";
 
   useEffect(() => {
-    if (!isLoading && !user) router.push("/login");
+    if (isLoading) return;
+    if (!user) {
+      router.push("/login");
+      return;
+    }
+    if (user.needsTermsAcceptance) {
+      router.push("/accept-terms");
+    }
   }, [user, isLoading, router]);
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -118,7 +125,7 @@ export default function OnboardingPage() {
               value={form.dateOfBirth}
               onChange={(e) => setForm({ ...form, dateOfBirth: e.target.value })}
               required
-              max={new Date(new Date().setFullYear(new Date().getFullYear() - 16))
+              max={new Date(new Date().setFullYear(new Date().getFullYear() - 18))
                 .toISOString()
                 .split("T")[0]}
             />
